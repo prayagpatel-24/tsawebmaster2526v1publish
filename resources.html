@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ripple Resources</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:#ebf1f4;color:#1e1e1e;}
+header{display:flex;align-items:center;padding:22px 60px;background:#f3f8ff;border-bottom:1px solid #e3e6ea;}
+.logo{font-size:24px;font-weight:600;margin-right:50px;}
+nav{display:flex;gap:32px;background: #f3f8ff;}
+nav a{text-decoration:none;color:#475569;font-weight:500;font-size:16px;}
+nav a.active{border-bottom:3px solid #111827;padding-bottom:6px;color:#111827;}
+.nav-right{margin-left:auto;}
+.profile{width:42px;height:42px;border-radius:50%;background:#4f46e5;display:flex;justify-content:center;align-items:center;color:white;font-weight:600;font-size:18px;}
+.main-title{text-align:center;margin-top:42px;font-size:38px;font-weight:600;}
+.sub-title{text-align:center;margin-top:10px;color:#64748b;font-size:18px;}
+.toggle-btns{display:flex;justify-content:center;margin:32px auto;border-radius:14px;background:white;width:360px;border:1px solid #d1d5db;}
+.toggle-btns button{flex:1;padding:13px 0;border:none;background:none;font-size:16px;font-weight:500;color:#475569;border-radius:14px;cursor:pointer;}
+.toggle-btns button.active{background:#3996d3;color:white;}
+.search-area{display:flex;justify-content:center;gap:14px;margin:18px auto;width:900px;}
+.search-area input{padding:13px 16px;border-radius:10px;border:1px solid #cbd5e1;font-size:15px;}
+.search-area input[type="text"]{flex:1;}
+.search-area button{padding:13px 22px;border:none;background:#3996d3;color:white;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;}
+.filters{display:flex;justify-content:center;gap:14px;margin:20px auto;flex-wrap:wrap;}
+.filters button{padding:8px 20px;font-size:14px;border-radius:20px;border:1px solid #cbd5e1;background:white;cursor:pointer;color:#475569;}
+.filters button.active{background:#3996d3;color:white;border:none;}
+.cards{display:grid;grid-template-columns:repeat(3, 1fr);gap:28px;width:1200px;margin:35px auto;}
+.card{padding:26px;border-radius:14px;background:white;}
+.cardEnv{border: 4px solid #17a34a;}
+.cardMen{border: 4px solid #2663eb;}
+.cardVol{border: 4px solid #f97315;}
+.cardDon{border: 4px solid #dc2627;}
+.cardCom{border: 4px solid #7d3aed;}
+.card h3{margin-bottom:14px;font-size:20px;font-weight:600;}
+.card p{margin:6px 0;color:#475569;font-size:14px;line-height:1.45;}
+.tag{margin-top:14px;padding:6px 14px;font-size:13px;border-radius:12px;width:max-content;color:white;font-weight:500;}
+.tag.green{background:#16a34a;}
+.tag.blue{background:#2563eb;}
+.tag.orange{background:#f97316;}
+.tag.red{background:#dc2626;}
+.tag.purple{background:#7c3aed;}
+/*footer{display:flex;justify-content:space-between;padding:70px 120px;margin-top:80px;color:#3996d3;font-size:15px;}
+footer h4{font-weight:600;margin-bottom:10px;font-size:18px;}*/
+/* FOOTER */
+.footer {
+      padding: 30px 40px 20px;
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 24px;
+    }
+
+    .footer-logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .footer-logo-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #a3d5ff, #4f87ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 16px;
+      position: relative;
+    }
+
+    .footer-logo-circle::before,
+    .footer-logo-circle::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+    }
+
+    .footer-logo-circle::before {
+      width: 22px;
+      height: 22px;
+    }
+
+    .footer-logo-circle::after {
+      width: 15px;
+      height: 15px;
+    }
+
+    .footer-logo-text-main {
+      font-weight: 600;
+    }
+
+    .footer-section-title {
+      font-weight: 600;
+      margin-bottom: 9px;
+      color: #111827;
+    }
+
+    .footer-list {
+      list-style: none;
+      line-height: 1.7;
+    }
+
+    .footer-line {
+      height: 1px;
+      background: #e5e7eb;
+      margin-bottom: 12px;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+.team-list p{margin:3px 0;}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">🌊 Ripple</div>
+<nav>
+<a href="main.html">Home</a>
+<a href="resources.html" class="active">Resources</a>
+<a href="#">Communities</a>
+<a href="#">Support</a>
+<a href="#">Calendar</a>
+</nav>
+<div class="nav-right"><div class="profile">A</div></div>
+</header>
+<div class="main-title">Resources</div>
+<div class="sub-title">Events and health resources for the community</div>
+<div class="toggle-btns">
+<button class="active">Events</button>
+<button>Health Resources</button>
+</div>
+<div class="search-area">
+<input type="text" placeholder="Search events..." />
+<input type="date" />
+<button>+ Add Event</button>
+</div>
+<div class="filters">
+<button class="active">All</button>
+<button>Mental Health</button>
+<button>Volunteering</button>
+<button>Environmental</button>
+<button>Community</button>
+<button>Donations</button>
+</div>
+<div class="cards">
+<div class="card cardEnv"><h3>Coastal Cleanup Day</h3><p>Nov 23, 2025 | 8:00 AM – 11:30 AM<br>Savannah Beach</p><p>Help remove litter from our shoreline and record findings to support environmental research.</p><div class="tag green">Environmental</div></div>
+<div class="card cardMen"><h3>Walk for Wellness</h3><p>Dec 1, 2025 | 8:00 AM – 11:00 AM<br>Lanie Trail</p><p>5K community walk promoting physical and mental health awareness and fundraising for local health initiatives.</p><div class="tag blue">Mental Health</div></div>
+<div class="card cardVol"><h3>Blood Donation Day</h3><p>Dec 19, 2025 | 9:00 AM – 4:00 PM<br>Emory Hospital Center</p><p>Partner with local hospitals for a community blood drive to save lives.</p><div class="tag orange">Volunteering</div></div>
+<div class="card cardDon"><h3>Book Donation Booth</h3><p>Dec 21, 2025 | 11:00 AM – 3:00 PM<br>Sharon Forks Library</p><p>Gather books for literacy programs and help organize donations for local schools.</p><div class="tag red">Donation Drives</div></div>
+<div class="card cardCom"><h3>Cultural Heritage Day</h3><p>Dec 29, 2025 | 10:00 AM – 7:00 PM<br>Cultural Arts Center</p><p>Help organize performances and exhibits celebrating our diverse community cultures.</p><div class="tag purple">Community Events</div></div>
+<div class="card cardEnv"><h3>Plant Reforestation</h3><p>Jan 14, 2026 | 10:00 AM – 5:30 PM<br>Fowler Park</p><p>Collaborate with the community in reforestation at local parks for environmental growth and diversity.</p><div class="tag green">Environmental</div></div>
+</div>
+<footer class="footer">
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo-row">
+        <div class="footer-logo-circle"></div>
+        <div class="footer-logo-text-main">Ripple</div>
+      </div>
+      <p>
+        Creating ripples of change across our<br />
+        community, one small action at a time.
+      </p>
+    </div>
+
+    <div>
+      <div class="footer-section-title">Our Team</div>
+      <ul class="footer-list">
+        <li>Purandhar Ram Choppa</li>
+        <li>Prayag Patel</li>
+        <li>Mihir Malladi</li>
+        <li>Advay Pradeep</li>
+        <li>Saaketh Alla</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="footer-section-title">Get in Touch</div>
+      <ul class="footer-list">
+        <li>hello@ripple.community</li>
+        <li>Terms of Use</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-line"></div>
+  <div class="footer-bottom">
+    © 2025 Ripple — All Rights Reserved
+  </div>
+</footer>
+</body>
+</html>

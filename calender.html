@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact</title>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  <main></main>
+  <div id="footer-placeholder"></div>
+  <script>
+    async function includeHeader(){
+      try{
+        const res = await fetch('main.html');
+        const text = await res.text();
+        document.getElementById('header-placeholder').innerHTML = text;
+      }catch(e){
+        console.warn('Header include failed:', e);
+      }
+      try{
+        const fres = await fetch('footer.mtml');
+        const ftext = await fres.text();
+        document.getElementById('footer-placeholder').innerHTML = ftext;
+      }catch(e){
+        console.warn('Footer include failed:', e);
+      }
+    }
+    includeHeader();
+  </script>
+</body>
+</html>

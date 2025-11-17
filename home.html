@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Home</title>
+</head>
+<style>
+  .title-area{background-color:#e6f6ff;display:flex;justify-content:center;padding:48px 16px}
+  .title-box{max-width:560px;text-align:center}
+  .title{margin:0 0 8px;font-size:1.5rem}
+  .title-text{margin:0 0 16px;color:#333}
+  .ripple-btn{width:120px;height:36px;border:1px solid #84aefe;background:transparent;border-radius:6px;background-color: #84aefe;color: white;}
+  .reg-text{margin:0 0 16px;color:#333}
+
+  .mission-area{background-color:#ffffff;display:flex;justify-content:center;padding:48px 16px}
+</style>
+<body>
+  <div id="header-placeholder"></div>
+  <main>
+    <!--<section class="title-area">
+      <div class="title-box">
+          <h1 class="title">Creating ripples of change</h1>
+          <h1 class="title">across our community</h1>
+          <p class="title-text">Make an impact, one ripple at a time</p>
+          <button class="ripple-btn" aria-label="Action"><b>Start your Ripple Today</b></button>
+        </div>
+      </section>
+      <section class="mission-area">
+        <div class="title-box">
+          <h3 class="title">Our Mision</h3>
+          <p class="reg-text">Ripple connects community members with meaningful opportunities to create positive change. We believe that small actions create ripples of impact across neighborhoods, bringing people together to support mental health, volunteer for causes, protect the environment, and celebrate community through local events.</p>
+          <button class="ripple-btn" aria-label="Action">Start your Ripple Today</button>
+        </div>
+      </section>-->
+    </main>
+    
+    <!--<div id="footer-placeholder"></div>-->
+    
+      </div>
+    </section>
+  </main>
+
+
+  <script>
+      async function includeHeader(){
+        try{
+          const res = await fetch('main.html');
+          const text = await res.text();
+          document.getElementById('header-placeholder').innerHTML = text;
+        }catch(e){
+          console.warn('Header include failed:', e);
+        }
+        /*try{
+          const fres = await fetch('footer.html');
+          const ftext = await fres.text();
+          document.getElementById('footer-placeholder').innerHTML = ftext;
+        }catch(e){
+          console.warn('Footer include failed:', e);
+        }*/
+      }
+      includeHeader();
+  </script>
+</body>
+</html>
