@@ -1,32 +1,356 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Blog</title>
-</head>
-<body>
-  <div id="header-placeholder"></div>
-  <main></main>
-  <div id="footer-placeholder"></div>
-  <script>
-    async function includeHeader(){
-      try{
-        const res = await fetch('main.html');
-        const text = await res.text();
-        document.getElementById('header-placeholder').innerHTML = text;
-      }catch(e){
-        console.warn('Header include failed:', e);
-      }
-      try{
-        const fres = await fetch('footer.mtml');
-        const ftext = await fres.text();
-        document.getElementById('footer-placeholder').innerHTML = ftext;
-      }catch(e){
-        console.warn('Footer include failed:', e);
-      }
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ripple AI Assistant</title>
+<style>
+
+    body {
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        background: #F3F6FA;
+        color: #1F2328;
     }
-    includeHeader();
-  </script>
+.nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      background: linear-gradient(to bottom, #f0f6ff, #f7fbff);
+      width: 100%
+    }
+    .hov {
+transition: transform 0.25s ease;
+}
+.hov:hover {
+transform: scale(1.03);
+}
+.dark {
+  transition: background-color 0.25s ease;
+}
+.dark:hover {
+  background-color: rgb(237, 237, 237);
+}
+.db{
+  transition: background-color 0.25s ease;
+}
+.db:hover{
+  background-color: #2b719f !important;
+}
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #a3d5ff, #4f87ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 18px;
+      position: relative;
+    }
+
+    .logo-circle::before,
+    .logo-circle::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+    }
+
+    .logo-circle::before {
+      width: 26px;
+      height: 26px;
+    }
+
+    .logo-circle::after {
+      width: 18px;
+      height: 18px;
+    }
+
+    .logo-text {
+      font-weight: 600;
+      font-size: 20px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 26px;
+      margin-left: 30px;
+      font-size: 14px;
+      color: #4b5563;
+      
+    }
+
+    .nav-link {
+      position: relative;
+      padding-bottom: 4px;
+      text-decoration: none;
+    }
+
+    .nav-link.active {
+      font-weight: 600;
+      color: black;
+    }
+    a {
+  color: inherit;
+}
+a:visited {
+  color: inherit;
+}
+
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  height: 3px;
+  border-radius: 999px;
+  background: #3b82f6; 
+  left: 0;
+  right: 0;
+  bottom: -4px;
+}
+
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      background: #6f88ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 18px;
+    }
+    .title {
+        text-align: center;
+        margin-top: 55px;
+        font-size: 40px;
+        font-weight: 700;
+        color: #1F2328;
+    }
+    .subtitle {
+        text-align: center;
+        margin-top: 12px;
+        font-size: 17px;
+        color: #6B7178;
+    }
+    .chat-box {
+        width: 58%;
+        margin: 45px auto;
+        background: white;
+        border-radius: 22px;
+        padding: 32px;
+        border: 1px solid #DFE3E8;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .message {
+        background: #EAF4FF;
+        padding: 22px;
+        border-radius: 12px;
+        border: 1px solid #BBD8FF;
+        width: fit-content;
+        max-width: 90%;
+        font-size: 16px;
+        line-height: 1.5;
+        color: #1F2328;
+    }
+    .input-area {
+        width: 58%;
+        margin: 0 auto 110px auto;
+        display: flex;
+        align-items: center;
+        background: white;
+        padding: 16px 22px;
+        border-radius: 50px;
+        border: 1px solid #DFE3E8;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .input-area input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        font-family: 'Inter', sans-serif;
+    }
+    .send-btn {
+        background: #5C7CFF;
+        width: 43px;
+        height: 43px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+    }
+    .footer {
+      padding: 30px 40px 20px;
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 24px;
+    }
+
+    .footer-logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .footer-logo-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #a3d5ff, #4f87ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 16px;
+      position: relative;
+    }
+
+    .footer-logo-circle::before,
+    .footer-logo-circle::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+    }
+
+    .footer-logo-circle::before {
+      width: 22px;
+      height: 22px;
+    }
+
+    .footer-logo-circle::after {
+      width: 15px;
+      height: 15px;
+    }
+
+    .footer-logo-text-main {
+      font-weight: 600;
+    }
+
+    .footer-section-title {
+      font-weight: 600;
+      margin-bottom: 9px;
+      color: #111827;
+    }
+
+    .footer-list {
+      list-style: none;
+      line-height: 1.7;
+    }
+
+    .footer-line {
+      height: 1px;
+      background: #e5e7eb;
+      margin-bottom: 12px;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+</style>
+</head>
+<body style="width:100%; overflow-x: hidden;">
+  <header class="nav">
+    <div class="nav-left">
+      <div><image src="logo.png" width="75px"></image></div>
+      <div class="logo-text">Ripple</div>
+      <nav class="nav-links">
+        <a class="nav-link" href="main.html">Home</a>
+        <a class="nav-link" href="resources.html">Resources</a>
+        <a class="nav-link" href="communites.html">Communities</a>
+        <a class="nav-link active" href="support.html">Support</a>
+        <a class="nav-link" href="calender.html">Calendar</a>
+      </nav>
+    </div>
+    <div class="nav-right" style="margin-right: 5%">
+      <div class="avatar">A</div>
+    </div>
+  </header>
+
+<div class="title">Ripple AI Assistant</div>
+<div class="subtitle">Ask me anything about opportunities, events, or our mission</div>
+
+<div class="chat-box">
+    <div class="message">Hello, I’m here to answer any questions and help you learn about Ripple. How may assist you?</div>
+</div>
+
+<div class="input-area">
+    <input type="text" placeholder="Type your message here..." />
+    <div class="send-btn db">➤</div>
+</div>
+
+<footer class="footer" style="margin-top: 100px;">
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo-row">
+        <div><image src="logo.png" width="75px"></image></div>
+        <div class="footer-logo-text-main">Ripple</div>
+      </div>
+      <p>
+        Creating ripples of change across our<br />
+        community, one small action at a time.
+      </p>
+    </div>
+
+    <div>
+      <div class="footer-section-title">Our Team</div>
+      <ul class="footer-list">
+        <li>Purandhar Ram Choppa</li>
+        <li>Prayag Patel</li>
+        <li>Mihir Malladi</li>
+        <li>Advay Pradeep</li>
+        <li>Saaketh Alla</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="footer-section-title">Get in Touch</div>
+      <ul class="footer-list">
+        <li>hello@ripple.community</li>
+        <li>Terms of Use</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-line"></div>
+  <div class="footer-bottom">
+    © 2025 Ripple — All Rights Reserved
+  </div>
+</footer>
+
 </body>
 </html>

@@ -7,19 +7,149 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
-body{background:#ebf1f4;color:#1e1e1e;}
+body{background:#f7fafc;color:#1e1e1e;overflow-x: hidden;}
+body {
+      
+      background: linear-gradient(to bottom, #eef6ff, #f6fbff);
+      
+    }
 header{display:flex;align-items:center;padding:22px 60px;background:#f3f8ff;border-bottom:1px solid #e3e6ea;}
 .logo{font-size:24px;font-weight:600;margin-right:50px;}
-nav{display:flex;gap:32px;background: #f3f8ff;}
+/*nav{display:flex;gap:32px;background: #f3f8ff;}
 nav a{text-decoration:none;color:#475569;font-weight:500;font-size:16px;}
 nav a.active{border-bottom:3px solid #111827;padding-bottom:6px;color:#111827;}
-.nav-right{margin-left:auto;}
+.nav-right{margin-left:auto;}*/
+/* NAVBAR */
+.nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      background: linear-gradient(to bottom, #f0f6ff, #f7fbff);
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .hov {
+transition: transform 0.25s ease;
+}
+.hov:hover {
+transform: scale(1.03);
+}
+.dark {
+  transition: background-color 0.25s ease;
+}
+.dark:hover {
+  background-color: rgb(237, 237, 237);
+}
+.db{
+  transition: background-color 0.25s ease;
+}
+.db:hover{
+  background-color: #2b719f !important;
+}
+    .logo-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #a3d5ff, #4f87ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 18px;
+      position: relative;
+    }
+
+    .logo-circle::before,
+    .logo-circle::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+    }
+
+    .logo-circle::before {
+      width: 26px;
+      height: 26px;
+    }
+
+    .logo-circle::after {
+      width: 18px;
+      height: 18px;
+    }
+
+    .logo-text {
+      font-weight: 600;
+      font-size: 20px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 26px;
+      margin-left: 30px;
+      font-size: 14px;
+      color: #4b5563;
+      
+    }
+
+    .nav-link {
+      position: relative;
+      padding-bottom: 4px;
+      text-decoration: none;
+    }
+
+    .nav-link.active {
+      font-weight: 600;
+      color: black;
+    }
+    a {
+  color: inherit;
+}
+a:visited {
+  color: inherit;
+}
+
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  height: 3px;
+  border-radius: 999px;
+  background: #3b82f6; 
+  left: 0;
+  right: 0;
+  bottom: -4px;
+}
+
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      background: #6f88ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 18px;
+    }
 .profile{width:42px;height:42px;border-radius:50%;background:#4f46e5;display:flex;justify-content:center;align-items:center;color:white;font-weight:600;font-size:18px;}
 .main-title{text-align:center;margin-top:42px;font-size:38px;font-weight:600;}
 .sub-title{text-align:center;margin-top:10px;color:#64748b;font-size:18px;}
 .toggle-btns{display:flex;justify-content:center;margin:32px auto;border-radius:14px;background:white;width:360px;border:1px solid #d1d5db;}
 .toggle-btns button{flex:1;padding:13px 0;border:none;background:none;font-size:16px;font-weight:500;color:#475569;border-radius:14px;cursor:pointer;}
-.toggle-btns button.active{background:#3996d3;color:white;}
+.toggle-btns button.active{background:#3996d3;color:white; border:3px solid white;}
 .search-area{display:flex;justify-content:center;gap:14px;margin:18px auto;width:900px;}
 .search-area input{padding:13px 16px;border-radius:10px;border:1px solid #cbd5e1;font-size:15px;}
 .search-area input[type="text"]{flex:1;}
@@ -29,11 +159,11 @@ nav a.active{border-bottom:3px solid #111827;padding-bottom:6px;color:#111827;}
 .filters button.active{background:#3996d3;color:white;border:none;}
 .cards{display:grid;grid-template-columns:repeat(3, 1fr);gap:28px;width:1200px;margin:35px auto;}
 .card{padding:26px;border-radius:14px;background:white;}
-.cardEnv{border: 4px solid #17a34a;}
-.cardMen{border: 4px solid #2663eb;}
-.cardVol{border: 4px solid #f97315;}
-.cardDon{border: 4px solid #dc2627;}
-.cardCom{border: 4px solid #7d3aed;}
+.cardEnv{border: 3px solid #17a34a;}
+.cardMen{border: 3px solid #2663eb;}
+.cardVol{border: 3px solid #f97315;}
+.cardDon{border: 3px solid #dc2627;}
+.cardCom{border: 3px solid #7d3aed;}
 .card h3{margin-bottom:14px;font-size:20px;font-weight:600;}
 .card p{margin:6px 0;color:#475569;font-size:14px;line-height:1.45;}
 .tag{margin-top:14px;padding:6px 14px;font-size:13px;border-radius:12px;width:max-content;color:white;font-weight:500;}
@@ -125,53 +255,154 @@ footer h4{font-weight:600;margin-bottom:10px;font-size:18px;}*/
       font-size: 11px;
       color: #9ca3af;
     }
+    
 .team-list p{margin:3px 0;}
+.modal-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.35);z-index:1000;padding:24px;}
+.modal-overlay[aria-hidden="false"]{display:flex}
+.modal-content{background:white;border-radius:14px;width:720px;max-width:96%;padding:20px;box-shadow:0 12px 40px rgba(2,6,23,0.12);}
+.modal-content input,.modal-content textarea,.modal-content select{font-family:'Inter',sans-serif}
 </style>
 </head>
 <body>
-<header>
-<div class="logo">🌊 Ripple</div>
-<nav>
-<a href="main.html">Home</a>
-<a href="resources.html" class="active">Resources</a>
-<a href="#">Communities</a>
-<a href="#">Support</a>
-<a href="#">Calendar</a>
-</nav>
-<div class="nav-right"><div class="profile">A</div></div>
-</header>
+
+  <header class="nav">
+    <div class="nav-left">
+      <div><image src="logo.png" width="75px"></image></div>
+      <div class="logo-text">Ripple</div>
+      <nav class="nav-links">
+        <a class="nav-link" href="main.html">Home</a>
+        <a class="nav-link active" href="resources.html">Resources</a>
+        <a class="nav-link" href="communites.html">Communities</a>
+        <a class="nav-link" href="support.html">Support</a>
+        <a class="nav-link" href="calender.html">Calendar</a>
+      </nav>
+    </div>
+    <div class="nav-right">
+      <div class="avatar">A</div>
+    </div>
+  </header>
+
 <div class="main-title">Resources</div>
 <div class="sub-title">Events and health resources for the community</div>
 <div class="toggle-btns">
-<button class="active">Events</button>
-<button>Health Resources</button>
+<button class="active db">Resources</button>
+<button class="dark" style="border: 3px solid white;">Events</button>
 </div>
+<div id="health-section">
+<div class="search-area">
+<input type="text" placeholder="Search health resources..." />
+<button id="addResourceBtn" class="db">+ Add Resource</button>
+</div>
+
+<!-- Resource Modal -->
+<div id="resourceModal" style="display:none;" class="modal-overlay" aria-hidden="true">
+  <div class="modal-content">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div style="font-size:20px;font-weight:600">Add New Resource</div>
+      <button id="closeResourceModalBtn" class="dark" style="padding:8px 12px;border-radius:10px;">Close</button>
+    </div>
+    <form id="resourceForm">
+      <input id="resourceTitle" type="text" placeholder="Resource title" required style="width:100%;padding:12px;border-radius:10px;border:1px solid #cbd5e1;margin-bottom:10px;" />
+      <textarea id="resourceDesc1" placeholder="Short description" rows="2" style="width:100%;padding:12px;border-radius:10px;border:1px solid #cbd5e1;margin-bottom:10px;"></textarea>
+      <textarea id="resourceDesc2" placeholder="Additional details" rows="2" style="width:100%;padding:12px;border-radius:10px;border:1px solid #cbd5e1;margin-bottom:10px;"></textarea>
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px;">
+        <label for="resourceCategory" style="font-weight:500;color:#475569;">Category:</label>
+        <select id="resourceCategory" style="padding:10px;border-radius:10px;border:1px solid #cbd5e1;">
+          <option>Mental Health</option>
+          <option>Physical Health</option>
+          <option>Nutrition</option>
+          <option>Wellness</option>
+          <option>Support Groups</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;">
+        <button type="button" id="cancelResourceBtn" class="dark" style="padding:10px 16px;border-radius:10px;">Cancel</button>
+        <button type="submit" class="db" style="padding:10px 16px;border-radius:10px;">Save Resource</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="filters">
+<button class="active db">All</button>
+<button class="dark">Mental Health</button>
+<button class="dark">Physical Health</button>
+<button class="dark">Nutrition</button>
+<button class="dark">Wellness</button>
+<button class="dark">Support Groups</button>
+</div>
+<div class="cards">
+<div class="card cardMen hov"><h3>Mindfulness Meditation Guide</h3><p>Learn simple techniques to reduce stress and improve mental well-being.</p><p>Access free guided sessions and tips for daily practice.</p><div class="tag blue">Mental Health</div></div>
+<div class="card cardMen hov"><h3>Understanding Anxiety</h3><p>Resources on recognizing symptoms and coping strategies.</p><p>Includes articles, videos, and local support contacts.</p><div class="tag blue">Mental Health</div></div>
+<div class="card cardVol hov"><h3>Healthy Eating Tips</h3><p>Nutrition advice for maintaining a balanced diet.</p><p>Meal plans, recipes, and grocery guides.</p><div class="tag orange">Nutrition</div></div>
+<div class="card cardEnv hov"><h3>Exercise Routines for Beginners</h3><p>Start your fitness journey with easy-to-follow workouts.</p><p>Home-based exercises and community classes.</p><div class="tag green">Physical Health</div></div>
+<div class="card cardCom hov"><h3>Local Wellness Workshops</h3><p>Join community sessions on holistic health.</p><p>Yoga, tai chi, and stress management groups.</p><div class="tag purple">Wellness</div></div>
+<div class="card cardDon hov"><h3>Support Group Directory</h3><p>Find groups for various health challenges.</p><p>Online and in-person meetings for peer support.</p><div class="tag red">Support Groups</div></div>
+</div>
+</div>
+
+<div id="events-section" style="display:none;">
 <div class="search-area">
 <input type="text" placeholder="Search events..." />
 <input type="date" />
-<button>+ Add Event</button>
+<button id="addEventBtn" class="db">+ Add Event</button>
 </div>
+
+<!-- Event Modal -->
+<div id="eventModal" style="display:none;" class="modal-overlay" aria-hidden="true">
+  <div class="modal-content">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div style="font-size:20px;font-weight:600">Add New Event</div>
+      <button id="closeModalBtn" class="dark" style="padding:8px 12px;border-radius:10px;">Close</button>
+    </div>
+    <form id="eventForm">
+      <div style="display:flex;gap:12px;margin-bottom:10px;">
+        <input id="eventTitle" type="text" placeholder="Event title" required style="flex:2;padding:12px;border-radius:10px;border:1px solid #cbd5e1;" />
+        <input id="eventDate" type="date" required style="flex:1;padding:12px;border-radius:10px;border:1px solid #cbd5e1;" />
+        <input id="eventTime" type="time" style="flex:1;padding:12px;border-radius:10px;border:1px solid #cbd5e1;" />
+      </div>
+      <input id="eventLocation" type="text" placeholder="Location" style="width:100%;padding:12px;border-radius:10px;border:1px solid #cbd5e1;margin-bottom:10px;" />
+      <textarea id="eventDesc" placeholder="Short description" rows="4" style="width:100%;padding:12px;border-radius:10px;border:1px solid #cbd5e1;margin-bottom:10px;"></textarea>
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px;">
+        <label for="eventCategory" style="font-weight:500;color:#475569;">Category:</label>
+        <select id="eventCategory" style="padding:10px;border-radius:10px;border:1px solid #cbd5e1;">
+          <option>Environmental</option>
+          <option>Mental Health</option>
+          <option>Volunteering</option>
+          <option>Donation Drives</option>
+          <option>Community Events</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;">
+        <button type="button" id="cancelBtn" class="dark" style="padding:10px 16px;border-radius:10px;">Cancel</button>
+        <button type="submit" class="db" style="padding:10px 16px;border-radius:10px;">Save Event</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="filters">
-<button class="active">All</button>
-<button>Mental Health</button>
-<button>Volunteering</button>
-<button>Environmental</button>
-<button>Community</button>
-<button>Donations</button>
+<button class="active db">All</button>
+<button class="dark">Mental Health</button>
+<button class="dark">Volunteering</button>
+<button class="dark">Environmental</button>
+<button class="dark">Community</button>
+<button class="dark">Donations</button>
 </div>
 <div class="cards">
-<div class="card cardEnv"><h3>Coastal Cleanup Day</h3><p>Nov 23, 2025 | 8:00 AM – 11:30 AM<br>Savannah Beach</p><p>Help remove litter from our shoreline and record findings to support environmental research.</p><div class="tag green">Environmental</div></div>
-<div class="card cardMen"><h3>Walk for Wellness</h3><p>Dec 1, 2025 | 8:00 AM – 11:00 AM<br>Lanie Trail</p><p>5K community walk promoting physical and mental health awareness and fundraising for local health initiatives.</p><div class="tag blue">Mental Health</div></div>
-<div class="card cardVol"><h3>Blood Donation Day</h3><p>Dec 19, 2025 | 9:00 AM – 4:00 PM<br>Emory Hospital Center</p><p>Partner with local hospitals for a community blood drive to save lives.</p><div class="tag orange">Volunteering</div></div>
-<div class="card cardDon"><h3>Book Donation Booth</h3><p>Dec 21, 2025 | 11:00 AM – 3:00 PM<br>Sharon Forks Library</p><p>Gather books for literacy programs and help organize donations for local schools.</p><div class="tag red">Donation Drives</div></div>
-<div class="card cardCom"><h3>Cultural Heritage Day</h3><p>Dec 29, 2025 | 10:00 AM – 7:00 PM<br>Cultural Arts Center</p><p>Help organize performances and exhibits celebrating our diverse community cultures.</p><div class="tag purple">Community Events</div></div>
-<div class="card cardEnv"><h3>Plant Reforestation</h3><p>Jan 14, 2026 | 10:00 AM – 5:30 PM<br>Fowler Park</p><p>Collaborate with the community in reforestation at local parks for environmental growth and diversity.</p><div class="tag green">Environmental</div></div>
+<div class="card cardEnv hov"><h3>Coastal Cleanup Day</h3><p>Nov 23, 2025 | 8:00 AM – 11:30 AM<br>Savannah Beach</p><p>Help remove litter from our shoreline and record findings to support environmental research.</p><div class="tag green">Environmental</div></div>
+<div class="card cardMen hov"><h3>Walk for Wellness</h3><p>Dec 1, 2025 | 8:00 AM – 11:00 AM<br>Lanie Trail</p><p>5K community walk promoting physical and mental health awareness and fundraising for local health initiatives.</p><div class="tag blue">Mental Health</div></div>
+<div class="card cardVol hov"><h3>Blood Donation Day</h3><p>Dec 19, 2025 | 9:00 AM – 4:00 PM<br>Emory Hospital Center</p><p>Partner with local hospitals for a community blood drive to save lives.</p><div class="tag orange">Volunteering</div></div>
+<div class="card cardDon hov"><h3>Book Donation Booth</h3><p>Dec 21, 2025 | 11:00 AM – 3:00 PM<br>Sharon Forks Library</p><p>Gather books for literacy programs and help organize donations for local schools.</p><div class="tag red">Donation Drives</div></div>
+<div class="card cardCom hov"><h3>Cultural Heritage Day</h3><p>Dec 29, 2025 | 10:00 AM – 7:00 PM<br>Cultural Arts Center</p><p>Help organize performances and exhibits celebrating our diverse community cultures.</p><div class="tag purple">Community Events</div></div>
+<div class="card cardEnv hov"><h3>Plant Reforestation</h3><p>Jan 14, 2026 | 10:00 AM – 5:30 PM<br>Fowler Park</p><p>Collaborate with the community in reforestation at local parks for environmental growth and diversity.</p><div class="tag green">Environmental</div></div>
+</div>
 </div>
 <footer class="footer">
   <div class="footer-top">
     <div>
       <div class="footer-logo-row">
-        <div class="footer-logo-circle"></div>
+        <div><image src="logo.png" width="75px"></image></div>
         <div class="footer-logo-text-main">Ripple</div>
       </div>
       <p>
@@ -205,5 +436,161 @@ footer h4{font-weight:600;margin-bottom:10px;font-size:18px;}*/
     © 2025 Ripple — All Rights Reserved
   </div>
 </footer>
+</footer>
+
+<script>
+// Modal and event creation (inline JS)
+(function(){
+  const modal = document.getElementById('eventModal');
+  const addBtn = document.getElementById('addEventBtn');
+  const closeBtn = document.getElementById('closeModalBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const form = document.getElementById('eventForm');
+  const cards = document.querySelector('#events-section .cards');
+
+  // Resource modal
+  const resourceModal = document.getElementById('resourceModal');
+  const addResourceBtn = document.getElementById('addResourceBtn');
+  const closeResourceBtn = document.getElementById('closeResourceModalBtn');
+  const cancelResourceBtn = document.getElementById('cancelResourceBtn');
+  const resourceForm = document.getElementById('resourceForm');
+  const resourceCards = document.querySelector('#health-section .cards');
+
+  // Toggle functionality
+  const toggleBtns = document.querySelectorAll('.toggle-btns button');
+  const healthSection = document.getElementById('health-section');
+  const eventsSection = document.getElementById('events-section');
+
+  toggleBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      toggleBtns.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      if (this.textContent === 'Resources') {
+        healthSection.style.display = 'block';
+        eventsSection.style.display = 'none';
+      } else {
+        healthSection.style.display = 'none';
+        eventsSection.style.display = 'block';
+      }
+    });
+  });
+
+  function openModal(){
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden','false');
+  }
+  function closeModal(){
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden','true');
+    form.reset();
+  }
+
+  function openResourceModal(){
+    resourceModal.style.display = 'flex';
+    resourceModal.setAttribute('aria-hidden','false');
+  }
+  function closeResourceModal(){
+    resourceModal.style.display = 'none';
+    resourceModal.setAttribute('aria-hidden','true');
+    resourceForm.reset();
+  }
+
+  addBtn && addBtn.addEventListener('click', openModal);
+  closeBtn && closeBtn.addEventListener('click', closeModal);
+  cancelBtn && cancelBtn.addEventListener('click', closeModal);
+  modal && modal.addEventListener('click', function(e){ if(e.target === modal) closeModal(); });
+
+  addResourceBtn && addResourceBtn.addEventListener('click', openResourceModal);
+  closeResourceBtn && closeResourceBtn.addEventListener('click', closeResourceModal);
+  cancelResourceBtn && cancelResourceBtn.addEventListener('click', closeResourceModal);
+  resourceModal && resourceModal.addEventListener('click', function(e){ if(e.target === resourceModal) closeResourceModal(); });
+
+  form && form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const title = document.getElementById('eventTitle').value.trim();
+    const date = document.getElementById('eventDate').value;
+    const time = document.getElementById('eventTime').value;
+    const location = document.getElementById('eventLocation').value.trim();
+    const desc = document.getElementById('eventDesc').value.trim();
+    const category = document.getElementById('eventCategory').value;
+
+    if(!title) return;
+
+    const card = document.createElement('div');
+    card.className = 'card hov';
+
+    const tagDiv = document.createElement('div');
+    tagDiv.className = 'tag';
+
+    switch(category){
+      case 'Environmental': card.classList.add('cardEnv'); tagDiv.classList.add('green'); break;
+      case 'Mental Health': card.classList.add('cardMen'); tagDiv.classList.add('blue'); break;
+      case 'Volunteering': card.classList.add('cardVol'); tagDiv.classList.add('orange'); break;
+      case 'Donation Drives': card.classList.add('cardDon'); tagDiv.classList.add('red'); break;
+      case 'Community Events': card.classList.add('cardCom'); tagDiv.classList.add('purple'); break;
+      default: tagDiv.classList.add('blue');
+    }
+
+    const h3 = document.createElement('h3'); h3.textContent = title;
+    const p1 = document.createElement('p');
+    const dateText = date ? (new Date(date).toLocaleDateString()) : '';
+    p1.textContent = (dateText ? dateText : '') + (time ? ' | ' + time : '');
+    p1.appendChild(document.createElement('br'));
+    p1.appendChild(document.createTextNode(location));
+
+    const p2 = document.createElement('p'); p2.textContent = desc;
+    tagDiv.textContent = category;
+
+    card.appendChild(h3);
+    card.appendChild(p1);
+    card.appendChild(p2);
+    card.appendChild(tagDiv);
+
+    if(cards) cards.insertBefore(card, cards.firstChild);
+
+    closeModal();
+  });
+
+  resourceForm && resourceForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    const title = document.getElementById('resourceTitle').value.trim();
+    const desc1 = document.getElementById('resourceDesc1').value.trim();
+    const desc2 = document.getElementById('resourceDesc2').value.trim();
+    const category = document.getElementById('resourceCategory').value;
+
+    if(!title) return;
+
+    const card = document.createElement('div');
+    card.className = 'card hov';
+
+    const tagDiv = document.createElement('div');
+    tagDiv.className = 'tag';
+
+    switch(category){
+      case 'Mental Health': card.classList.add('cardMen'); tagDiv.classList.add('blue'); break;
+      case 'Physical Health': card.classList.add('cardEnv'); tagDiv.classList.add('green'); break;
+      case 'Nutrition': card.classList.add('cardVol'); tagDiv.classList.add('orange'); break;
+      case 'Wellness': card.classList.add('cardCom'); tagDiv.classList.add('purple'); break;
+      case 'Support Groups': card.classList.add('cardDon'); tagDiv.classList.add('red'); break;
+      default: tagDiv.classList.add('blue');
+    }
+
+    const h3 = document.createElement('h3'); h3.textContent = title;
+    const p1 = document.createElement('p'); p1.textContent = desc1;
+    const p2 = document.createElement('p'); p2.textContent = desc2;
+    tagDiv.textContent = category;
+
+    card.appendChild(h3);
+    card.appendChild(p1);
+    card.appendChild(p2);
+    card.appendChild(tagDiv);
+
+    if(resourceCards) resourceCards.insertBefore(card, resourceCards.firstChild);
+
+    closeResourceModal();
+  });
+})();
+</script>
+
 </body>
 </html>

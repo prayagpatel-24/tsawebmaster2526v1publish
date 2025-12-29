@@ -1,32 +1,367 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Contact</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ripple Calendar</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+body{background:#f1f4f8;display:flex;flex-direction:column;align-items:center;width:100%;overflow-x: hidden;}
+/*header{width:100%;max-width:1400px;display:flex;justify-content:space-between;padding:32px 60px;align-items:center}
+/*.logo{display:flex;align-items:center;font-size:27px;font-weight:600;color:#1e2b3a}
+.logo img{width:46px;margin-right:12px}
+nav{display:flex;gap:22px}
+nav a{font-size:18px;color:#5c6675;text-decoration:none}
+nav a:last-child{padding-bottom:6px;border-bottom:3px solid #7ea0ff}
+.profile{width:48px;height:48px;border-radius:50%;background:#9d8dfc;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px}
+*/
+.main{margin-top:10px;text-align:center}
+.main h1{font-size:40px;font-weight:700;color:#1e2b3a;margin-bottom:4px}
+.main p{font-size:16px;color:#7a889a}
+.page-wrapper{display:flex;margin-top:40px;width:100%;max-width:1300px;justify-content:center;gap:40px}
+/* Calendar - note: border added to match image */
+.calendar-box{width:460px;background:#ffffff;border-radius:24px;padding:28px 36px;border:1px solid #d7e3ea}
+.calendar-header{font-size:22px;font-weight:600;text-align:center;margin-bottom:20px;color:#1e2b3a;display:flex;align-items:center;justify-content:center;gap:14px}
+.calendar-header .nav-btn{width:34px;height:34px;border-radius:25%;display:inline-flex;align-items:center;justify-content:center;background:#fbfdff;border:1px solid #e6eef3;color:#9aa7b4;font-size:16px}
+.calendar{width:100%;border-collapse:collapse;font-size:17px}
+.calendar th{color:#8c97a6;padding-bottom:14px;font-weight:500}
+.calendar td{text-align:center;padding:14px 0;color:#3c4a5a;font-weight:500}
+.date-beige{background:#f6eade;color:#9b6f3f;padding:8px 12px;border-radius:8px;display:inline-block}
+.date-teal{background:#e9f7f4;color:#1f7f6a;padding:8px 12px;border-radius:10px;display:inline-block;border:2px solid #c7efe6}
+.date-green-text{color:#2aa65a;font-weight:700}
+.right-col{width:360px}
+.card{background:white;padding:26px 28px;border-radius:22px;border:1px solid #d7e3ea;margin-bottom:20px;}
+.card-title{font-size:18px;font-weight:600;margin-bottom:6px;color:#1e2b3a;display:flex;align-items:center;gap:10px}
+.card small{color:#7a889a;font-size:14px}
+.event-box{background:#f5f7fa;margin-top:16px;padding:16px;border-radius:14px;}
+.event-title{font-size:16px;font-weight:600;color:#1e2b3a;}
+.event-desc{margin-top:6px;font-size:14px;color:#7a889a;line-height:1.45}
+.event-btn{margin-top:14px;padding:8px 16px;border-radius:8px;background:white;border:1px solid #7ea0ff;color:#4d6ce3;cursor:pointer;font-size:14px}
+.coastal{background:#d7eddc;margin-top:16px;padding:16px;border-radius:14px}
+
+.lightbulb{width:18px;height:18px;display:inline-block;vertical-align:middle}
+/* NAVBAR */
+.nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      background: linear-gradient(to bottom, #f0f6ff, #f7fbff);
+      width: 100%
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #a3d5ff, #4f87ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 18px;
+      position: relative;
+    }
+
+    .logo-circle::before,
+    .logo-circle::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+    }
+
+    .logo-circle::before {
+      width: 26px;
+      height: 26px;
+    }
+
+    .logo-circle::after {
+      width: 18px;
+      height: 18px;
+    }
+    .hov {
+transition: transform 0.25s ease;
+}
+.hov:hover {
+transform: scale(1.03);
+}
+.dark, td {
+  transition: background-color 0.25s ease;
+}
+.dark:hover, td:hover {
+  background-color: rgb(237, 237, 237);
+}
+.db{
+  transition: background-color 0.25s ease;
+}
+.db:hover{
+  background-color: #2b719f !important;
+}
+    .logo-text {
+      font-weight: 600;
+      font-size: 20px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 26px;
+      margin-left: 30px;
+      font-size: 14px;
+      color: #4b5563;
+      
+    }
+
+    .nav-link {
+      position: relative;
+      padding-bottom: 4px;
+      text-decoration: none;
+    }
+
+    .nav-link.active {
+      font-weight: 600;
+      color: black;
+    }
+    a {
+  color: inherit;
+}
+a:visited {
+  color: inherit;
+}
+
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  height: 3px;
+  border-radius: 999px;
+  background: #3b82f6; 
+  left: 0;
+  right: 0;
+  bottom: -4px;
+}
+
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    background: #6f88ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff !important; 
+    font-weight: 600;
+    font-size: 18px;
+}
+/* FOOTER */
+.footer {
+      padding: 30px 40px 20px;
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 24px;
+    }
+    .footer-logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .footer-logo-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #a3d5ff, #4f87ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 16px;
+      position: relative;
+    }
+
+    .footer-logo-circle::before,
+    .footer-logo-circle::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+    }
+
+    .footer-logo-circle::before {
+      width: 22px;
+      height: 22px;
+    }
+
+    .footer-logo-circle::after {
+      width: 15px;
+      height: 15px;
+    }
+
+    .footer-logo-text-main {
+      font-weight: 600;
+    }
+
+    .footer-section-title {
+      font-weight: 600;
+      margin-bottom: 9px;
+      color: #111827;
+    }
+
+    .footer-list {
+      list-style: none;
+      line-height: 1.7;
+    }
+
+    .footer-line {
+      height: 1px;
+      background: #e5e7eb;
+      margin-bottom: 12px;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+</style>
 </head>
 <body>
-  <div id="header-placeholder"></div>
-  <main></main>
-  <div id="footer-placeholder"></div>
-  <script>
-    async function includeHeader(){
-      try{
-        const res = await fetch('main.html');
-        const text = await res.text();
-        document.getElementById('header-placeholder').innerHTML = text;
-      }catch(e){
-        console.warn('Header include failed:', e);
-      }
-      try{
-        const fres = await fetch('footer.mtml');
-        const ftext = await fres.text();
-        document.getElementById('footer-placeholder').innerHTML = ftext;
-      }catch(e){
-        console.warn('Footer include failed:', e);
-      }
-    }
-    includeHeader();
-  </script>
+  <header class="nav">
+    <div class="nav-left">
+      <div><image src="logo.png" width="75px"></image></div>
+      <div class="logo-text">Ripple</div>
+      <nav class="nav-links">
+        <a class="nav-link" href="main.html">Home</a>
+        <a class="nav-link" href="resources.html">Resources</a>
+        <a class="nav-link" href="communites.html">Communities</a>
+        <a class="nav-link" href="support.html">Support</a>
+        <a class="nav-link active" href="calender.html">Calendar</a>
+      </nav>
+    </div>
+    <div class="nav-right">
+      <div class="avatar">A</div>
+    </div>
+  </header>
+
+<div class="main">
+  <h1>Your Event Calendar</h1>
+  <p>Manage your volunteer commitments</p>
+</div>
+
+<div class="page-wrapper">
+  <div class="calendar-box">
+    <div class="calendar-header">
+      <div class="nav-btn">‹</div>
+      <div>November 2025</div>
+      <div class="nav-btn">›</div>
+    </div>
+    <table class="calendar" role="table">
+      <thead>
+        <tr><th>Su</th><th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th><th>Sa</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td><td>31</td><td>1</td></tr>
+        <tr><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+        <tr><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td></tr>
+        <tr><td>16</td><td>17</td><td><span class="date-beige">18</span></td><td>19</td><td><span class="date-teal">20</span></td><td>21</td><td>22</td></tr>
+        <tr><td><span class="date-green-text">23</span></td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td></tr>
+        <tr><td>30</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="right-col">
+    <div class="card hov" style="background-color: #e2eaf3; border: 2px solid #b0d9ee;">
+      <div class="card-title">
+        <!-- inline SVG lightbulb icon to match image -->
+        <i class="fa-regular fa-lightbulb"></i>
+        Recommended for You
+      </div>
+      <small>Based on your interests</small>
+
+      <div class="event-box hov">
+        <div class="event-title" >Walk for Wellness</div>
+        <p class="event-desc">5K community walk promoting physical and mental health awareness and fundraising for local health programs.</p>
+        <button class="event-btn dark" onclick="reso()">View Event</button>
+      </div>
+    </div>
+
+    <div class="card hov"  style="border: 1px solid #b1b1b1;">
+      <div class="card-title">Your Upcoming Events</div>
+      <div class="coastal hov" style="border: 2px solid #e2e2e2;">
+        <div class="event-title">Coastal Cleanup</div>
+        <p class="event-desc"><i class="fa fa-calendar"></i> Nov 23, 2025<br><i class="fa fa-map-pin"></i> Savannah Beach</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer" style="margin-top: 100px; width: 100%">
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo-row">
+        <div><image src="logo.png" width="75px"></image></div>
+        <div class="footer-logo-text-main">Ripple</div>
+      </div>
+      <p>
+        Creating ripples of change across our<br />
+        community, one small action at a time.
+      </p>
+    </div>
+
+    <div>
+      <div class="footer-section-title">Our Team</div>
+      <ul class="footer-list">
+        <li>Purandhar Ram Choppa</li>
+        <li>Prayag Patel</li>
+        <li>Mihir Malladi</li>
+        <li>Advay Pradeep</li>
+        <li>Saaketh Alla</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="footer-section-title">Get in Touch</div>
+      <ul class="footer-list">
+        <li>hello@ripple.community</li>
+        <li>Terms of Use</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-line"></div>
+  <div class="footer-bottom">
+    © 2025 Ripple — All Rights Reserved
+  </div>
+</footer>
+<script>
+  function reso() {
+    window.location.href="resources.html";
+  }
+</script>
 </body>
 </html>

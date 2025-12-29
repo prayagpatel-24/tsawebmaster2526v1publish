@@ -37,6 +37,7 @@
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background-color: #f7fafc;
       color: var(--text-dark);
+      overflow-x: hidden;
     }
 
     a {
@@ -54,7 +55,6 @@
       width: 100%; max-width: none; margin: 0; box-shadow: none;
     }
 
-    /* NAVBAR */
     .nav {
       display: flex;
       align-items: center;
@@ -125,15 +125,16 @@
     }
 
     .nav-link.active::after {
-      content: "";
-      position: absolute;
-      height: 2px;
-      border-radius: 999px;
-      background: var(--accent-blue);
-      left: 0;
-      right: 0;
-      bottom: 0;
-    }
+  content: "";
+  position: absolute;
+  height: 3px;
+  border-radius: 999px;
+  background: #3b82f6;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+}
+
 
     .nav-right {
       display: flex;
@@ -154,7 +155,6 @@
       font-size: 18px;
     }
 
-    /* HERO */
     .hero {
       padding: 50px 40px 80px;
       background: linear-gradient(to bottom, #eef6ff, #f6fbff);
@@ -200,7 +200,6 @@
       box-shadow: 0 16px 30px rgba(76, 125, 255, 0.4);
     }
 
-    /* MISSION SECTION */
     .section {
       padding: 48px 40px 60px;
       background: #ffffff;
@@ -221,7 +220,6 @@
       color: var(--text-muted);
     }
 
-    /* HIGHLIGHTS */
     .highlights-wrapper {
       margin-top: 42px;
       text-align: left;
@@ -333,7 +331,6 @@
 
     
 
-    /* CTA SECTION */
     .cta-section {
       padding: 60px 40px 70px;
       background: linear-gradient(to bottom, #e8f3ff, #f2f7ff);
@@ -367,7 +364,6 @@
       color: #4b5563;
     }
 
-    /* FOOTER */
     .footer {
       padding: 30px 40px 20px;
       background: #ffffff;
@@ -448,8 +444,18 @@
       font-size: 11px;
       color: #9ca3af;
     }
-
-    /* Simple responsiveness */
+    .hov {
+transition: transform 0.25s ease;
+}
+.hov:hover {
+transform: scale(1.03);
+}
+.dark {
+  transition: background-color 0.25s ease;
+}
+.dark:hover {
+  background-color: rgb(237, 237, 237);
+}
     @media (max-width: 900px) {
       .nav {
         padding-inline: 20px;
@@ -479,17 +485,16 @@
 <body>
 <div class="page">
 
-  <!-- NAVBAR -->
   <header class="nav">
     <div class="nav-left">
-      <div class="logo-circle"></div>
+      <div><image src="logo.png" width="75px"></image></div>
       <div class="logo-text">Ripple</div>
       <nav class="nav-links">
-        <a class="nav-link active" href="#">Home</a>
+        <a class="nav-link active" href="main.html">Home</a>
         <a class="nav-link" href="resources.html">Resources</a>
-        <a class="nav-link" href="#">Communities</a>
-        <a class="nav-link" href="#">Support</a>
-        <a class="nav-link" href="#">Calendar</a>
+        <a class="nav-link" href="communites.html">Communities</a>
+        <a class="nav-link" href="support.html">Support</a>
+        <a class="nav-link" href="calender.html">Calendar</a>
       </nav>
     </div>
     <div class="nav-right">
@@ -497,7 +502,6 @@
     </div>
   </header>
 
-  <!-- HERO -->
   <section class="hero">
     <h1 class="hero-title">
       Creating ripples of change<br />
@@ -507,11 +511,10 @@
       Make an impact, one ripple at a time
     </p>
     <div class="hero-cta">
-      <button class="primary-btn">Start Your Ripple Today</button>
+      <button class="primary-btn" onclick="redirectit()">Start Your Ripple Today</button>
     </div>
   </section>
 
-  <!-- MISSION + HIGHLIGHTS -->
   <section class="section">
     <h2 class="section-title">Our Mission</h2>
     <p class="section-text">
@@ -528,8 +531,7 @@
       </div>
 
       <div class="cards-row">
-        <!-- Card 1 -->
-        <article class="event-card">
+        <article class="event-card hov">
           <div class="event-title">Coastal Cleanup</div>
           <div class="meta">
             <span class="meta-icon"></span>
@@ -539,12 +541,11 @@
             <span class="meta-icon location"></span>
             <span>Savannah Beach</span>
           </div>
-          <div class="learn-bar">Learn More</div>
+          <div class="learn-bar dark">Learn More</div>
           <div class="cursor-arrow"></div>
         </article>
 
-        <!-- Card 2 -->
-        <article class="event-card blue">
+        <article class="event-card blue hov">
           <div class="event-title">Walk for Wellness</div>
           <div class="meta">
             <span class="meta-icon"></span>
@@ -554,11 +555,10 @@
             <span class="meta-icon location"></span>
             <span>Lanier Trail</span>
           </div>
-          <div class="learn-bar">Learn More</div>
+          <div class="learn-bar dark">Learn More</div>
         </article>
 
-        <!-- Card 3 -->
-        <article class="event-card peach">
+        <article class="event-card peach hov">
           <div class="event-title">Blood Donation Day</div>
           <div class="meta">
             <span class="meta-icon"></span>
@@ -568,30 +568,28 @@
             <span class="meta-icon location"></span>
             <span>Emory Hospital Center</span>
           </div>
-          <div class="learn-bar">Learn More</div>
+          <div class="learn-bar dark">Learn More</div>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- CTA SECTION -->
   <section class="cta-section">
     <h2 class="cta-title">Ready to make a difference?</h2>
     <p class="cta-subtitle">
       Your journey to change to creating meaningful change starts here!
     </p>
     <div class="cta-buttons">
-      <button class="primary-btn">Start Your Ripple Today</button>
-      <button class="secondary-btn">Explore Resources</button>
+      <button class="primary-btn" onclick="conn()">Explore Connections</button>
+      <button class="secondary-btn dark" onclick="cale()">Check Calendar</button>
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-top">
       <div>
         <div class="footer-logo-row">
-          <div class="footer-logo-circle"></div>
+          <div><image src="logo.png" width="75px"></image></div>
           <div class="footer-logo-text-main">Ripple</div>
         </div>
         <p>
@@ -626,5 +624,16 @@
     </div>
   </footer>
 </div>
+<script>
+function redirectit() {
+  window.location.href="resources.html";
+}
+function conn() {
+  window.location.href="communites.html";
+}
+function cale() {
+  window.location.href="calender.html";
+}
+</script>
 </body>
 </html>
