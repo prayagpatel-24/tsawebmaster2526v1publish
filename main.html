@@ -1,540 +1,15 @@
+==> main.html <==
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Ripple Landing Page</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ripple - Home</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-light: #f3f7ff;
-      --bg-hero: #eef6ff;
-      --bg-section: #f4f7ff;
-      --bg-card-green: #d7f0df;
-      --bg-card-blue: #cde3ff;
-      --bg-card-peach: #ffd7c2;
-      --accent-blue: #4c7dff;
-      --accent-blue-dark: #2e63e5;
-      --accent-text: #3266e3;
-      --text-dark: #1f2933;
-      --text-muted: #4b5563;
-      --border-subtle: #e3e7f2;
-      --white: #ffffff;
-      --shadow-soft: 0 14px 34px rgba(15, 23, 42, 0.08);
-      --radius-lg: 18px;
-      --radius-full: 999px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background-color: #f7fafc;
-      color: var(--text-dark);
-      overflow-x: hidden;
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    button {
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    .page {
-      width: 100%; max-width: none; margin: 0; box-shadow: none;
-    }
-
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 40px;
-      background: linear-gradient(to bottom, #f0f6ff, #f7fbff);
-      position: relative;
-    }
-
-    .nav-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .logo-circle {
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 20%, #a3d5ff, #4f87ff);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      font-weight: 700;
-      font-size: 18px;
-      position: relative;
-    }
-
-    .logo-circle::before,
-    .logo-circle::after {
-      content: "";
-      position: absolute;
-      border-radius: 999px;
-      border: 2px solid rgba(255, 255, 255, 0.85);
-    }
-
-    .logo-circle::before {
-      width: 26px;
-      height: 26px;
-    }
-
-    .logo-circle::after {
-      width: 18px;
-      height: 18px;
-    }
-
-    .logo-text {
-      font-weight: 600;
-      font-size: 20px;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 26px;
-      margin-left: 30px;
-      font-size: 14px;
-      color: #4b5563;
-    }
-
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      justify-content: space-around;
-      width: 30px;
-      height: 30px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-    }
-
-    .hamburger-line {
-      width: 30px;
-      height: 3px;
-      background: var(--text-dark);
-      border-radius: 2px;
-      transition: all 0.3s ease;
-    }
-
-    .nav-link {
-      position: relative;
-      padding-bottom: 4px;
-    }
-
-    .nav-link.active {
-      font-weight: 600;
-      color: var(--text-dark);
-    }
-
-    .nav-link.active::after {
-  content: "";
-  position: absolute;
-  height: 3px;
-  border-radius: 999px;
-  background: #3b82f6;
-  left: 0;
-  right: 0;
-  bottom: -4px;
-}
-
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-
-    .avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 999px;
-      background: #6f88ff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      font-weight: 600;
-      font-size: 18px;
-    }
-
-    .hero {
-      padding: 50px 40px 80px;
-      background: linear-gradient(to bottom, #eef6ff, #f6fbff);
-      text-align: center;
-    }
-
-    .hero-title {
-      font-family: "Lora", serif;
-      font-size: 40px;
-      font-weight: 700;
-      line-height: 1.25;
-      color: var(--text-dark);
-    }
-
-    .hero-title span {
-      color: var(--accent-text);
-    }
-
-    .hero-subtitle {
-      margin-top: 18px;
-      font-size: 16px;
-      color: #6b7280;
-    }
-
-    .hero-cta {
-      margin-top: 30px;
-    }
-
-    .primary-btn {
-      padding: 11px 26px;
-      border-radius: var(--radius-full);
-      background: linear-gradient(to bottom, var(--accent-blue), var(--accent-blue-dark));
-      color: white;
-      font-size: 14px;
-      font-weight: 600;
-      box-shadow: 0 10px 24px rgba(76, 125, 255, 0.35);
-      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
-    }
-
-    .primary-btn:hover {
-      filter: brightness(1.05);
-      transform: translateY(-1px);
-      box-shadow: 0 16px 30px rgba(76, 125, 255, 0.4);
-    }
-
-    .section {
-      padding: 48px 40px 60px;
-      background: #ffffff;
-      text-align: center;
-    }
-
-    .section-title {
-      font-family: "Lora", serif;
-      font-size: 24px;
-      margin-bottom: 18px;
-    }
-
-    .section-text {
-      font-size: 14px;
-      max-width: 760px;
-      margin: 0 auto;
-      line-height: 1.7;
-      color: var(--text-muted);
-    }
-
-    .highlights-wrapper {
-      margin-top: 42px;
-      text-align: left;
-    }
-
-    .highlights-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 18px;
-    }
-
-    .highlights-title {
-      font-family: "Lora", serif;
-      font-size: 22px;
-    }
-
-    .view-all-btn {
-      padding: 6px 14px;
-      border-radius: var(--radius-full);
-      border: 1px solid #d1d5db;
-      background: #ffffff;
-      font-size: 11px;
-      font-weight: 500;
-      color: #4b5563;
-    }
-
-    .cards-row {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    .event-card {
-      border-radius: 18px;
-      padding: 16px 16px 12px;
-      box-shadow: var(--shadow-soft);
-      background: var(--bg-card-green);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .event-card.blue {
-      background: var(--bg-card-blue);
-    }
-
-    .event-card.peach {
-      background: var(--bg-card-peach);
-    }
-
-    .event-title {
-      font-weight: 600;
-      font-size: 14px;
-      margin-bottom: 6px;
-    }
-
-    .meta {
-      font-size: 11px;
-      color: #4b5563;
-      margin-bottom: 2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .meta-icon {
-      display: inline-block;
-      width: 13px;
-      height: 13px;
-      border-radius: 3px;
-      border: 1px solid rgba(55, 65, 81, 0.2);
-      position: relative;
-    }
-
-    .meta-icon::before {
-      content: "";
-      position: absolute;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      border: 1px solid rgba(55, 65, 81, 0.3);
-      top: 2px;
-      left: 2px;
-    }
-
-    .meta-icon.location {
-      border-radius: 999px;
-    }
-
-    .meta-icon.location::before {
-      border-radius: 999px;
-      height: 5px;
-      width: 5px;
-      border-width: 2px;
-      top: 3px;
-      left: 3px;
-    }
-
-    .learn-bar {
-      margin-top: 10px;
-      padding: 3px;
-      border-radius: var(--radius-full);
-      background: rgba(255, 255, 255, 0.92);
-      font-size: 10px;
-      text-align: center;
-      font-weight: 500;
-      color: #6b7280;
-    }
-
-    
-
-    .cta-section {
-      padding: 60px 40px 70px;
-      background: linear-gradient(to bottom, #e8f3ff, #f2f7ff);
-      text-align: center;
-    }
-
-    .cta-title {
-      font-family: "Lora", serif;
-      font-size: 34px;
-      margin-bottom: 14px;
-    }
-
-    .cta-subtitle {
-      font-size: 14px;
-      color: #6b7280;
-      margin-bottom: 30px;
-    }
-
-    .cta-buttons {
-      display: inline-flex;
-      gap: 10px;
-    }
-
-    .secondary-btn {
-      padding: 11px 22px;
-      border-radius: var(--radius-full);
-      border: 1px solid #d1d5db;
-      font-size: 13px;
-      font-weight: 500;
-      background: #ffffff;
-      color: #4b5563;
-    }
-
-    .footer {
-      padding: 30px 40px 20px;
-      background: #ffffff;
-      border-top: 1px solid #e5e7eb;
-      font-size: 12px;
-      color: #6b7280;
-    }
-
-    .footer-top {
-      display: grid;
-      grid-template-columns: 1.3fr 1fr 1fr;
-      gap: 40px;
-      margin-bottom: 24px;
-    }
-
-    .footer-logo-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .footer-logo-circle {
-      width: 32px;
-      height: 32px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 20%, #a3d5ff, #4f87ff);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      font-weight: 700;
-      font-size: 16px;
-      position: relative;
-    }
-
-    .footer-logo-circle::before,
-    .footer-logo-circle::after {
-      content: "";
-      position: absolute;
-      border-radius: 999px;
-      border: 2px solid rgba(255, 255, 255, 0.85);
-    }
-
-    .footer-logo-circle::before {
-      width: 22px;
-      height: 22px;
-    }
-
-    .footer-logo-circle::after {
-      width: 15px;
-      height: 15px;
-    }
-
-    .footer-logo-text-main {
-      font-weight: 600;
-    }
-
-    .footer-section-title {
-      font-weight: 600;
-      margin-bottom: 9px;
-      color: #111827;
-    }
-
-    .footer-list {
-      list-style: none;
-      line-height: 1.7;
-    }
-
-    .footer-line {
-      height: 1px;
-      background: #e5e7eb;
-      margin-bottom: 12px;
-    }
-
-    .footer-bottom {
-      text-align: center;
-      font-size: 11px;
-      color: #9ca3af;
-    }
-    .hov {
-transition: transform 0.25s ease;
-}
-.hov:hover {
-transform: scale(1.03);
-}
-.dark {
-  transition: background-color 0.25s ease;
-}
-.dark:hover {
-  background-color: rgb(237, 237, 237);
-}
-    @media (max-width: 900px) {
-      .nav {
-        padding-inline: 20px;
-      }
-
-      .hamburger {
-        display: flex;
-      }
-
-      .nav-links {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: linear-gradient(to bottom, #f0f6ff, #f7fbff);
-        flex-direction: column;
-        gap: 0;
-        margin-left: 0;
-        padding: 20px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        transform: translateY(-100%);
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-        z-index: 1000;
-      }
-
-      .nav-links.open {
-        transform: translateY(0);
-        opacity: 1;
-        visibility: visible;
-      }
-
-      .nav-link {
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-      }
-
-      .nav-link:last-child {
-        border-bottom: none;
-      }
-
-      .hero,
-      .section,
-      .cta-section,
-      .footer {
-        padding-inline: 20px;
-      }
-
-      .cards-row {
-        grid-template-columns: 1fr;
-      }
-
-      .footer-top {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="main.css">
 </head>
 <body>
 <div class="page">
@@ -582,10 +57,47 @@ transform: scale(1.03);
       together to support mental health, volunteer for causes, protect the environment, and
       celebrate community through local events.
     </p>
+  </section>
 
+  <section class="partnerships-section">
+    <h2 class="partnerships-title">Possible Partnerships</h2>
+    <div class="partnerships-stack">
+      <article class="partnership-card left-text">
+        <div class="partnership-text-content">
+          <h3 class="partnership-card-title">Partnership Name</h3>
+          <p class="partnership-description">Add a brief description of the partnership and how it benefits the community. Explain the mutual benefits and opportunities for collaboration.</p>
+        </div>
+        <div class="partnership-image" style="background-color: #e8f4f8;">
+          <img src="" alt="Partnership placeholder" class="partnership-img">
+        </div>
+      </article>
+
+      <article class="partnership-card right-text">
+        <div class="partnership-image" style="background-color: #f0e8f8;">
+          <img src="" alt="Partnership placeholder" class="partnership-img">
+        </div>
+        <div class="partnership-text-content">
+          <h3 class="partnership-card-title">Partnership Name</h3>
+          <p class="partnership-description">Add a brief description of the partnership and how it benefits the community. Explain the mutual benefits and opportunities for collaboration.</p>
+        </div>
+      </article>
+
+      <article class="partnership-card left-text">
+        <div class="partnership-text-content">
+          <h3 class="partnership-card-title">Partnership Name</h3>
+          <p class="partnership-description">Add a brief description of the partnership and how it benefits the community. Explain the mutual benefits and opportunities for collaboration.</p>
+        </div>
+        <div class="partnership-image" style="background-color: #f8f0e8;">
+          <img src="" alt="Partnership placeholder" class="partnership-img">
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="highlights-section">
     <div class="highlights-wrapper">
       <div class="highlights-header">
-        <h3 class="highlights-title">Highlights</h3>
+        <h3 class="highlights-title">Featured Events</h3>
         <button class="view-all-btn">View All</button>
       </div>
 
@@ -636,7 +148,7 @@ transform: scale(1.03);
   <section class="cta-section">
     <h2 class="cta-title">Ready to make a difference?</h2>
     <p class="cta-subtitle">
-      Your journey to change to creating meaningful change starts here!
+      Your journey to creating meaningful change starts here!
     </p>
     <div class="cta-buttons">
       <button class="primary-btn" onclick="conn()">Explore Connections</button>
@@ -683,6 +195,152 @@ transform: scale(1.03);
     </div>
   </footer>
 </div>
+
+<script>
+function redirectit() {
+  window.location.href="resources.html";
+}
+function conn() {
+  window.location.href="communites.html";
+}
+function cale() {
+  window.location.href="calender.html";
+}
+
+// Hamburger menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+  const hamburger = document.querySelector('.hamburger');
+  const navLinks = document.querySelector('.nav-links');
+
+  hamburger.addEventListener('click', function() {
+    navLinks.classList.toggle('open');
+  });
+
+  // Close menu when clicking outside or on a link
+  document.addEventListener('click', function(event) {
+    if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
+      navLinks.classList.remove('open');
+    }
+  });
+
+  // Close menu when clicking on a nav link
+  const navLinkElements = document.querySelectorAll('.nav-link');
+  navLinkElements.forEach(link => {
+    link.addEventListener('click', function() {
+      navLinks.classList.remove('open');
+    });
+  });
+});
+</script>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
+    authDomain: "webmaster-v4-0.firebaseapp.com",
+    projectId: "webmaster-v4-0",
+    storageBucket: "webmaster-v4-0.firebasestorage.app",
+    messagingSenderId: "413556961992",
+    appId: "1:413556961992:web:899600895ecb68eb9debfd"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  window.signOutUser = function() {
+    signOut(auth).then(() => {
+      alert('Signed out successfully!');
+      location.reload();
+    }).catch((error) => {
+      console.error('Sign out error:', error);
+    });
+  };
+
+  onAuthStateChanged(auth, (user) => {
+    const avatar = document.querySelector('.avatar');
+    const navRight = document.querySelector('.nav-right');
+    if (user) {
+      // User is signed in
+      const initial = user.email.charAt(0).toUpperCase();
+      if (avatar) {
+        avatar.textContent = initial;
+      }
+      // Remove sign in button if exists
+      const signInBtn = document.querySelector('.sign-in-btn');
+      if (signInBtn) {
+        signInBtn.remove();
+      }
+      // Add sign out button
+      if (navRight && !document.querySelector('.sign-out-btn')) {
+        const signOutBtn = document.createElement('button');
+        signOutBtn.textContent = 'Sign Out';
+        signOutBtn.className = 'sign-out-btn';
+        signOutBtn.style.padding = '8px 16px';
+        signOutBtn.style.background = 'linear-gradient(to bottom, #ef4444, #dc2626)';
+        signOutBtn.style.color = 'white';
+        signOutBtn.style.border = 'none';
+        signOutBtn.style.borderRadius = '999px';
+        signOutBtn.style.cursor = 'pointer';
+        signOutBtn.style.fontSize = '14px';
+        signOutBtn.style.fontWeight = '600';
+        signOutBtn.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.25)';
+        signOutBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
+        signOutBtn.onclick = window.signOutUser;
+        signOutBtn.onmouseover = () => {
+          signOutBtn.style.transform = 'translateY(-1px)';
+          signOutBtn.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.35)';
+        };
+        signOutBtn.onmouseout = () => {
+          signOutBtn.style.transform = 'translateY(0)';
+          signOutBtn.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.25)';
+        };
+        navRight.appendChild(signOutBtn);
+      }
+    } else {
+      // User is signed out
+      if (avatar) {
+        avatar.textContent = ''; // or default
+      }
+      // Remove sign out button if exists
+      const signOutBtn = document.querySelector('.sign-out-btn');
+      if (signOutBtn) {
+        signOutBtn.remove();
+      }
+      // Add sign in button
+      if (navRight && !document.querySelector('.sign-in-btn')) {
+        const signInBtn = document.createElement('button');
+        signInBtn.textContent = 'Sign In';
+        signInBtn.className = 'sign-in-btn';
+        signInBtn.style.padding = '8px 16px';
+        signInBtn.style.background = 'linear-gradient(to bottom, #4c7dff, #2e63e5)';
+        signInBtn.style.color = 'white';
+        signInBtn.style.border = 'none';
+        signInBtn.style.borderRadius = '999px';
+        signInBtn.style.cursor = 'pointer';
+        signInBtn.style.fontSize = '14px';
+        signInBtn.style.fontWeight = '600';
+        signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
+        signInBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
+        signInBtn.onclick = () => window.location.href = 'index.html';
+        signInBtn.onmouseover = () => {
+          signInBtn.style.transform = 'translateY(-1px)';
+          signInBtn.style.boxShadow = '0 6px 16px rgba(76, 125, 255, 0.35)';
+        };
+        signInBtn.onmouseout = () => {
+          signInBtn.style.transform = 'translateY(0)';
+          signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
+        };
+        navRight.appendChild(signInBtn);
+      }
+    }
+  });
+</script>
+</body>
+</html>
+
 <script>
 function redirectit() {
   window.location.href="resources.html";
