@@ -91,6 +91,26 @@ transform: scale(1.03);
       
     }
 
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 30px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .hamburger-line {
+      width: 30px;
+      height: 3px;
+      background: #1f2933;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
     .nav-link {
       position: relative;
       padding-bottom: 4px;
@@ -281,6 +301,49 @@ a:visited {
       font-size: 11px;
       color: #9ca3af;
     }
+
+@media (max-width: 900px) {
+  .nav {
+    padding-inline: 20px;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to bottom, #f0f6ff, #f7fbff);
+    flex-direction: column;
+    gap: 0;
+    margin-left: 0;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+  }
+
+  .nav-links.open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .nav-link {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .nav-link:last-child {
+    border-bottom: none;
+  }
+}
 </style>
 </head>
 <body style="width:100%; overflow-x: hidden;">
@@ -288,6 +351,11 @@ a:visited {
     <div class="nav-left">
       <div><image src="logo.png" width="75px"></image></div>
       <div class="logo-text">Ripple</div>
+      <button class="hamburger" aria-label="Toggle navigation menu">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
       <nav class="nav-links">
         <a class="nav-link" href="main.html">Home</a>
         <a class="nav-link" href="resources.html">Resources</a>
@@ -351,6 +419,35 @@ a:visited {
     © 2025 Ripple — All Rights Reserved
   </div>
 </footer>
+
+<script>
+// Hamburger menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+  const hamburger = document.querySelector('.hamburger');
+  const navLinks = document.querySelector('.nav-links');
+
+  if (hamburger && navLinks) {
+    hamburger.addEventListener('click', function() {
+      navLinks.classList.toggle('open');
+    });
+
+    // Close menu when clicking outside or on a link
+    document.addEventListener('click', function(event) {
+      if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
+        navLinks.classList.remove('open');
+      }
+    });
+
+    // Close menu when clicking on a nav link
+    const navLinkElements = document.querySelectorAll('.nav-link');
+    navLinkElements.forEach(link => {
+      link.addEventListener('click', function() {
+        navLinks.classList.remove('open');
+      });
+    });
+  }
+});
+</script>
 
 </body>
 </html>

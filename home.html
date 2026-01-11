@@ -48,6 +48,33 @@
           const res = await fetch('main.html');
           const text = await res.text();
           document.getElementById('header-placeholder').innerHTML = text;
+          
+          // Initialize hamburger menu after content is loaded
+          setTimeout(() => {
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (hamburger && navLinks) {
+              hamburger.addEventListener('click', function() {
+                navLinks.classList.toggle('open');
+              });
+              
+              // Close menu when clicking outside or on a link
+              document.addEventListener('click', function(event) {
+                if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
+                  navLinks.classList.remove('open');
+                }
+              });
+              
+              // Close menu when clicking on a nav link
+              const navLinkElements = document.querySelectorAll('.nav-link');
+              navLinkElements.forEach(link => {
+                link.addEventListener('click', function() {
+                  navLinks.classList.remove('open');
+                });
+              });
+            }
+          }, 100);
         }catch(e){
           console.warn('Header include failed:', e);
         }
