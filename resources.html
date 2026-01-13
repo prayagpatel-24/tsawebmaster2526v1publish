@@ -45,18 +45,24 @@
 
 <!-- Resource Modal -->
 <div id="resourceModal" style="display:none;" class="modal-overlay" aria-hidden="true">
-  <div class="modal-content">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <div style="font-size:20px;font-weight:600">Add New Resource</div>
-      <button id="closeResourceModalBtn" class="dark" style="padding:8px 12px;border-radius:10px;">Close</button>
+  <div class="modal-content" id="resourceModalContent">
+    <div class="modal-header">
+      <div>Add New Resource</div>
+      <button id="closeResourceModalBtn" style="background: #f3f4f6; border: 1px solid #e5e7eb; color: #374151; border-radius: 10px; padding: 10px 18px; font-weight: 600; cursor: pointer; font-size: 14px; transition: all 0.2s ease;">✕ Close</button>
     </div>
     <form id="resourceForm">
-      <input id="resourceTitle" type="text" placeholder="Resource title" required style="width:100%;padding:12px;border-radius:10px;border:1px solid #cbd5e1;margin-bottom:10px;" />
-      <textarea id="resourceDesc1" placeholder="Short description" rows="2" style="width:100%;padding:12px;border-radius:10px;border:1px solid #cbd5e1;margin-bottom:10px;"></textarea>
-      <textarea id="resourceDesc2" placeholder="Additional details" rows="2" style="width:100%;padding:12px;border-radius:10px;border:1px solid #cbd5e1;margin-bottom:10px;"></textarea>
-      <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px;">
-        <label for="resourceCategory" style="font-weight:500;color:#475569;">Category:</label>
-        <select id="resourceCategory" style="padding:10px;border-radius:10px;border:1px solid #cbd5e1;">
+      <div class="modal-form-group">
+        <input id="resourceTitle" type="text" placeholder="Enter resource title" required />
+      </div>
+      <div class="modal-form-group">
+        <input id="resourceDesc1" type="text" placeholder="Short description" />
+      </div>
+      <div class="modal-form-group">
+        <textarea id="resourceDesc2" placeholder="Additional details (optional)" rows="3"></textarea>
+      </div>
+      <div class="modal-form-group">
+        <label for="resourceCategory">Category</label>
+        <select id="resourceCategory">
           <option>Mental Health</option>
           <option>Physical Health</option>
           <option>Nutrition</option>
@@ -64,9 +70,9 @@
           <option>Support Groups</option>
         </select>
       </div>
-      <div style="display:flex;gap:12px;justify-content:flex-end;">
-        <button type="button" id="cancelResourceBtn" class="dark" style="padding:10px 16px;border-radius:10px;">Cancel</button>
-        <button type="submit" class="db" style="padding:10px 16px;border-radius:10px;">Save Resource</button>
+      <div class="modal-form-actions">
+        <button type="button" id="cancelResourceBtn" class="cancel-btn">Cancel</button>
+        <button type="submit" class="submit-btn">Save Resource</button>
       </div>
     </form>
   </div>
@@ -99,22 +105,26 @@
 
 <!-- Event Modal -->
 <div id="eventModal" style="display:none;" class="modal-overlay" aria-hidden="true">
-  <div class="modal-content">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <div style="font-size:20px;font-weight:600">Add New Event</div>
-      <button id="closeModalBtn" class="dark" style="padding:8px 12px;border-radius:10px;">Close</button>
+  <div class="modal-content" id="eventModalContent">
+    <div class="modal-header">
+      <div>Add New Event</div>
+      <button id="closeModalBtn" style="background: #f3f4f6; border: 1px solid #e5e7eb; color: #374151; border-radius: 10px; padding: 10px 18px; font-weight: 600; cursor: pointer; font-size: 14px; transition: all 0.2s ease;">✕ Close</button>
     </div>
     <form id="eventForm">
-      <div style="display:flex;gap:12px;margin-bottom:10px;">
-        <input id="eventTitle" type="text" placeholder="Event title" required style="flex:2;padding:12px;border-radius:10px;border:1px solid #cbd5e1;" />
-        <input id="eventDate" type="date" required style="flex:1;padding:12px;border-radius:10px;border:1px solid #cbd5e1;" />
-        <input id="eventTime" type="time" style="flex:1;padding:12px;border-radius:10px;border:1px solid #cbd5e1;" />
+      <div class="modal-form-group">
+        <input id="eventTitle" type="text" placeholder="Event title" required />
       </div>
-      <input id="eventLocation" type="text" placeholder="Location" style="width:100%;padding:12px;border-radius:10px;border:1px solid #cbd5e1;margin-bottom:10px;" />
-      <textarea id="eventDesc" placeholder="Short description" rows="4" style="width:100%;padding:12px;border-radius:10px;border:1px solid #cbd5e1;margin-bottom:10px;"></textarea>
-      <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px;">
-        <label for="eventCategory" style="font-weight:500;color:#475569;">Category:</label>
-        <select id="eventCategory" style="padding:10px;border-radius:10px;border:1px solid #cbd5e1;">
+      <div class="modal-form-row">
+        <input id="eventDate" type="date" required />
+        <input id="eventTime" type="time" />
+        <input id="eventLocation" type="text" placeholder="Location" />
+      </div>
+      <div class="modal-form-group">
+        <textarea id="eventDesc" placeholder="Event description" rows="4"></textarea>
+      </div>
+      <div class="modal-form-group">
+        <label for="eventCategory">Category</label>
+        <select id="eventCategory">
           <option>Environmental</option>
           <option>Mental Health</option>
           <option>Volunteering</option>
@@ -122,9 +132,9 @@
           <option>Community Events</option>
         </select>
       </div>
-      <div style="display:flex;gap:12px;justify-content:flex-end;">
-        <button type="button" id="cancelBtn" class="dark" style="padding:10px 16px;border-radius:10px;">Cancel</button>
-        <button type="submit" class="db" style="padding:10px 16px;border-radius:10px;">Save Event</button>
+      <div class="modal-form-actions">
+        <button type="button" id="cancelBtn" class="cancel-btn">Cancel</button>
+        <button type="submit" class="submit-btn">Save Event</button>
       </div>
     </form>
   </div>
@@ -226,6 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function openModal(){
     modal.style.display = 'flex';
     modal.setAttribute('aria-hidden','false');
+    updateEventModalStyle();
   }
   function closeModal(){
     modal.style.display = 'none';
@@ -236,11 +247,50 @@ document.addEventListener('DOMContentLoaded', function() {
   function openResourceModal(){
     resourceModal.style.display = 'flex';
     resourceModal.setAttribute('aria-hidden','false');
+    updateResourceModalStyle();
   }
   function closeResourceModal(){
     resourceModal.style.display = 'none';
     resourceModal.setAttribute('aria-hidden','true');
     resourceForm.reset();
+  }
+
+  function updateEventModalStyle() {
+    const eventModalContent = document.getElementById('eventModalContent');
+    const category = document.getElementById('eventCategory').value;
+    const categoryMap = {
+      'Environmental': 'category-environmental',
+      'Mental Health': 'category-mental-health',
+      'Volunteering': 'category-volunteering',
+      'Donation Drives': 'category-donation-drives',
+      'Community Events': 'category-community-events'
+    };
+    
+    // Remove all category classes
+    eventModalContent.className = 'modal-content';
+    // Add the appropriate category class
+    if (categoryMap[category]) {
+      eventModalContent.classList.add(categoryMap[category]);
+    }
+  }
+
+  function updateResourceModalStyle() {
+    const resourceModalContent = document.getElementById('resourceModalContent');
+    const category = document.getElementById('resourceCategory').value;
+    const categoryMap = {
+      'Mental Health': 'category-mental-health',
+      'Physical Health': 'category-physical-health',
+      'Nutrition': 'category-nutrition',
+      'Wellness': 'category-wellness',
+      'Support Groups': 'category-support-groups'
+    };
+    
+    // Remove all category classes
+    resourceModalContent.className = 'modal-content';
+    // Add the appropriate category class
+    if (categoryMap[category]) {
+      resourceModalContent.classList.add(categoryMap[category]);
+    }
   }
 
   addBtn && addBtn.addEventListener('click', openModal);
@@ -252,6 +302,10 @@ document.addEventListener('DOMContentLoaded', function() {
   closeResourceBtn && closeResourceBtn.addEventListener('click', closeResourceModal);
   cancelResourceBtn && cancelResourceBtn.addEventListener('click', closeResourceModal);
   resourceModal && resourceModal.addEventListener('click', function(e){ if(e.target === resourceModal) closeResourceModal(); });
+
+  // Update modal style when category changes
+  document.getElementById('eventCategory').addEventListener('change', updateEventModalStyle);
+  document.getElementById('resourceCategory').addEventListener('change', updateResourceModalStyle);
 
   form && form.addEventListener('submit', function(e){
     e.preventDefault();
@@ -365,6 +419,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Filter functionality for Resources
   const resourceFilterBtns = document.querySelectorAll('#health-section .filters button');
+  const resourceSearchInput = document.querySelector('#health-section .search-area input[type="text"]');
+  
+  // Search functionality for Resources
+  if (resourceSearchInput) {
+    resourceSearchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const resourceCards = document.querySelectorAll('#health-section .card');
+      
+      resourceCards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const description = card.textContent.toLowerCase();
+        
+        if (searchTerm === '' || title.includes(searchTerm) || description.includes(searchTerm)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  }
+  
   resourceFilterBtns.forEach(btn => {
     btn.addEventListener('click', function() {
       resourceFilterBtns.forEach(b => b.classList.remove('active'));
@@ -386,6 +461,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Filter functionality for Events
   const eventFilterBtns = document.querySelectorAll('#events-section .filters button');
+  const eventSearchInput = document.querySelector('#events-section .search-area input[type="text"]');
+  
+  // Search functionality for Events
+  if (eventSearchInput) {
+    eventSearchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const eventCards = document.querySelectorAll('#events-section .card');
+      
+      eventCards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const description = card.textContent.toLowerCase();
+        
+        if (searchTerm === '' || title.includes(searchTerm) || description.includes(searchTerm)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  }
+  
   eventFilterBtns.forEach(btn => {
     btn.addEventListener('click', function() {
       eventFilterBtns.forEach(b => b.classList.remove('active'));

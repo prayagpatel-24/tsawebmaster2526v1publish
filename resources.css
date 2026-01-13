@@ -457,9 +457,22 @@ a:visited {
   display: none;
   align-items: center;
   justify-content: center;
-  background: rgba(2, 6, 23, 0.35);
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
   z-index: 1000;
-  padding: 24px;
+  padding: 20px;
+  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
 }
 
 .modal-overlay[aria-hidden="false"] {
@@ -468,17 +481,252 @@ a:visited {
 
 .modal-content {
   background: white;
-  border-radius: 14px;
+  border-radius: 24px;
   width: 720px;
-  max-width: 96%;
-  padding: 20px;
-  box-shadow: 0 12px 40px rgba(2, 6, 23, 0.12);
+  max-width: 100%;
+  padding: 48px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 3px solid #4c7dff;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(to right, #4c7dff, #2e63e5);
+  border-radius: 24px 24px 0 0;
+  transition: background 0.4s ease;
+}
+
+.modal-content.category-mental-health {
+  border-color: #3b82f6;
+}
+
+.modal-content.category-mental-health::before {
+  background: linear-gradient(to right, #3b82f6, #1d4ed8);
+}
+
+.modal-content.category-physical-health {
+  border-color: #10b981;
+}
+
+.modal-content.category-physical-health::before {
+  background: linear-gradient(to right, #10b981, #059669);
+}
+
+.modal-content.category-nutrition {
+  border-color: #f97316;
+}
+
+.modal-content.category-nutrition::before {
+  background: linear-gradient(to right, #f97316, #d97706);
+}
+
+.modal-content.category-wellness {
+  border-color: #a855f7;
+}
+
+.modal-content.category-wellness::before {
+  background: linear-gradient(to right, #a855f7, #7c3aed);
+}
+
+.modal-content.category-support-groups {
+  border-color: #ef4444;
+}
+
+.modal-content.category-support-groups::before {
+  background: linear-gradient(to right, #ef4444, #dc2626);
+}
+
+.modal-content.category-environmental {
+  border-color: #10b981;
+}
+
+.modal-content.category-environmental::before {
+  background: linear-gradient(to right, #10b981, #059669);
+}
+
+.modal-content.category-volunteering {
+  border-color: #f97316;
+}
+
+.modal-content.category-volunteering::before {
+  background: linear-gradient(to right, #f97316, #d97706);
+}
+
+.modal-content.category-donation-drives {
+  border-color: #ef4444;
+}
+
+.modal-content.category-donation-drives::before {
+  background: linear-gradient(to right, #ef4444, #dc2626);
+}
+
+.modal-content.category-community-events {
+  border-color: #a855f7;
+}
+
+.modal-content.category-community-events::before {
+  background: linear-gradient(to right, #a855f7, #7c3aed);
 }
 
 .modal-content input,
 .modal-content textarea,
 .modal-content select {
   font-family: 'Inter', sans-serif;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.modal-header > div:first-child {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.8px;
+}
+
+.modal-header button {
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: 1px solid #e5e7eb;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.modal-header button:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.modal-form-group {
+  margin-bottom: 24px;
+}
+
+.modal-form-group label {
+  display: block;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 10px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="date"],
+.modal-content input[type="time"],
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+  background: white;
+  color: #1f2937;
+}
+
+.modal-content input[type="text"]::placeholder,
+.modal-content textarea::placeholder,
+.modal-content input[type="date"]::placeholder {
+  color: #9ca3af;
+}
+
+.modal-content input[type="text"]:focus,
+.modal-content input[type="date"]:focus,
+.modal-content input[type="time"]:focus,
+.modal-content textarea:focus,
+.modal-content select:focus {
+  outline: none;
+  border-color: #4c7dff;
+  box-shadow: 0 0 0 4px rgba(76, 125, 255, 0.1);
+  background: #f8faff;
+}
+
+.modal-form-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 600px) {
+  .modal-form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.modal-form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 36px;
+  padding-top: 28px;
+  border-top: 2px solid #f3f4f6;
+}
+
+.modal-form-actions button {
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-form-actions button.cancel-btn {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.modal-form-actions button.cancel-btn:hover {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+.modal-form-actions button.submit-btn {
+  background: linear-gradient(to bottom, #4c7dff, #2e63e5);
+  color: white;
+  box-shadow: 0 8px 16px rgba(76, 125, 255, 0.3);
+}
+
+.modal-form-actions button.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(76, 125, 255, 0.4);
+}
+
+.modal-form-actions button.submit-btn:active {
+  transform: translateY(0);
 }
 
 @media (max-width: 900px) {

@@ -42,35 +42,35 @@
         <h3>Environmental Action Group</h3>
         <p>Join our community focused on sustainability on our planet!</p>
         <div class="members">238 members</div>
-        <button class="join-btn dark">&#x2197; Join Group</button>
+        <button class="join-btn dark"><a href="https://www.facebook.com/KFCBorg/mentions/">&#x2197; Join Group</a></button>
     </div>
 
     <div class="group-card hov">
         <h3>Mental Health Support Circle</h3>
         <p>Join our safe space for mental health discussions!</p>
         <div class="members">602 members</div>
-        <button class="join-btn dark">&#x2197; Join Group</button>
+        <button class="join-btn dark"><a href="https://www.facebook.com/forsythspeaks/">Join Group</a></button>
     </div>
 
     <div class="group-card hov">
         <h3>Volunteer Network</h3>
         <p>Connect to learn about local volunteer opportunities!</p>
         <div class="members">842 members</div>
-        <button class="join-btn dark">&#x2197; Join Group</button>
+        <button class="join-btn dark"><a href="https://forsythaylus.org">Join Group</a></button>
     </div>
 
     <div class="group-card hov">
         <h3>Community Event Hub</h3>
         <p>Join to stay updated on local gatherings and events!</p>
         <div class="members">312 members</div>
-        <button class="join-btn dark">&#x2197; Join Group</button>
+        <button class="join-btn dark"><a href="https://www.facebook.com/cummingcitycenter/">Join Group</a></button>
     </div>
 
     <div class="group-card hov">
         <h3>Donation Drive Coordinators</h3>
         <p>Join to help organize and participate in donation campaigns!</p>
         <div class="members">215 members</div>
-        <button class="join-btn dark">&#x2197; Join Group</button>
+        <button class="join-btn dark"><a href="https://www.facebook.com/CASAForsyth">Join Group</a></button>
     </div>
 </div>
 
@@ -136,6 +136,26 @@ document.addEventListener('DOMContentLoaded', function() {
     navLinkElements.forEach(link => {
       link.addEventListener('click', function() {
         navLinks.classList.remove('open');
+      });
+    });
+  }
+
+  // Search functionality for communities
+  const searchBar = document.querySelector('.search-bar');
+  if (searchBar) {
+    searchBar.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const groupCards = document.querySelectorAll('.group-card');
+      
+      groupCards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const description = card.querySelector('p').textContent.toLowerCase();
+        
+        if (searchTerm === '' || title.includes(searchTerm) || description.includes(searchTerm)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
       });
     });
   }
