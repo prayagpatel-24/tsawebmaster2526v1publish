@@ -10,7 +10,7 @@
 <body style="width:100%; overflow-x: hidden;">
   <header class="nav">
     <div class="nav-left">
-      <div><image src="logo.png" width="75px"></image></div>
+      <div><img src="logo.png" width="75px"></div>
       <div class="logo-text">Ripple</div>
       <button class="hamburger" aria-label="Toggle navigation menu">
         <span class="hamburger-line"></span>
@@ -46,7 +46,7 @@
   <div class="footer-top">
     <div>
       <div class="footer-logo-row">
-        <div><image src="logo.png" width="75px"></image></div>
+        <div><img src="logo.png" width="75px"></div>
         <div class="footer-logo-text-main">Ripple</div>
       </div>
       <p>
@@ -108,6 +108,112 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+</script>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
+    authDomain: "webmaster-v4-0.firebaseapp.com",
+    projectId: "webmaster-v4-0",
+    storageBucket: "webmaster-v4-0.firebasestorage.app",
+    messagingSenderId: "413556961992",
+    appId: "1:413556961992:web:899600895ecb68eb9debfd"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  window.signOutUser = function() {
+    signOut(auth).then(() => {
+      alert('Signed out successfully!');
+      location.reload();
+    }).catch((error) => {
+      console.error('Sign out error:', error);
+    });
+  };
+
+  onAuthStateChanged(auth, (user) => {
+    const avatar = document.querySelector('.avatar');
+    const navRight = document.querySelector('.nav-right');
+    if (user) {
+      // User is signed in
+      const initial = user.email.charAt(0).toUpperCase();
+      if (avatar) {
+        avatar.textContent = initial;
+      }
+      // Remove sign in button if exists
+      const signInBtn = document.querySelector('.sign-in-btn');
+      if (signInBtn) {
+        signInBtn.remove();
+      }
+      // Add sign out button
+      if (navRight && !document.querySelector('.sign-out-btn')) {
+        const signOutBtn = document.createElement('button');
+        signOutBtn.textContent = 'Sign Out';
+        signOutBtn.className = 'sign-out-btn';
+        signOutBtn.style.padding = '8px 16px';
+        signOutBtn.style.background = 'linear-gradient(to bottom, #ef4444, #dc2626)';
+        signOutBtn.style.color = 'white';
+        signOutBtn.style.border = 'none';
+        signOutBtn.style.borderRadius = '999px';
+        signOutBtn.style.cursor = 'pointer';
+        signOutBtn.style.fontSize = '14px';
+        signOutBtn.style.fontWeight = '600';
+        signOutBtn.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.25)';
+        signOutBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
+        signOutBtn.onclick = window.signOutUser;
+        signOutBtn.onmouseover = () => {
+          signOutBtn.style.transform = 'translateY(-1px)';
+          signOutBtn.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.35)';
+        };
+        signOutBtn.onmouseout = () => {
+          signOutBtn.style.transform = 'translateY(0)';
+          signOutBtn.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.25)';
+        };
+        navRight.appendChild(signOutBtn);
+      }
+    } else {
+      // User is signed out
+      if (avatar) {
+        avatar.textContent = ''; // or default
+      }
+      // Remove sign out button if exists
+      const signOutBtn = document.querySelector('.sign-out-btn');
+      if (signOutBtn) {
+        signOutBtn.remove();
+      }
+      // Add sign in button
+      if (navRight && !document.querySelector('.sign-in-btn')) {
+        const signInBtn = document.createElement('button');
+        signInBtn.textContent = 'Sign In';
+        signInBtn.className = 'sign-in-btn';
+        signInBtn.style.padding = '8px 16px';
+        signInBtn.style.background = 'linear-gradient(to bottom, #4c7dff, #2e63e5)';
+        signInBtn.style.color = 'white';
+        signInBtn.style.border = 'none';
+        signInBtn.style.borderRadius = '999px';
+        signInBtn.style.cursor = 'pointer';
+        signInBtn.style.fontSize = '14px';
+        signInBtn.style.fontWeight = '600';
+        signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
+        signInBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
+        signInBtn.onclick = () => window.location.href = 'index.html';
+        signInBtn.onmouseover = () => {
+          signInBtn.style.transform = 'translateY(-1px)';
+          signInBtn.style.boxShadow = '0 6px 16px rgba(76, 125, 255, 0.35)';
+        };
+        signInBtn.onmouseout = () => {
+          signInBtn.style.transform = 'translateY(0)';
+          signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
+        };
+        navRight.appendChild(signInBtn);
+      }
+    }
+  });
 </script>
 
 </body>
