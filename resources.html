@@ -27,7 +27,7 @@
       </nav>
     </div>
     <div class="nav-right">
-      <div class="avatar">A</div>
+      <div class="avatar"></div>
     </div>
   </header>
 
@@ -522,7 +522,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   window.signOutUser = function() {
     signOut(auth).then(() => {
-      alert('Signed out successfully!');
       location.reload();
     }).catch((error) => {
       console.error('Sign out error:', error);

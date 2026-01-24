@@ -26,7 +26,7 @@
       </nav>
     </div>
     <div class="nav-right" style="margin-right: 5%">
-      <div class="avatar">A</div>
+      <div class="avatar"></div>
     </div>
   </header>
 
@@ -34,7 +34,7 @@
 <div class="subtitle">Ask me anything about opportunities, events, or our mission</div>
 
 <div class="chat-box">
-    <div class="message">Hello, I’m here to answer any questions and help you learn about Ripple. How may assist you?</div>
+    <div class="message" id="initialGreeting">Hello, I'm here to answer any questions and help you learn about Ripple. How may assist you?</div>
 </div>
 
 <div class="input-area">
@@ -81,8 +81,207 @@
   </div>
 </footer>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
+    authDomain: "webmaster-v4-0.firebaseapp.com",
+    projectId: "webmaster-v4-0",
+    storageBucket: "webmaster-v4-0.firebasestorage.app",
+    messagingSenderId: "413556961992",
+    appId: "1:413556961992:web:899600895ecb68eb9debfd"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// Chatbot functionality
+const sendBtn = document.querySelector('.send-btn');
+const input = document.querySelector('.input-area input');
+const chatBox = document.querySelector('.chat-box');
+const API_KEY = 'F6hJTUzhRv4lx5XAYCV3g4z5bXpXTwsT';
+
+const WEBSITE_CONTEXT = `You are the Ripple AI Assistant for the Ripple Community website. Here's information about the website to help you answer user questions:
+
+ABOUT RIPPLE:
+- Ripple connects community members with meaningful opportunities to create positive change
+- Mission: Creating ripples of change across our community, one small action at a time
+- We believe small actions create ripples of impact across neighborhoods
+- Focus areas: mental health, volunteering, environmental protection, and community events
+
+RESOURCES PAGE:
+The Resources section provides community health resources and events, including:
+- Mindfulness Meditation Guide (Mental Health)
+- Understanding Anxiety (Mental Health)
+- Healthy Eating Tips (Nutrition)
+- Exercise Routines for Beginners (Physical Health)
+- Local Wellness Workshops (Wellness)
+- Support Group Directory (Support Groups)
+
+COMMUNITY GROUPS:
+- Environmental Action Group (238 members) - Focus on sustainability
+- Mental Health Support Circle (602 members) - Safe space for mental health discussions
+- Volunteer Network (842 members) - Local volunteer opportunities
+- Community Event Hub (312 members) - Local gatherings and events
+- Donation Drive Coordinators (215 members) - Help organize donation campaigns
+
+NAVIGATION:
+Website pages: Home, Resources, Communities, Support, Calendar
+
+When answering questions, be helpful, friendly, and refer users to relevant pages or resources on the website when appropriate.`;
+
+async function sendMessage() {
+  const userMessage = input.value.trim();
+  if (!userMessage) return;
+
+  sendBtn.disabled = true;
+  sendBtn.style.opacity = '0.5';
+
+  const userMessageDiv = document.createElement('div');
+  userMessageDiv.className = 'message user-message';
+  userMessageDiv.textContent = userMessage;
+  chatBox.appendChild(userMessageDiv);
+  input.value = '';
+
+  try {
+    const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + API_KEY
+      },
+      body: JSON.stringify({
+        model: 'mistral-small-latest',
+        messages: [
+          {
+            role: 'system',
+            content: WEBSITE_CONTEXT
+          },
+          {
+            role: 'user',
+            content: userMessage
+          }
+        ]
+      })
+    });
+
+    let botResponse = 'Sorry, I could not process your request.';
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+        botResponse = data.choices[0].message.content;
+      }
+    } else {
+      botResponse = 'Error: ' + response.status + ' ' + response.statusText;
+    }
+
+    const botMessageDiv = document.createElement('div');
+    botMessageDiv.className = 'message';
+    botMessageDiv.textContent = botResponse;
+    chatBox.appendChild(botMessageDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  } catch (error) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'message';
+    errorDiv.textContent = 'Error: ' + error.message;
+    chatBox.appendChild(errorDiv);
+  } finally {
+    sendBtn.disabled = false;
+    sendBtn.style.opacity = '1';
+  }
+}
+
+sendBtn.addEventListener('click', sendMessage);
+input.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    sendMessage();
+  }
+});
+
+// Auth state
+onAuthStateChanged(auth, (user) => {
+  const avatar = document.querySelector('.avatar');
+  const navRight = document.querySelector('.nav-right');
+  
+  if (user) {
+    const initial = user.email.charAt(0).toUpperCase();
+    if (avatar) {
+      avatar.textContent = initial;
+    }
+    
+    if (navRight && !document.querySelector('.sign-out-btn')) {
+      const signOutBtn = document.createElement('button');
+      signOutBtn.textContent = 'Sign Out';
+      signOutBtn.className = 'sign-out-btn';
+      signOutBtn.style.padding = '8px 16px';
+      signOutBtn.style.background = 'linear-gradient(to bottom, #ef4444, #dc2626)';
+      signOutBtn.style.color = 'white';
+      signOutBtn.style.border = 'none';
+      signOutBtn.style.borderRadius = '999px';
+      signOutBtn.style.cursor = 'pointer';
+      signOutBtn.style.fontSize = '14px';
+      signOutBtn.style.fontWeight = '600';
+      signOutBtn.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.25)';
+      signOutBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
+      signOutBtn.onclick = function() {
+        signOut(auth).then(() => {
+          window.location.href = 'main.html';
+        }).catch((error) => {
+          console.error('Sign out error:', error);
+        });
+      };
+      signOutBtn.onmouseover = () => {
+        signOutBtn.style.transform = 'translateY(-1px)';
+        signOutBtn.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.35)';
+      };
+      signOutBtn.onmouseout = () => {
+        signOutBtn.style.transform = 'translateY(0)';
+        signOutBtn.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.25)';
+      };
+      navRight.appendChild(signOutBtn);
+    }
+  } else {
+    if (avatar) {
+      avatar.textContent = '';
+    }
+    const signOutBtn = document.querySelector('.sign-out-btn');
+    if (signOutBtn) {
+      signOutBtn.remove();
+    }
+    if (navRight && !document.querySelector('.sign-in-btn')) {
+      const signInBtn = document.createElement('button');
+      signInBtn.textContent = 'Sign In';
+      signInBtn.className = 'sign-in-btn';
+      signInBtn.style.padding = '8px 16px';
+      signInBtn.style.background = 'linear-gradient(to bottom, #4c7dff, #2e63e5)';
+      signInBtn.style.color = 'white';
+      signInBtn.style.border = 'none';
+      signInBtn.style.borderRadius = '999px';
+      signInBtn.style.cursor = 'pointer';
+      signInBtn.style.fontSize = '14px';
+      signInBtn.style.fontWeight = '600';
+      signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
+      signInBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
+      signInBtn.onclick = () => window.location.href = 'index.html';
+      signInBtn.onmouseover = () => {
+        signInBtn.style.transform = 'translateY(-1px)';
+        signInBtn.style.boxShadow = '0 6px 16px rgba(76, 125, 255, 0.35)';
+      };
+      signInBtn.onmouseout = () => {
+        signInBtn.style.transform = 'translateY(0)';
+        signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
+      };
+      navRight.appendChild(signInBtn);
+    }
+  }
+});
+</script>
+
 <script>
-// Hamburger menu toggle
+// Non-module script for hamburger menu (can't access module variables)
 document.addEventListener('DOMContentLoaded', function() {
   const hamburger = document.querySelector('.hamburger');
   const navLinks = document.querySelector('.nav-links');
@@ -92,14 +291,12 @@ document.addEventListener('DOMContentLoaded', function() {
       navLinks.classList.toggle('open');
     });
 
-    // Close menu when clicking outside or on a link
     document.addEventListener('click', function(event) {
       if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
         navLinks.classList.remove('open');
       }
     });
 
-    // Close menu when clicking on a nav link
     const navLinkElements = document.querySelectorAll('.nav-link');
     navLinkElements.forEach(link => {
       link.addEventListener('click', function() {
@@ -108,112 +305,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
-</script>
-
-<!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
-    authDomain: "webmaster-v4-0.firebaseapp.com",
-    projectId: "webmaster-v4-0",
-    storageBucket: "webmaster-v4-0.firebasestorage.app",
-    messagingSenderId: "413556961992",
-    appId: "1:413556961992:web:899600895ecb68eb9debfd"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  window.signOutUser = function() {
-    signOut(auth).then(() => {
-      alert('Signed out successfully!');
-      location.reload();
-    }).catch((error) => {
-      console.error('Sign out error:', error);
-    });
-  };
-
-  onAuthStateChanged(auth, (user) => {
-    const avatar = document.querySelector('.avatar');
-    const navRight = document.querySelector('.nav-right');
-    if (user) {
-      // User is signed in
-      const initial = user.email.charAt(0).toUpperCase();
-      if (avatar) {
-        avatar.textContent = initial;
-      }
-      // Remove sign in button if exists
-      const signInBtn = document.querySelector('.sign-in-btn');
-      if (signInBtn) {
-        signInBtn.remove();
-      }
-      // Add sign out button
-      if (navRight && !document.querySelector('.sign-out-btn')) {
-        const signOutBtn = document.createElement('button');
-        signOutBtn.textContent = 'Sign Out';
-        signOutBtn.className = 'sign-out-btn';
-        signOutBtn.style.padding = '8px 16px';
-        signOutBtn.style.background = 'linear-gradient(to bottom, #ef4444, #dc2626)';
-        signOutBtn.style.color = 'white';
-        signOutBtn.style.border = 'none';
-        signOutBtn.style.borderRadius = '999px';
-        signOutBtn.style.cursor = 'pointer';
-        signOutBtn.style.fontSize = '14px';
-        signOutBtn.style.fontWeight = '600';
-        signOutBtn.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.25)';
-        signOutBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
-        signOutBtn.onclick = window.signOutUser;
-        signOutBtn.onmouseover = () => {
-          signOutBtn.style.transform = 'translateY(-1px)';
-          signOutBtn.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.35)';
-        };
-        signOutBtn.onmouseout = () => {
-          signOutBtn.style.transform = 'translateY(0)';
-          signOutBtn.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.25)';
-        };
-        navRight.appendChild(signOutBtn);
-      }
-    } else {
-      // User is signed out
-      if (avatar) {
-        avatar.textContent = ''; // or default
-      }
-      // Remove sign out button if exists
-      const signOutBtn = document.querySelector('.sign-out-btn');
-      if (signOutBtn) {
-        signOutBtn.remove();
-      }
-      // Add sign in button
-      if (navRight && !document.querySelector('.sign-in-btn')) {
-        const signInBtn = document.createElement('button');
-        signInBtn.textContent = 'Sign In';
-        signInBtn.className = 'sign-in-btn';
-        signInBtn.style.padding = '8px 16px';
-        signInBtn.style.background = 'linear-gradient(to bottom, #4c7dff, #2e63e5)';
-        signInBtn.style.color = 'white';
-        signInBtn.style.border = 'none';
-        signInBtn.style.borderRadius = '999px';
-        signInBtn.style.cursor = 'pointer';
-        signInBtn.style.fontSize = '14px';
-        signInBtn.style.fontWeight = '600';
-        signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
-        signInBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
-        signInBtn.onclick = () => window.location.href = 'index.html';
-        signInBtn.onmouseover = () => {
-          signInBtn.style.transform = 'translateY(-1px)';
-          signInBtn.style.boxShadow = '0 6px 16px rgba(76, 125, 255, 0.35)';
-        };
-        signInBtn.onmouseout = () => {
-          signInBtn.style.transform = 'translateY(0)';
-          signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
-        };
-        navRight.appendChild(signInBtn);
-      }
-    }
-  });
 </script>
 
 </body>

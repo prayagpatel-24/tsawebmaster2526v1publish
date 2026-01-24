@@ -194,6 +194,14 @@ a:visited {
   font-size: 16px;
   line-height: 1.5;
   color: #1F2328;
+  margin-bottom: 16px;
+}
+
+.user-message {
+  background: #5C7CFF;
+  color: white;
+  border: 1px solid #4563d9;
+  margin-left: auto;
 }
 
 .input-area {

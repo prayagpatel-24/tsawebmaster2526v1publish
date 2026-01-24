@@ -181,7 +181,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   window.signOutUser = function() {
     signOut(auth).then(() => {
-      alert('Signed out successfully!');
       location.reload();
     }).catch((error) => {
       console.error('Sign out error:', error);
