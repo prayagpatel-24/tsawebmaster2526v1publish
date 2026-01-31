@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Ripple Calendar</title>
-<link rel="stylesheet" href="calender.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ripple Calendar</title>
+  <link rel="stylesheet" href="calender.css">
 </head>
 <body>
   <header class="nav">
@@ -38,29 +38,31 @@
 <div class="page-wrapper">
   <div class="calendar-box">
     <div class="calendar-header">
-      <div class="nav-btn">‹</div>
-      <div>November 2025</div>
-      <div class="nav-btn">›</div>
+      <div class="nav-btn" id="prevMonth">‹</div>
+      <div id="monthTitle">November 2025</div>
+      <div class="nav-btn" id="nextMonth">›</div>
     </div>
-    <table class="calendar" role="table">
-      <thead>
-        <tr><th>Su</th><th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th><th>Sa</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td><td>31</td><td>1</td></tr>
-        <tr><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
-        <tr><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td></tr>
-        <tr><td>16</td><td>17</td><td><span class="date-beige">18</span></td><td>19</td><td><span class="date-teal">20</span></td><td>21</td><td>22</td></tr>
-        <tr><td><span class="date-green-text">23</span></td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td></tr>
-        <tr><td>30</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
-      </tbody>
-    </table>
+
+    <div class="calendar" role="region" aria-label="Google Calendar events">
+      <div style="padding:16px;border:1px solid #e6e6e6;border-radius:8px;background:#fafafa;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <strong>Google Calendar</strong>
+          <small style="color:#666;font-size:13px">Click a day to view events</small>
+        </div>
+
+        <!-- NEW: calendar grid -->
+        <div id="calendarGrid"></div>
+
+        <!-- NEW: events list -->
+        <div id="dayEvents" style="margin-top:12px;"></div>
+
+      </div>
+    </div>
   </div>
 
   <div class="right-col">
     <div class="card hov" style="background-color: #e2eaf3; border: 2px solid #b0d9ee;">
       <div class="card-title">
-        <!-- inline SVG lightbulb icon to match image -->
         <i class="fa-regular fa-lightbulb"></i>
         Recommended for You
       </div>
@@ -121,33 +123,32 @@
     © 2025 Ripple — All Rights Reserved
   </div>
 </footer>
+
 <script>
-// Hamburger menu toggle
-document.addEventListener('DOMContentLoaded', function() {
-  const hamburger = document.querySelector('.hamburger');
-  const navLinks = document.querySelector('.nav-links');
+  // Hamburger menu toggle
+  document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
 
-  if (hamburger && navLinks) {
-    hamburger.addEventListener('click', function() {
-      navLinks.classList.toggle('open');
-    });
-
-    // Close menu when clicking outside or on a link
-    document.addEventListener('click', function(event) {
-      if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
-        navLinks.classList.remove('open');
-      }
-    });
-
-    // Close menu when clicking on a nav link
-    const navLinkElements = document.querySelectorAll('.nav-link');
-    navLinkElements.forEach(link => {
-      link.addEventListener('click', function() {
-        navLinks.classList.remove('open');
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', function() {
+        navLinks.classList.toggle('open');
       });
-    });
-  }
-});
+
+      document.addEventListener('click', function(event) {
+        if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
+          navLinks.classList.remove('open');
+        }
+      });
+
+      const navLinkElements = document.querySelectorAll('.nav-link');
+      navLinkElements.forEach(link => {
+        link.addEventListener('click', function() {
+          navLinks.classList.remove('open');
+        });
+      });
+    }
+  });
 
   function reso() {
     window.location.href="resources.html";
@@ -183,17 +184,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const avatar = document.querySelector('.avatar');
     const navRight = document.querySelector('.nav-right');
     if (user) {
-      // User is signed in
+      window.pendingLoginHint = user.email || null;
       const initial = user.email.charAt(0).toUpperCase();
-      if (avatar) {
-        avatar.textContent = initial;
-      }
-      // Remove sign in button if exists
+      if (avatar) avatar.textContent = initial;
+
       const signInBtn = document.querySelector('.sign-in-btn');
-      if (signInBtn) {
-        signInBtn.remove();
-      }
-      // Add sign out button
+      if (signInBtn) signInBtn.remove();
+
       if (navRight && !document.querySelector('.sign-out-btn')) {
         const signOutBtn = document.createElement('button');
         signOutBtn.textContent = 'Sign Out';
@@ -209,27 +206,14 @@ document.addEventListener('DOMContentLoaded', function() {
         signOutBtn.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.25)';
         signOutBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
         signOutBtn.onclick = window.signOutUser;
-        signOutBtn.onmouseover = () => {
-          signOutBtn.style.transform = 'translateY(-1px)';
-          signOutBtn.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.35)';
-        };
-        signOutBtn.onmouseout = () => {
-          signOutBtn.style.transform = 'translateY(0)';
-          signOutBtn.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.25)';
-        };
         navRight.appendChild(signOutBtn);
       }
     } else {
-      // User is signed out
-      if (avatar) {
-        avatar.textContent = ''; // or default
-      }
-      // Remove sign out button if exists
+      window.pendingLoginHint = null;
+      if (avatar) avatar.textContent = '';
       const signOutBtn = document.querySelector('.sign-out-btn');
-      if (signOutBtn) {
-        signOutBtn.remove();
-      }
-      // Add sign in button
+      if (signOutBtn) signOutBtn.remove();
+
       if (navRight && !document.querySelector('.sign-in-btn')) {
         const signInBtn = document.createElement('button');
         signInBtn.textContent = 'Sign In';
@@ -243,20 +227,220 @@ document.addEventListener('DOMContentLoaded', function() {
         signInBtn.style.fontSize = '14px';
         signInBtn.style.fontWeight = '600';
         signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
-        signInBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
         signInBtn.onclick = () => window.location.href = 'index.html';
-        signInBtn.onmouseover = () => {
-          signInBtn.style.transform = 'translateY(-1px)';
-          signInBtn.style.boxShadow = '0 6px 16px rgba(76, 125, 255, 0.35)';
-        };
-        signInBtn.onmouseout = () => {
-          signInBtn.style.transform = 'translateY(0)';
-          signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
-        };
         navRight.appendChild(signInBtn);
       }
     }
   });
+</script>
+
+<script>
+  window.pendingLoginHint = null;
+
+  (function insertGCal() {
+    const root = document.createElement('div');
+    root.id = 'gcal-root';
+    root.style.position = 'fixed';
+    root.style.right = '20px';
+    root.style.bottom = '20px';
+    root.style.maxWidth = '360px';
+    root.style.zIndex = '9999';
+
+    const panel = document.createElement('div');
+    panel.style.background = '#fff';
+    panel.style.padding = '12px';
+    panel.style.borderRadius = '8px';
+    panel.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)';
+
+    const btnRow = document.createElement('div');
+    btnRow.style.display = 'flex';
+    btnRow.style.gap = '8px';
+    btnRow.style.alignItems = 'center';
+    btnRow.style.marginBottom = '8px';
+
+    const authorizeButton = document.createElement('button');
+    authorizeButton.id = 'authorize_button';
+    authorizeButton.textContent = 'Authorize Google Calendar';
+    authorizeButton.style.flex = '1';
+    authorizeButton.style.padding = '8px 12px';
+    authorizeButton.style.borderRadius = '8px';
+    authorizeButton.style.border = 'none';
+    authorizeButton.style.background = '#1a73e8';
+    authorizeButton.style.color = '#fff';
+    authorizeButton.style.cursor = 'pointer';
+    authorizeButton.disabled = true;
+
+    btnRow.appendChild(authorizeButton);
+    panel.appendChild(btnRow);
+
+    const eventsContainer = document.createElement('div');
+    eventsContainer.id = 'events_container';
+    eventsContainer.style.maxHeight = '300px';
+    eventsContainer.style.overflow = 'auto';
+    eventsContainer.style.fontSize = '14px';
+    eventsContainer.style.color = '#222';
+
+    panel.appendChild(eventsContainer);
+    root.appendChild(panel);
+    document.body.appendChild(root);
+
+    const CLIENT_ID = '1052147186085-mo0674iqsjktif9oauo7k4rqajnsv8ka.apps.googleusercontent.com';
+    const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
+
+    let tokenClient;
+    let currentAccessToken = null;
+    let calendarEvents = [];
+
+    // =================== Calendar Rendering ===================
+    const monthTitle = document.getElementById('monthTitle');
+    const calendarGrid = document.getElementById('calendarGrid');
+    const dayEvents = document.getElementById('dayEvents');
+    const prevMonth = document.getElementById('prevMonth');
+    const nextMonth = document.getElementById('nextMonth');
+
+    let currentDate = new Date();
+
+    function formatDateKey(d) {
+      return d.toISOString().slice(0, 10); // YYYY-MM-DD
+    }
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+
+      const startDay = firstDay.getDay(); // 0-6 (Sun-Sat)
+      const totalDays = lastDay.getDate();
+
+      const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+      monthTitle.textContent = `${monthNames[month]} ${year}`;
+
+      calendarGrid.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; margin-bottom:6px;">
+          ${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d => `<div style="font-weight:600; text-align:center;">${d}</div>`).join("")}
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(7, 1fr); gap:6px;">
+          ${Array(startDay).fill('<div></div>').join("")}
+          ${Array.from({length: totalDays}, (_, i) => {
+            const day = i + 1;
+            const dateObj = new Date(year, month, day);
+            const key = formatDateKey(dateObj);
+            const hasEvent = calendarEvents.some(ev => ev.dateKey === key);
+            return `
+              <div class="cal-day ${hasEvent ? 'has-event' : ''}" data-date="${key}" style="padding:10px; border:1px solid #e0e0e0; border-radius:8px; cursor:pointer; text-align:center;">
+                <div style="font-weight:600;">${day}</div>
+                ${hasEvent ? `<div style="font-size:10px; color:#1a73e8;">•</div>` : ''}
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+
+      document.querySelectorAll('.cal-day').forEach(el => {
+        el.addEventListener('click', () => {
+          const dateKey = el.getAttribute('data-date');
+          showDayEvents(dateKey);
+        });
+      });
+    }
+
+    function showDayEvents(dateKey) {
+      const events = calendarEvents.filter(ev => ev.dateKey === dateKey);
+
+      if (events.length === 0) {
+        dayEvents.innerHTML = `<div style="margin-top:12px;"><strong>No events on ${dateKey}</strong></div>`;
+        return;
+      }
+
+      dayEvents.innerHTML = `<div style="margin-top:12px;"><strong>Events on ${dateKey}</strong></div>` +
+        events.map(ev => `
+          <div style="margin-top:8px; padding:8px; border:1px solid #ddd; border-radius:8px;">
+            <div><strong>${ev.summary || '(No title)'}</strong></div>
+            <div style="font-size:12px; color:#555;">${ev.time}</div>
+            <div style="font-size:12px; color:#777;">${ev.location || ''}</div>
+          </div>
+        `).join('');
+    }
+
+    prevMonth.addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    nextMonth.addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    // =================== Calendar API ===================
+    function normalizeEvents(items) {
+      const events = (items || []).map(ev => {
+        const start = ev.start?.dateTime || ev.start?.date;
+        const dateKey = start ? start.slice(0, 10) : null;
+        const time = ev.start?.dateTime ? new Date(ev.start.dateTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'All day';
+        return {
+          summary: ev.summary,
+          dateKey,
+          time,
+          location: ev.location,
+        };
+      }).filter(ev => ev.dateKey);
+
+      return events;
+    }
+
+    function listUpcomingEventsWithToken(accessToken) {
+      eventsContainer.innerHTML = '<em>Loading events...</em>';
+      const now = encodeURIComponent(new Date().toISOString());
+
+      const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${now}&singleEvents=true&orderBy=startTime&maxResults=250`;
+      fetch(url, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      })
+      .then(r => r.json())
+      .then(data => {
+        calendarEvents = normalizeEvents(data.items);
+        renderCalendar();
+        eventsContainer.innerHTML = '<div>Calendar loaded. Click a day.</div>';
+      })
+      .catch(err => {
+        console.error(err);
+        eventsContainer.innerHTML = '<div>Error loading calendar.</div>';
+      });
+    }
+
+    // =================== GIS OAuth ===================
+    function onTokenResponse(resp) {
+      currentAccessToken = resp.access_token;
+      listUpcomingEventsWithToken(currentAccessToken);
+    }
+
+    function gisLoadCallback() {
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: onTokenResponse,
+      });
+      authorizeButton.disabled = false;
+    }
+
+    authorizeButton.addEventListener('click', () => {
+      tokenClient.requestAccessToken({
+        login_hint: window.pendingLoginHint || undefined,
+        prompt: 'consent'
+      });
+    });
+
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = gisLoadCallback;
+    document.head.appendChild(script);
+
+  })();
 </script>
 
 </body>
