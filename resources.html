@@ -219,6 +219,17 @@ document.addEventListener('DOMContentLoaded', function() {
   const healthSection = document.getElementById('health-section');
   const eventsSection = document.getElementById('events-section');
 
+  // Check if we should show events on page load
+  const urlParams = new URLSearchParams(window.location.search);
+  const showEvents = urlParams.get('tab') === 'events';
+  
+  if (showEvents) {
+    toggleBtns.forEach(b => b.classList.remove('active'));
+    toggleBtns[1].classList.add('active');
+    healthSection.style.display = 'none';
+    eventsSection.style.display = 'block';
+  }
+
   toggleBtns.forEach(btn => {
     btn.addEventListener('click', function() {
       toggleBtns.forEach(b => b.classList.remove('active'));
