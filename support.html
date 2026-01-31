@@ -178,10 +178,41 @@ async function sendMessage() {
       botResponse = 'Error: ' + response.status + ' ' + response.statusText;
     }
 
+    const botMessageContainer = document.createElement('div');
+    botMessageContainer.className = 'bot-message-container';
+    
     const botMessageDiv = document.createElement('div');
     botMessageDiv.className = 'message';
-    botMessageDiv.textContent = botResponse;
-    chatBox.appendChild(botMessageDiv);
+    botMessageDiv.innerHTML = botResponse
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/(\d+\.\s+)/g, '<br>$1')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+    
+    const reactionsDiv = document.createElement('div');
+    reactionsDiv.className = 'message-reactions';
+    
+    const thumbsUpBtn = document.createElement('button');
+    thumbsUpBtn.className = 'reaction-btn thumbs-up';
+    thumbsUpBtn.textContent = '👍';
+    thumbsUpBtn.addEventListener('click', function() {
+      thumbsUpBtn.classList.add('active');
+      thumbsDownBtn.classList.remove('active');
+    });
+    
+    const thumbsDownBtn = document.createElement('button');
+    thumbsDownBtn.className = 'reaction-btn thumbs-down';
+    thumbsDownBtn.textContent = '👎';
+    thumbsDownBtn.addEventListener('click', function() {
+      thumbsDownBtn.classList.add('active');
+      thumbsUpBtn.classList.remove('active');
+    });
+    
+    reactionsDiv.appendChild(thumbsUpBtn);
+    reactionsDiv.appendChild(thumbsDownBtn);
+    
+    botMessageContainer.appendChild(botMessageDiv);
+    botMessageContainer.appendChild(reactionsDiv);
+    chatBox.appendChild(botMessageContainer);
     chatBox.scrollTop = chatBox.scrollHeight;
   } catch (error) {
     const errorDiv = document.createElement('div');

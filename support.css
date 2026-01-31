@@ -204,6 +204,66 @@ a:visited {
   margin-left: auto;
 }
 
+.message strong {
+  font-weight: 600;
+  color: #1F2328;
+}
+
+.message a {
+  color: #5C7CFF;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid #5C7CFF;
+}
+
+.message a:hover {
+  opacity: 0.8;
+}
+
+.message br {
+  content: '';
+  display: block;
+  height: 8px;
+}
+
+.bot-message-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.message-reactions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.reaction-btn {
+  background: white;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reaction-btn:hover {
+  border-color: #5C7CFF;
+  background: #F3F6FA;
+  transform: scale(1.1);
+}
+
+.reaction-btn.active {
+  background: #5C7CFF;
+  border-color: #5C7CFF;
+}
+
 .input-area {
   width: 58%;
   margin: 0 auto 110px auto;
