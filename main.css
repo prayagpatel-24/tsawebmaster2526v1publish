@@ -22,6 +22,52 @@
   margin: 0;
   padding: 0;
 }
+/* Bubble background layer */
+#bubble-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  overflow: visible;
+
+  z-index: 9999; /* TEMP: force on top */
+}
+/* Individual bubble */
+.bubble {
+  position: absolute;
+  bottom: -120px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.25),
+    rgba(255, 255, 255, 0.08)
+  );
+  opacity: 0.6;
+  animation-name: bubble-rise;
+  animation-timing-function: linear;
+}
+
+/* Float upward + slight horizontal drift */
+@keyframes bubble-rise {
+  from {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(-120vh) translateX(40px) scale(1.15);
+    opacity: 0;
+  }
+}
+
+/* Ensure site content stays above bubbles */
+.page {
+  position: relative;
+  z-index: 1;
+}
+
 
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
