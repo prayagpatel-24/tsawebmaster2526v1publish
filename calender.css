@@ -27,8 +27,9 @@ body {
 }
 
 .main p {
-  font-size: 16px;
-  color: #7a889a;
+  font-size: 25px;
+  font-family: "Lora", serif;
+  color: #8f9698;
 }
 
 .page-wrapper {
