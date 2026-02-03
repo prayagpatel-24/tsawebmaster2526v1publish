@@ -468,3 +468,29 @@ a:visited {
     grid-template-columns: 1fr;
   }
 }
+
+.chat-box {
+  max-height: 500px; 
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #5C7CFF #e0e0e0; 
+}
+
+
+.chat-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-box::-webkit-scrollbar-track {
+  background: #e0e0e0;
+  border-radius: 4px;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+  background-color: #5C7CFF;
+  border-radius: 4px;
+}
+
+.chat-box {
+  scroll-behavior: smooth;
+}
