@@ -28,6 +28,7 @@
       </nav>
     </div>
     <div class="nav-right">
+      <a class="notif-icon" href="notifications.html" title="Notifications">N</a>
       <div class="avatar"></div>
     </div>
   </header>
@@ -193,10 +194,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const avatar = document.querySelector('.avatar');
     const navRight = document.querySelector('.nav-right');
     if (user) {
+      if (!user.emailVerified) {
+        signOut(auth).finally(() => {
+          window.location.href = 'index.html?verify=1';
+        });
+        return;
+      }
       // User is signed in
-      const initial = user.email.charAt(0).toUpperCase();
+      const initial = (user.email || '').charAt(0).toUpperCase();
       if (avatar) {
-        avatar.textContent = initial;
+        if (user.photoURL) {
+          avatar.style.backgroundImage = `url('${user.photoURL}')`;
+          avatar.style.backgroundSize = 'cover';
+          avatar.style.backgroundPosition = 'center';
+          avatar.textContent = '';
+        } else {
+          avatar.style.backgroundImage = '';
+          avatar.textContent = initial;
+        }
+        avatar.style.cursor = 'pointer';
+        avatar.onclick = () => window.location.href = 'account.html';
       }
       // Remove sign in button if exists
       const signInBtn = document.querySelector('.sign-in-btn');

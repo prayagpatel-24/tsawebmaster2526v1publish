@@ -33,7 +33,8 @@
       </nav>
     </div>
     <div class="nav-right">
-      <div class="avatar"></div>
+      <a class="notif-icon" href="notifications.html" title="Notifications">N</a>
+      <div class="avatar" id="avatarBtn" title="Account" style="cursor:pointer" onclick="window.location.href='account.html'"></div>
     </div>
   </header>
 
@@ -250,13 +251,29 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   onAuthStateChanged(auth, (user) => {
+    if (user && !user.emailVerified) {
+      signOut(auth).finally(() => {
+        window.location.href = 'index.html?verify=1';
+      });
+      return;
+    }
     const avatar = document.querySelector('.avatar');
     const navRight = document.querySelector('.nav-right');
     if (user) {
       // User is signed in
-      const initial = user.email.charAt(0).toUpperCase();
+      const initial = (user.email || '').charAt(0).toUpperCase();
       if (avatar) {
-        avatar.textContent = initial;
+        if (user.photoURL) {
+          avatar.style.backgroundImage = `url('${user.photoURL}')`;
+          avatar.style.backgroundSize = 'cover';
+          avatar.style.backgroundPosition = 'center';
+          avatar.textContent = '';
+        } else {
+          avatar.style.backgroundImage = '';
+          avatar.textContent = initial;
+        }
+        avatar.style.cursor = 'pointer';
+        avatar.onclick = () => window.location.href = 'account.html';
       }
       // Remove sign in button if exists
       const signInBtn = document.querySelector('.sign-in-btn');
@@ -328,46 +345,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 </script>
-</body>
-</html>
-
-<script>
-function redirectit() {
-  window.location.href="resources.html";
-}
-function conn() {
-  window.location.href="communites.html";
-}
-function cale() {
-  window.location.href="calender.html";
-}
-
-// Hamburger menu toggle
-document.addEventListener('DOMContentLoaded', function() {
-  const hamburger = document.querySelector('.hamburger');
-  const navLinks = document.querySelector('.nav-links');
-
-  hamburger.addEventListener('click', function() {
-    navLinks.classList.toggle('open');
-  });
-
-  // Close menu when clicking outside or on a link
-  document.addEventListener('click', function(event) {
-    if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
-      navLinks.classList.remove('open');
-    }
-  });
-
-  // Close menu when clicking on a nav link
-  const navLinkElements = document.querySelectorAll('.nav-link');
-  navLinkElements.forEach(link => {
-    link.addEventListener('click', function() {
-      navLinks.classList.remove('open');
-    });
-  });
-});
-</script>
 <script src="bubbles.js"></script>
-
 </body>
 </html>

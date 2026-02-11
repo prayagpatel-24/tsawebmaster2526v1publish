@@ -28,6 +28,7 @@
       </nav>
     </div>
     <div class="nav-right">
+      <a class="notif-icon" href="notifications.html" title="Notifications">N</a>
       <div class="avatar"></div>
     </div>
   </header>
@@ -79,6 +80,23 @@
   </div>
 </div>
 
+<!-- Resource Detail Modal -->
+<div id="resourceDetailModal" style="display:none;" class="modal-overlay" aria-hidden="true">
+  <div class="modal-content" id="resourceDetailModalContent">
+    <div class="modal-header">
+      <div id="resourceDetailTitle">Resource Details</div>
+      <button id="closeResourceDetailBtn" style="background: #f3f4f6; border: 1px solid #e5e7eb; color: #374151; border-radius: 10px; padding: 10px 18px; font-weight: 600; cursor: pointer; font-size: 14px; transition: all 0.2s ease;">✕ Close</button>
+    </div>
+    <div class="event-detail-body">
+      <div class="event-detail-meta" id="resourceDetailMeta"></div>
+      <div class="event-detail-desc" id="resourceDetailDesc"></div>
+    </div>
+    <div class="modal-form-actions">
+      <button type="button" id="resourceDetailSaveBtn" class="submit-btn">Save Resource</button>
+    </div>
+  </div>
+</div>
+
 <div class="filters">
 <button class="active db">All</button>
 <button class="dark">Mental Health</button>
@@ -88,12 +106,12 @@
 <button class="dark">Support Groups</button>
 </div>
 <div class="cards">
-<div class="card cardMen hov"><h3>Mindfulness Meditation Guide</h3><p>Learn simple techniques to reduce stress and improve mental well-being.</p><p>Access free guided sessions and tips for daily practice.</p><div class="tag blue">Mental Health</div></div>
-<div class="card cardMen hov"><h3>Understanding Anxiety</h3><p>Resources on recognizing symptoms and coping strategies.</p><p>Includes articles, videos, and local support contacts.</p><div class="tag blue">Mental Health</div></div>
-<div class="card cardVol hov"><h3>Healthy Eating Tips</h3><p>Nutrition advice for maintaining a balanced diet.</p><p>Meal plans, recipes, and grocery guides.</p><div class="tag orange">Nutrition</div></div>
-<div class="card cardEnv hov"><h3>Exercise Routines for Beginners</h3><p>Start your fitness journey with easy-to-follow workouts.</p><p>Home-based exercises and community classes.</p><div class="tag green">Physical Health</div></div>
-<div class="card cardCom hov"><h3>Local Wellness Workshops</h3><p>Join community sessions on holistic health.</p><p>Yoga, tai chi, and stress management groups.</p><div class="tag purple">Wellness</div></div>
-<div class="card cardDon hov"><h3>Support Group Directory</h3><p>Find groups for various health challenges.</p><p>Online and in-person meetings for peer support.</p><div class="tag red">Support Groups</div></div>
+<div class="card cardMen hov"><h3>Forsyth Mindfulness Starter</h3><p>Local breathing and mindfulness guides for busy schedules.</p><p>Short routines you can do between classes or after practice.</p><div class="tag blue">Mental Health</div></div>
+<div class="card cardMen hov"><h3>Talk It Out: Anxiety Support</h3><p>Local and school‑friendly coping strategies and check‑ins.</p><p>Quick tips and links to nearby community support.</p><div class="tag blue">Mental Health</div></div>
+<div class="card cardVol hov"><h3>Forsyth Healthy Plate</h3><p>Simple nutrition ideas using groceries from local markets.</p><p>Meal planning tips for families and student athletes.</p><div class="tag orange">Nutrition</div></div>
+<div class="card cardEnv hov"><h3>Move More Forsyth</h3><p>Beginner routines and walking paths around the county.</p><p>Great for weekends, parks, and neighborhood strolls.</p><div class="tag green">Physical Health</div></div>
+<div class="card cardCom hov"><h3>Community Wellness Nights</h3><p>Local workshops on stress, sleep, and balance.</p><p>Yoga, tai chi, and resilience sessions hosted nearby.</p><div class="tag purple">Wellness</div></div>
+<div class="card cardDon hov"><h3>Forsyth Support Groups</h3><p>Directory of peer groups for families and students.</p><p>Mix of in‑person and virtual meetups in the county.</p><div class="tag red">Support Groups</div></div>
 </div>
 </div>
 
@@ -108,7 +126,7 @@
 <div id="eventModal" style="display:none;" class="modal-overlay" aria-hidden="true">
   <div class="modal-content" id="eventModalContent">
     <div class="modal-header">
-      <div>Add New Event</div>
+      <div id="eventModalTitle">Add New Event</div>
       <button id="closeModalBtn" style="background: #f3f4f6; border: 1px solid #e5e7eb; color: #374151; border-radius: 10px; padding: 10px 18px; font-weight: 600; cursor: pointer; font-size: 14px; transition: all 0.2s ease;">✕ Close</button>
     </div>
     <form id="eventForm">
@@ -141,21 +159,39 @@
   </div>
 </div>
 
+<!-- Event Detail Modal -->
+<div id="eventDetailModal" style="display:none;" class="modal-overlay" aria-hidden="true">
+  <div class="modal-content" id="eventDetailModalContent">
+    <div class="modal-header">
+      <div id="eventDetailTitle">Event Details</div>
+      <button id="closeEventDetailBtn" style="background: #f3f4f6; border: 1px solid #e5e7eb; color: #374151; border-radius: 10px; padding: 10px 18px; font-weight: 600; cursor: pointer; font-size: 14px; transition: all 0.2s ease;">✕ Close</button>
+    </div>
+    <div class="event-detail-body">
+      <div class="event-detail-meta" id="eventDetailMeta"></div>
+      <div class="event-detail-desc" id="eventDetailDesc"></div>
+    </div>
+    <div class="modal-form-actions">
+      <button type="button" id="eventDetailEditBtn" class="cancel-btn" style="display:none;">Edit Event</button>
+      <button type="button" id="eventDetailSignupBtn" class="submit-btn">Sign Up</button>
+    </div>
+  </div>
+</div>
+
 <div class="filters">
 <button class="active db">All</button>
 <button class="dark">Mental Health</button>
 <button class="dark">Volunteering</button>
 <button class="dark">Environmental</button>
-<button class="dark">Community</button>
-<button class="dark">Donations</button>
+<button class="dark">Community Events</button>
+<button class="dark">Donation Drives</button>
 </div>
 <div class="cards">
-<div class="card cardEnv hov"><h3>Coastal Cleanup Day</h3><p>Nov 23, 2025 | 8:00 AM – 11:30 AM<br>Savannah Beach</p><p>Help remove litter from our shoreline and record findings to support environmental research.</p><div class="tag green">Environmental</div></div>
-<div class="card cardMen hov"><h3>Walk for Wellness</h3><p>Dec 1, 2025 | 8:00 AM – 11:00 AM<br>Lanie Trail</p><p>5K community walk promoting physical and mental health awareness and fundraising for local health initiatives.</p><div class="tag blue">Mental Health</div></div>
-<div class="card cardVol hov"><h3>Blood Donation Day</h3><p>Dec 19, 2025 | 9:00 AM – 4:00 PM<br>Emory Hospital Center</p><p>Partner with local hospitals for a community blood drive to save lives.</p><div class="tag orange">Volunteering</div></div>
-<div class="card cardDon hov"><h3>Book Donation Booth</h3><p>Dec 21, 2025 | 11:00 AM – 3:00 PM<br>Sharon Forks Library</p><p>Gather books for literacy programs and help organize donations for local schools.</p><div class="tag red">Donation Drives</div></div>
-<div class="card cardCom hov"><h3>Cultural Heritage Day</h3><p>Dec 29, 2025 | 10:00 AM – 7:00 PM<br>Cultural Arts Center</p><p>Help organize performances and exhibits celebrating our diverse community cultures.</p><div class="tag purple">Community Events</div></div>
-<div class="card cardEnv hov"><h3>Plant Reforestation</h3><p>Jan 14, 2026 | 10:00 AM – 5:30 PM<br>Fowler Park</p><p>Collaborate with the community in reforestation at local parks for environmental growth and diversity.</p><div class="tag green">Environmental</div></div>
+<div class="card cardEnv hov" data-title="Big Creek Greenway Cleanup" data-date="Mar 8, 2026" data-time="9:00 AM - 12:00 PM" data-location="Big Creek Greenway Trailhead" data-desc="Join neighbors for a Forsyth County trail cleanup and litter audit." data-category="Environmental"><h3>Big Creek Greenway Cleanup</h3><p>Mar 8, 2026 | 9:00 AM – 12:00 PM<br>Big Creek Greenway Trailhead</p><p>Join neighbors for a Forsyth County trail cleanup and litter audit.</p><div class="tag green">Environmental</div></div>
+<div class="card cardMen hov" data-title="Lake Lanier Wellness Walk" data-date="Mar 15, 2026" data-time="8:30 AM - 10:30 AM" data-location="Lanier Park Trail" data-desc="Community walk supporting mental health awareness and local resources." data-category="Mental Health"><h3>Lake Lanier Wellness Walk</h3><p>Mar 15, 2026 | 8:30 AM – 10:30 AM<br>Lanier Park Trail</p><p>Community walk supporting mental health awareness and local resources.</p><div class="tag blue">Mental Health</div></div>
+<div class="card cardVol hov" data-title="Forsyth Blood Drive" data-date="Mar 22, 2026" data-time="10:00 AM - 3:00 PM" data-location="Cumming City Center" data-desc="Partner with local hospitals for a community blood drive to save lives." data-category="Volunteering"><h3>Forsyth Blood Drive</h3><p>Mar 22, 2026 | 10:00 AM – 3:00 PM<br>Cumming City Center</p><p>Partner with local hospitals for a community blood drive to save lives.</p><div class="tag orange">Volunteering</div></div>
+<div class="card cardDon hov" data-title="Sharon Forks Book Drive" data-date="Mar 29, 2026" data-time="11:00 AM - 2:00 PM" data-location="Sharon Forks Library" data-desc="Collect and sort books for local classrooms and family literacy." data-category="Donation Drives"><h3>Sharon Forks Book Drive</h3><p>Mar 29, 2026 | 11:00 AM – 2:00 PM<br>Sharon Forks Library</p><p>Collect and sort books for local classrooms and family literacy.</p><div class="tag red">Donation Drives</div></div>
+<div class="card cardCom hov" data-title="Forsyth Cultural Expo" data-date="Apr 5, 2026" data-time="12:00 PM - 6:00 PM" data-location="Forsyth Central Park" data-desc="Celebrate community traditions with performances, food, and art." data-category="Community Events"><h3>Forsyth Cultural Expo</h3><p>Apr 5, 2026 | 12:00 PM – 6:00 PM<br>Forsyth Central Park</p><p>Celebrate community traditions with performances, food, and art.</p><div class="tag purple">Community Events</div></div>
+<div class="card cardEnv hov" data-title="Fowler Park Reforestation" data-date="Apr 12, 2026" data-time="9:30 AM - 1:30 PM" data-location="Fowler Park" data-desc="Plant native trees to strengthen Forsyth County green spaces." data-category="Environmental"><h3>Fowler Park Reforestation</h3><p>Apr 12, 2026 | 9:30 AM – 1:30 PM<br>Fowler Park</p><p>Plant native trees to strengthen Forsyth County green spaces.</p><div class="tag green">Environmental</div></div>
 </div>
 </div>
 <footer class="footer">
@@ -201,11 +237,21 @@
 // Modal and event creation (inline JS)
 document.addEventListener('DOMContentLoaded', function() {
   const modal = document.getElementById('eventModal');
+  const eventModalTitle = document.getElementById('eventModalTitle');
   const addBtn = document.getElementById('addEventBtn');
   const closeBtn = document.getElementById('closeModalBtn');
   const cancelBtn = document.getElementById('cancelBtn');
   const form = document.getElementById('eventForm');
   const cards = document.querySelector('#events-section .cards');
+
+  const eventDetailModal = document.getElementById('eventDetailModal');
+  const eventDetailModalContent = document.getElementById('eventDetailModalContent');
+  const closeEventDetailBtn = document.getElementById('closeEventDetailBtn');
+  const eventDetailTitle = document.getElementById('eventDetailTitle');
+  const eventDetailMeta = document.getElementById('eventDetailMeta');
+  const eventDetailDesc = document.getElementById('eventDetailDesc');
+  const eventDetailSignupBtn = document.getElementById('eventDetailSignupBtn');
+  const eventDetailEditBtn = document.getElementById('eventDetailEditBtn');
 
   // Resource modal
   const resourceModal = document.getElementById('resourceModal');
@@ -214,16 +260,26 @@ document.addEventListener('DOMContentLoaded', function() {
   const cancelResourceBtn = document.getElementById('cancelResourceBtn');
   const resourceForm = document.getElementById('resourceForm');
   const resourceCards = document.querySelector('#health-section .cards');
+  const resourceDetailModal = document.getElementById('resourceDetailModal');
+  const resourceDetailModalContent = document.getElementById('resourceDetailModalContent');
+  const closeResourceDetailBtn = document.getElementById('closeResourceDetailBtn');
+  const resourceDetailTitle = document.getElementById('resourceDetailTitle');
+  const resourceDetailMeta = document.getElementById('resourceDetailMeta');
+  const resourceDetailDesc = document.getElementById('resourceDetailDesc');
+  const resourceDetailSaveBtn = document.getElementById('resourceDetailSaveBtn');
 
   // Toggle functionality
   const toggleBtns = document.querySelectorAll('.toggle-btns button');
   const healthSection = document.getElementById('health-section');
   const eventsSection = document.getElementById('events-section');
 
+  let editingEventCard = null;
+  let isEditingEvent = false;
+
   // Check if we should show events on page load
   const urlParams = new URLSearchParams(window.location.search);
   const showEvents = urlParams.get('tab') === 'events';
-  
+
   if (showEvents) {
     toggleBtns.forEach(b => b.classList.remove('active'));
     toggleBtns[1].classList.add('active');
@@ -245,26 +301,260 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  function openModal(){
-    modal.style.display = 'flex';
-    modal.setAttribute('aria-hidden','false');
-    updateEventModalStyle();
-  }
-  function closeModal(){
-    modal.style.display = 'none';
-    modal.setAttribute('aria-hidden','true');
-    form.reset();
+  function normalizeText(value) {
+    return (value || '').toLowerCase();
   }
 
-  function openResourceModal(){
+  function setEventCardData(card, data) {
+    card.dataset.title = data.title || '';
+    card.dataset.date = data.date || '';
+    card.dataset.time = data.time || '';
+    card.dataset.location = data.location || '';
+    card.dataset.desc = data.desc || '';
+    card.dataset.category = data.category || '';
+    card.dataset.status = data.status || '';
+    card.dataset.search = normalizeText(
+      [data.title, data.date, data.time, data.location, data.desc, data.category].join(' ')
+    );
+  }
+
+  function setResourceCardData(card, data) {
+    card.dataset.title = data.title || '';
+    card.dataset.desc1 = data.desc1 || '';
+    card.dataset.desc2 = data.desc2 || '';
+    card.dataset.category = data.category || '';
+    card.dataset.status = data.status || '';
+    card.dataset.search = normalizeText(
+      [data.title, data.desc1, data.desc2, data.category].join(' ')
+    );
+  }
+
+  function loadPendingLocal(key) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function savePendingLocal(key, list) {
+    try {
+      localStorage.setItem(key, JSON.stringify(list));
+    } catch (e) {}
+  }
+
+  function addPendingLocal(key, item) {
+    const list = loadPendingLocal(key);
+    list.unshift({ ...item, _ts: Date.now() });
+    savePendingLocal(key, list);
+  }
+
+  function removePendingLocalByTitle(key, title) {
+    const list = loadPendingLocal(key);
+    const next = list.filter(it => (it.title || '').trim().toLowerCase() !== (title || '').trim().toLowerCase());
+    savePendingLocal(key, next);
+  }
+
+  function cleanupPendingLocal(key, maxAgeMs) {
+    const list = loadPendingLocal(key);
+    const now = Date.now();
+    const next = list.filter(it => !it._ts || (now - it._ts) <= maxAgeMs);
+    savePendingLocal(key, next);
+  }
+
+  function applyResourceFilters() {
+    const resourceFilterBtn = document.querySelector('#health-section .filters button.active');
+    const activeFilter = resourceFilterBtn ? resourceFilterBtn.textContent.trim() : 'All';
+    const searchTerm = normalizeText(resourceSearchInput.value);
+    const cards = document.querySelectorAll('#health-section .card');
+    cards.forEach(card => {
+      const tag = card.querySelector('.tag') ? card.querySelector('.tag').textContent.trim() : '';
+      const haystack = card.dataset.search || normalizeText(card.textContent);
+      const matchesSearch = !searchTerm || haystack.includes(searchTerm);
+      const matchesFilter = activeFilter === 'All' || tag === activeFilter;
+      card.style.display = matchesSearch && matchesFilter ? 'block' : 'none';
+    });
+  }
+
+  function applyEventFilters() {
+    const eventFilterBtn = document.querySelector('#events-section .filters button.active');
+    const activeFilter = eventFilterBtn ? eventFilterBtn.textContent.trim() : 'All';
+    const searchTerm = normalizeText(eventSearchInput.value);
+    const cards = document.querySelectorAll('#events-section .card');
+    cards.forEach(card => {
+      const tag = card.querySelector('.tag') ? card.querySelector('.tag').textContent.trim() : '';
+      const haystack = card.dataset.search || normalizeText(card.textContent);
+      const matchesSearch = !searchTerm || haystack.includes(searchTerm);
+      const matchesFilter = activeFilter === 'All' || tag === activeFilter;
+      card.style.display = matchesSearch && matchesFilter ? 'block' : 'none';
+    });
+  }
+
+  function openModal() {
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+    updateEventModalStyle();
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+    form.reset();
+    isEditingEvent = false;
+    editingEventCard = null;
+    if (eventModalTitle) eventModalTitle.textContent = 'Add New Event';
+  }
+
+  function openResourceModal() {
     resourceModal.style.display = 'flex';
-    resourceModal.setAttribute('aria-hidden','false');
+    resourceModal.setAttribute('aria-hidden', 'false');
     updateResourceModalStyle();
   }
-  function closeResourceModal(){
+
+  function closeResourceModal() {
     resourceModal.style.display = 'none';
-    resourceModal.setAttribute('aria-hidden','true');
+    resourceModal.setAttribute('aria-hidden', 'true');
     resourceForm.reset();
+  }
+
+  function openEventDetail(card) {
+    if (!card) return;
+    const title = card.dataset.title || card.querySelector('h3')?.textContent || 'Event';
+    const date = card.dataset.date || '';
+    const time = card.dataset.time || '';
+    const location = card.dataset.location || '';
+    const desc = card.dataset.desc || '';
+    const category = card.dataset.category || (card.querySelector('.tag')?.textContent || '');
+
+    eventDetailTitle.textContent = title;
+    eventDetailMeta.textContent = [date, time, location].filter(Boolean).join(' | ');
+    eventDetailDesc.textContent = desc || 'No description provided.';
+    if (card.dataset.status === 'pending') {
+      eventDetailDesc.textContent = `${eventDetailDesc.textContent} (Pending approval)`;
+    }
+
+    const categoryMap = {
+      'Environmental': 'category-environmental',
+      'Mental Health': 'category-mental-health',
+      'Volunteering': 'category-volunteering',
+      'Donation Drives': 'category-donation-drives',
+      'Community Events': 'category-community-events'
+    };
+    eventDetailModalContent.className = 'modal-content';
+    if (categoryMap[category]) {
+      eventDetailModalContent.classList.add(categoryMap[category]);
+    }
+
+    const role = (window.currentUserRole || 'member').toLowerCase();
+    if (role === 'admin' || role === 'founder') {
+      eventDetailEditBtn.style.display = 'inline-flex';
+      eventDetailEditBtn.onclick = function() {
+        openEditFromCard(card);
+      };
+    } else {
+      eventDetailEditBtn.style.display = 'none';
+    }
+
+    eventDetailSignupBtn.onclick = function() {
+      if (window.createEventSignup) {
+        window.createEventSignup({
+          title,
+          date,
+          time,
+          location,
+          desc,
+          category
+        }).then(() => {
+          alert('You are signed up for this event. Check notifications for details.');
+          closeEventDetailModal();
+        }).catch(err => {
+          console.error('Signup failed', err);
+          alert('Failed to sign up for this event.');
+        });
+      } else {
+        alert('Signup is not available right now.');
+      }
+    };
+
+    eventDetailModal.style.display = 'flex';
+    eventDetailModal.setAttribute('aria-hidden', 'false');
+  }
+
+  function openResourceDetail(card) {
+    if (!card) return;
+    const title = card.dataset.title || card.querySelector('h3')?.textContent || 'Resource';
+    const desc1 = card.dataset.desc1 || card.querySelectorAll('p')[0]?.textContent || '';
+    const desc2 = card.dataset.desc2 || card.querySelectorAll('p')[1]?.textContent || '';
+    const category = card.dataset.category || (card.querySelector('.tag')?.textContent || '');
+
+    resourceDetailTitle.textContent = title;
+    resourceDetailMeta.textContent = category || 'Resource';
+    resourceDetailDesc.textContent = [desc1, desc2].filter(Boolean).join(' ');
+    if (card.dataset.status === 'pending') {
+      resourceDetailDesc.textContent = `${resourceDetailDesc.textContent} (Pending approval)`;
+    }
+
+    const categoryMap = {
+      'Mental Health': 'category-mental-health',
+      'Physical Health': 'category-physical-health',
+      'Nutrition': 'category-nutrition',
+      'Wellness': 'category-wellness',
+      'Support Groups': 'category-support-groups'
+    };
+    resourceDetailModalContent.className = 'modal-content';
+    if (categoryMap[category]) {
+      resourceDetailModalContent.classList.add(categoryMap[category]);
+    }
+
+    resourceDetailSaveBtn.onclick = function() {
+      if (window.createResourceSave) {
+        window.createResourceSave({
+          title,
+          desc1,
+          desc2,
+          category
+        }).then(() => {
+          alert('Resource saved. Check notifications for details.');
+          closeResourceDetailModal();
+        }).catch(err => {
+          console.error('Save failed', err);
+          alert('Failed to save this resource.');
+        });
+      } else {
+        alert('Save is not available right now.');
+      }
+    };
+
+    resourceDetailModal.style.display = 'flex';
+    resourceDetailModal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeResourceDetailModal() {
+    resourceDetailModal.style.display = 'none';
+    resourceDetailModal.setAttribute('aria-hidden', 'true');
+  }
+
+  function closeEventDetailModal() {
+    eventDetailModal.style.display = 'none';
+    eventDetailModal.setAttribute('aria-hidden', 'true');
+  }
+
+  function openEditFromCard(card) {
+    if (!card) return;
+    isEditingEvent = true;
+    editingEventCard = card;
+    if (eventModalTitle) eventModalTitle.textContent = 'Edit Event';
+    document.getElementById('eventTitle').value = card.dataset.title || '';
+    const parsedDate = card.dataset.date ? new Date(card.dataset.date) : null;
+    document.getElementById('eventDate').value = parsedDate && !isNaN(parsedDate) ? parsedDate.toISOString().slice(0, 10) : '';
+    document.getElementById('eventTime').value = card.dataset.time || '';
+    document.getElementById('eventLocation').value = card.dataset.location || '';
+    document.getElementById('eventDesc').value = card.dataset.desc || '';
+    document.getElementById('eventCategory').value = card.dataset.category || 'Community Events';
+    updateEventModalStyle();
+    openModal();
+    closeEventDetailModal();
   }
 
   function updateEventModalStyle() {
@@ -277,10 +567,8 @@ document.addEventListener('DOMContentLoaded', function() {
       'Donation Drives': 'category-donation-drives',
       'Community Events': 'category-community-events'
     };
-    
-    // Remove all category classes
+
     eventModalContent.className = 'modal-content';
-    // Add the appropriate category class
     if (categoryMap[category]) {
       eventModalContent.classList.add(categoryMap[category]);
     }
@@ -296,19 +584,150 @@ document.addEventListener('DOMContentLoaded', function() {
       'Wellness': 'category-wellness',
       'Support Groups': 'category-support-groups'
     };
-    
-    // Remove all category classes
+
     resourceModalContent.className = 'modal-content';
-    // Add the appropriate category class
     if (categoryMap[category]) {
       resourceModalContent.classList.add(categoryMap[category]);
     }
   }
 
+  function setupEventCard(card) {
+    if (!card) return;
+    card.addEventListener('click', function() {
+      openEventDetail(card);
+    });
+  }
+
+  function buildEventCardFromData(data) {
+    const card = document.createElement('div');
+    card.className = 'card hov';
+
+    const tagDiv = document.createElement('div');
+    tagDiv.className = 'tag';
+
+    switch(data.category){
+      case 'Environmental': card.classList.add('cardEnv'); tagDiv.classList.add('green'); break;
+      case 'Mental Health': card.classList.add('cardMen'); tagDiv.classList.add('blue'); break;
+      case 'Volunteering': card.classList.add('cardVol'); tagDiv.classList.add('orange'); break;
+      case 'Donation Drives': card.classList.add('cardDon'); tagDiv.classList.add('red'); break;
+      case 'Community Events': card.classList.add('cardCom'); tagDiv.classList.add('purple'); break;
+      default: tagDiv.classList.add('blue');
+    }
+
+    const h3 = document.createElement('h3'); h3.textContent = data.title || 'Untitled Event';
+    const p1 = document.createElement('p');
+    const dateText = data.date || '';
+    p1.textContent = (dateText ? dateText : '') + (data.time ? ' | ' + data.time : '');
+    p1.appendChild(document.createElement('br'));
+    p1.appendChild(document.createTextNode(data.location || ''));
+
+    const p2 = document.createElement('p'); p2.textContent = data.desc || '';
+    tagDiv.textContent = data.category || 'Community Events';
+
+    card.appendChild(h3);
+    card.appendChild(p1);
+    card.appendChild(p2);
+    card.appendChild(tagDiv);
+
+    setEventCardData(card, {
+      title: data.title,
+      date: dateText,
+      time: data.time,
+      location: data.location,
+      desc: data.desc,
+      category: data.category,
+      status: data.status || ''
+    });
+    setupEventCard(card);
+    return card;
+  }
+
+  function buildResourceCardFromData(data) {
+    const card = document.createElement('div');
+    card.className = 'card hov';
+
+    const tagDiv = document.createElement('div');
+    tagDiv.className = 'tag';
+
+    switch(data.category){
+      case 'Mental Health': card.classList.add('cardMen'); tagDiv.classList.add('blue'); break;
+      case 'Physical Health': card.classList.add('cardEnv'); tagDiv.classList.add('green'); break;
+      case 'Nutrition': card.classList.add('cardVol'); tagDiv.classList.add('orange'); break;
+      case 'Wellness': card.classList.add('cardCom'); tagDiv.classList.add('purple'); break;
+      case 'Support Groups': card.classList.add('cardDon'); tagDiv.classList.add('red'); break;
+      default: tagDiv.classList.add('blue');
+    }
+
+    const h3 = document.createElement('h3'); h3.textContent = data.title || 'Untitled Resource';
+    const p1 = document.createElement('p'); p1.textContent = data.desc1 || '';
+    const p2 = document.createElement('p'); p2.textContent = data.desc2 || '';
+    tagDiv.textContent = data.category || 'Wellness';
+
+    card.appendChild(h3);
+    card.appendChild(p1);
+    card.appendChild(p2);
+    card.appendChild(tagDiv);
+
+    setResourceCardData(card, {
+      title: data.title,
+      desc1: data.desc1,
+      desc2: data.desc2,
+      category: data.category,
+      status: data.status || ''
+    });
+    card.addEventListener('click', function() {
+      openResourceDetail(card);
+    });
+    return card;
+  }
+
+  window.renderEventsFromFirestore = function(list) {
+    if (!cards) return;
+    list.forEach(item => {
+      const match = Array.from(cards.querySelectorAll('.card')).find(card => {
+        const title = (card.dataset.title || card.querySelector('h3')?.textContent || '').trim().toLowerCase();
+        return title && item.title && title === item.title.trim().toLowerCase();
+      });
+      if (match) {
+        match.classList.remove('pending-card');
+        match.dataset.status = '';
+        removePendingLocalByTitle('pendingEvents', item.title);
+      } else {
+        const card = buildEventCardFromData(item);
+        cards.appendChild(card);
+      }
+    });
+    applyEventFilters();
+  };
+
+  window.renderResourcesFromFirestore = function(list) {
+    if (!resourceCards) return;
+    list.forEach(item => {
+      const match = Array.from(resourceCards.querySelectorAll('.card')).find(card => {
+        const title = (card.dataset.title || card.querySelector('h3')?.textContent || '').trim().toLowerCase();
+        return title && item.title && title === item.title.trim().toLowerCase();
+      });
+      if (match) {
+        match.classList.remove('pending-card');
+        match.dataset.status = '';
+        removePendingLocalByTitle('pendingResources', item.title);
+      } else {
+        const card = buildResourceCardFromData(item);
+        resourceCards.appendChild(card);
+      }
+    });
+    applyResourceFilters();
+  };
+
   addBtn && addBtn.addEventListener('click', openModal);
   closeBtn && closeBtn.addEventListener('click', closeModal);
   cancelBtn && cancelBtn.addEventListener('click', closeModal);
   modal && modal.addEventListener('click', function(e){ if(e.target === modal) closeModal(); });
+
+  closeEventDetailBtn && closeEventDetailBtn.addEventListener('click', closeEventDetailModal);
+  eventDetailModal && eventDetailModal.addEventListener('click', function(e){ if(e.target === eventDetailModal) closeEventDetailModal(); });
+  closeResourceDetailBtn && closeResourceDetailBtn.addEventListener('click', closeResourceDetailModal);
+  resourceDetailModal && resourceDetailModal.addEventListener('click', function(e){ if(e.target === resourceDetailModal) closeResourceDetailModal(); });
 
   addResourceBtn && addResourceBtn.addEventListener('click', openResourceModal);
   closeResourceBtn && closeResourceBtn.addEventListener('click', closeResourceModal);
@@ -329,6 +748,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const category = document.getElementById('eventCategory').value;
 
     if(!title) return;
+
+    if (isEditingEvent && editingEventCard) {
+      const tag = editingEventCard.querySelector('.tag');
+      const h3 = editingEventCard.querySelector('h3');
+      const p1 = editingEventCard.querySelector('p');
+      const p2 = editingEventCard.querySelectorAll('p')[1];
+
+      h3.textContent = title;
+      const dateText = date ? (new Date(date).toLocaleDateString()) : '';
+      p1.textContent = (dateText ? dateText : '') + (time ? ' | ' + time : '');
+      p1.appendChild(document.createElement('br'));
+      p1.appendChild(document.createTextNode(location));
+      p2.textContent = desc;
+      tag.textContent = category;
+
+      setEventCardData(editingEventCard, { title, date: dateText || date, time, location, desc, category, status: editingEventCard.dataset.status || '' });
+      applyEventFilters();
+      closeModal();
+      return;
+    }
 
     const card = document.createElement('div');
     card.className = 'card hov';
@@ -360,9 +799,28 @@ document.addEventListener('DOMContentLoaded', function() {
     card.appendChild(p2);
     card.appendChild(tagDiv);
 
-    if(cards) cards.insertBefore(card, cards.firstChild);
+    setEventCardData(card, { title, date: dateText || date, time, location, desc, category, status: 'pending' });
+    setupEventCard(card);
 
-    closeModal();
+    card.classList.add('pending-card');
+    if (cards) cards.insertBefore(card, cards.firstChild);
+    addPendingLocal('pendingEvents', { title, date: dateText || date, time, location, desc, category, status: 'pending' });
+    applyEventFilters();
+    if (window.createPendingEvent) {
+      window.createPendingEvent({ title, date, time, location, desc, category })
+        .then(() => {
+          alert('Event submitted for review. An admin will approve it shortly.');
+        })
+        .catch(err => {
+          console.error('Error submitting event for review', err);
+          alert('Failed to submit event for review.');
+        })
+        .finally(() => {
+          closeModal();
+        });
+    } else {
+      closeModal();
+    }
   });
 
   resourceForm && resourceForm.addEventListener('submit', function(e){
@@ -399,9 +857,27 @@ document.addEventListener('DOMContentLoaded', function() {
     card.appendChild(p2);
     card.appendChild(tagDiv);
 
-    if(resourceCards) resourceCards.insertBefore(card, resourceCards.firstChild);
+    setResourceCardData(card, { title, desc1, desc2, category, status: 'pending' });
+    card.classList.add('pending-card');
 
-    closeResourceModal();
+    if(resourceCards) resourceCards.insertBefore(card, resourceCards.firstChild);
+    addPendingLocal('pendingResources', { title, desc1, desc2, category, status: 'pending' });
+    applyResourceFilters();
+    if (window.createPendingResource) {
+      window.createPendingResource({ title, desc1, desc2, category })
+        .then(() => {
+          alert('Resource submitted for review. An admin will approve it shortly.');
+        })
+        .catch(err => {
+          console.error('Error submitting resource for review', err);
+          alert('Failed to submit resource for review.');
+        })
+        .finally(() => {
+          closeResourceModal();
+        });
+    } else {
+      closeResourceModal();
+    }
   });
 
   // Hamburger menu toggle
@@ -413,14 +889,12 @@ document.addEventListener('DOMContentLoaded', function() {
       navLinks.classList.toggle('open');
     });
 
-    // Close menu when clicking outside or on a link
     document.addEventListener('click', function(event) {
       if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
         navLinks.classList.remove('open');
       }
     });
 
-    // Close menu when clicking on a nav link
     const navLinkElements = document.querySelectorAll('.nav-link');
     navLinkElements.forEach(link => {
       link.addEventListener('click', function() {
@@ -432,86 +906,80 @@ document.addEventListener('DOMContentLoaded', function() {
   // Filter functionality for Resources
   const resourceFilterBtns = document.querySelectorAll('#health-section .filters button');
   const resourceSearchInput = document.querySelector('#health-section .search-area input[type="text"]');
-  
-  // Search functionality for Resources
+
   if (resourceSearchInput) {
-    resourceSearchInput.addEventListener('input', function() {
-      const searchTerm = this.value.toLowerCase();
-      const resourceCards = document.querySelectorAll('#health-section .card');
-      
-      resourceCards.forEach(card => {
-        const title = card.querySelector('h3').textContent.toLowerCase();
-        const description = card.textContent.toLowerCase();
-        
-        if (searchTerm === '' || title.includes(searchTerm) || description.includes(searchTerm)) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    });
+    resourceSearchInput.addEventListener('input', applyResourceFilters);
   }
-  
+
   resourceFilterBtns.forEach(btn => {
     btn.addEventListener('click', function() {
       resourceFilterBtns.forEach(b => b.classList.remove('active'));
       this.classList.add('active');
-      
-      const filter = this.textContent.trim();
-      const resourceCards = document.querySelectorAll('#health-section .card');
-      
-      resourceCards.forEach(card => {
-        const tag = card.querySelector('.tag').textContent.trim();
-        if (filter === 'All' || tag === filter) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
+      applyResourceFilters();
     });
   });
 
   // Filter functionality for Events
   const eventFilterBtns = document.querySelectorAll('#events-section .filters button');
   const eventSearchInput = document.querySelector('#events-section .search-area input[type="text"]');
-  
-  // Search functionality for Events
+
   if (eventSearchInput) {
-    eventSearchInput.addEventListener('input', function() {
-      const searchTerm = this.value.toLowerCase();
-      const eventCards = document.querySelectorAll('#events-section .card');
-      
-      eventCards.forEach(card => {
-        const title = card.querySelector('h3').textContent.toLowerCase();
-        const description = card.textContent.toLowerCase();
-        
-        if (searchTerm === '' || title.includes(searchTerm) || description.includes(searchTerm)) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    });
+    eventSearchInput.addEventListener('input', applyEventFilters);
   }
-  
+
   eventFilterBtns.forEach(btn => {
     btn.addEventListener('click', function() {
       eventFilterBtns.forEach(b => b.classList.remove('active'));
       this.classList.add('active');
-      
-      const filter = this.textContent.trim();
-      const eventCards = document.querySelectorAll('#events-section .card');
-      
-      eventCards.forEach(card => {
-        const tag = card.querySelector('.tag').textContent.trim();
-        if (filter === 'All' || tag === filter) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
+      applyEventFilters();
     });
   });
+
+  document.querySelectorAll('#events-section .card').forEach(card => {
+    setupEventCard(card);
+  });
+
+  document.querySelectorAll('#health-section .card').forEach(card => {
+    const title = card.querySelector('h3')?.textContent || '';
+    const desc1 = card.querySelectorAll('p')[0]?.textContent || '';
+    const desc2 = card.querySelectorAll('p')[1]?.textContent || '';
+    const category = card.querySelector('.tag')?.textContent || '';
+    setResourceCardData(card, { title, desc1, desc2, category });
+    card.addEventListener('click', function() {
+      openResourceDetail(card);
+    });
+  });
+
+  // Rehydrate pending items from localStorage
+  cleanupPendingLocal('pendingEvents', 1000 * 60 * 60 * 24 * 14);
+  cleanupPendingLocal('pendingResources', 1000 * 60 * 60 * 24 * 14);
+  const pendingEvents = loadPendingLocal('pendingEvents');
+  pendingEvents.forEach(item => {
+    const existing = Array.from(cards.querySelectorAll('.card')).some(card => {
+      const title = (card.dataset.title || card.querySelector('h3')?.textContent || '').trim().toLowerCase();
+      return title && item.title && title === item.title.trim().toLowerCase();
+    });
+    if (!existing) {
+      const card = buildEventCardFromData(item);
+      card.classList.add('pending-card');
+      cards.insertBefore(card, cards.firstChild);
+    }
+  });
+  applyEventFilters();
+
+  const pendingResources = loadPendingLocal('pendingResources');
+  pendingResources.forEach(item => {
+    const existing = Array.from(resourceCards.querySelectorAll('.card')).some(card => {
+      const title = (card.dataset.title || card.querySelector('h3')?.textContent || '').trim().toLowerCase();
+      return title && item.title && title === item.title.trim().toLowerCase();
+    });
+    if (!existing) {
+      const card = buildResourceCardFromData(item);
+      card.classList.add('pending-card');
+      resourceCards.insertBefore(card, resourceCards.firstChild);
+    }
+  });
+  applyResourceFilters();
 });
 </script>
 
@@ -519,6 +987,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, serverTimestamp, doc, setDoc, updateDoc, getDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
@@ -531,6 +1000,134 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  window.currentUserRole = 'member';
+
+  // Helper: create a pending event and send a notification to admins/founders
+  window.createPendingEvent = async function(eventData) {
+    if (!auth.currentUser) throw new Error('Not authenticated');
+    const payload = {
+      ...eventData,
+      createdBy: auth.currentUser.uid,
+      createdByEmail: auth.currentUser.email || null,
+      status: 'pending',
+      createdAt: serverTimestamp()
+    };
+    const ref = await addDoc(collection(db, 'pendingEvents'), payload);
+    // create notification for admins/founders
+    await addDoc(collection(db, 'notifications'), {
+      type: 'approval',
+      itemType: 'event',
+      itemId: ref.id,
+      title: eventData.title,
+      message: `New event submitted: ${eventData.title}`,
+      recipientsRole: ['admin','founder'],
+      status: 'unread',
+      createdBy: auth.currentUser.uid,
+      createdByEmail: auth.currentUser.email || null,
+      createdAt: serverTimestamp()
+    });
+    // notify submitter
+    await addDoc(collection(db, 'notifications'), {
+      type: 'submission',
+      itemType: 'event',
+      itemId: ref.id,
+      title: 'Event Submitted',
+      message: `Your event "${eventData.title}" is pending approval.`,
+      createdBy: auth.currentUser.uid,
+      createdByEmail: auth.currentUser.email || null,
+      status: 'unread',
+      createdAt: serverTimestamp()
+    });
+    return ref;
+  };
+
+  // Helper: create an event signup and notify the user
+  window.createEventSignup = async function(eventData) {
+    if (!auth.currentUser) throw new Error('Not authenticated');
+    const payload = {
+      ...eventData,
+      createdBy: auth.currentUser.uid,
+      createdByEmail: auth.currentUser.email || null,
+      createdAt: serverTimestamp()
+    };
+    const ref = await addDoc(collection(db, 'eventSignups'), payload);
+    await addDoc(collection(db, 'notifications'), {
+      type: 'eventSignup',
+      itemType: 'event',
+      itemId: ref.id,
+      title: eventData.title,
+      message: `You signed up for ${eventData.title}.`,
+      createdBy: auth.currentUser.uid,
+      createdByEmail: auth.currentUser.email || null,
+      status: 'unread',
+      createdAt: serverTimestamp()
+    });
+    return ref;
+  };
+
+  // Helper: save a resource for the current user
+  window.createResourceSave = async function(resourceData) {
+    if (!auth.currentUser) throw new Error('Not authenticated');
+    const payload = {
+      ...resourceData,
+      dateKey: new Date().toISOString().slice(0, 10),
+      createdBy: auth.currentUser.uid,
+      createdByEmail: auth.currentUser.email || null,
+      createdAt: serverTimestamp()
+    };
+    const ref = await addDoc(collection(db, 'resourceSaves'), payload);
+    await addDoc(collection(db, 'notifications'), {
+      type: 'resourceSave',
+      itemType: 'resource',
+      itemId: ref.id,
+      title: resourceData.title,
+      message: `You saved ${resourceData.title}.`,
+      createdBy: auth.currentUser.uid,
+      createdByEmail: auth.currentUser.email || null,
+      status: 'unread',
+      createdAt: serverTimestamp()
+    });
+    return ref;
+  };
+
+  // Helper: create a pending resource and notify admins/founders
+  window.createPendingResource = async function(resourceData) {
+    if (!auth.currentUser) throw new Error('Not authenticated');
+    const payload = {
+      ...resourceData,
+      createdBy: auth.currentUser.uid,
+      createdByEmail: auth.currentUser.email || null,
+      status: 'pending',
+      createdAt: serverTimestamp()
+    };
+    const ref = await addDoc(collection(db, 'pendingResources'), payload);
+    await addDoc(collection(db, 'notifications'), {
+      type: 'approval',
+      itemType: 'resource',
+      itemId: ref.id,
+      title: resourceData.title,
+      message: `New resource submitted: ${resourceData.title}`,
+      recipientsRole: ['admin','founder'],
+      status: 'unread',
+      createdBy: auth.currentUser.uid,
+      createdByEmail: auth.currentUser.email || null,
+      createdAt: serverTimestamp()
+    });
+    await addDoc(collection(db, 'notifications'), {
+      type: 'submission',
+      itemType: 'resource',
+      itemId: ref.id,
+      title: 'Resource Submitted',
+      message: `Your resource "${resourceData.title}" is pending approval.`,
+      createdBy: auth.currentUser.uid,
+      createdByEmail: auth.currentUser.email || null,
+      status: 'unread',
+      createdAt: serverTimestamp()
+    });
+    return ref;
+  };
 
   window.signOutUser = function() {
     signOut(auth).then(() => {
@@ -544,10 +1141,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const avatar = document.querySelector('.avatar');
     const navRight = document.querySelector('.nav-right');
     if (user) {
+      if (!user.emailVerified) {
+        signOut(auth).finally(() => {
+          window.location.href = 'index.html?verify=1';
+        });
+        return;
+      }
+      const roleDocRef = doc(db, 'users', user.uid);
+      getDoc(roleDocRef).then((snap) => {
+        if (snap.exists() && snap.data().role) {
+          window.currentUserRole = snap.data().role;
+        }
+      }).catch(() => {
+        window.currentUserRole = 'member';
+      });
       // User is signed in
-      const initial = user.email.charAt(0).toUpperCase();
+      const initial = (user.email || '').charAt(0).toUpperCase();
       if (avatar) {
-        avatar.textContent = initial;
+        if (user.photoURL) {
+          avatar.style.backgroundImage = `url('${user.photoURL}')`;
+          avatar.style.backgroundSize = 'cover';
+          avatar.style.backgroundPosition = 'center';
+          avatar.textContent = '';
+        } else {
+          avatar.style.backgroundImage = '';
+          avatar.textContent = initial;
+        }
+        avatar.style.cursor = 'pointer';
+        avatar.onclick = () => window.location.href = 'account.html';
       }
       // Remove sign in button if exists
       const signInBtn = document.querySelector('.sign-in-btn');
@@ -618,6 +1239,43 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
+
+  // Load approved events/resources from Firestore if available
+  const eventsQuery = query(collection(db, 'events'));
+  onSnapshot(eventsQuery, (snapshot) => {
+    const list = [];
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      list.push({
+        title: data.title,
+        date: data.date || data.dateText || '',
+        time: data.time || '',
+        location: data.location || '',
+        desc: data.desc || data.description || '',
+        category: data.category || 'Community Events'
+      });
+    });
+    if (list.length && window.renderEventsFromFirestore) {
+      window.renderEventsFromFirestore(list);
+    }
+  }, () => {});
+
+  const resourcesQuery = query(collection(db, 'resources'));
+  onSnapshot(resourcesQuery, (snapshot) => {
+    const list = [];
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      list.push({
+        title: data.title,
+        desc1: data.desc1 || data.description || '',
+        desc2: data.desc2 || '',
+        category: data.category || 'Wellness'
+      });
+    });
+    if (list.length && window.renderResourcesFromFirestore) {
+      window.renderResourcesFromFirestore(list);
+    }
+  }, () => {});
 </script>
 <script src="bubbles.js"></script>
 </body>

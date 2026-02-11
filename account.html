@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Account - Ripple</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="account.css">
+</head>
+<body>
+  <div class="page">
+    <header class="nav">
+      <div class="nav-left">
+        <div><img src="logo.png" width="75px"></div>
+        <div class="logo-text">Ripple</div>
+        <nav class="nav-links">
+          <a class="nav-link" href="main.html">Home</a>
+          <a class="nav-link" href="resources.html">Resources</a>
+          <a class="nav-link" href="communites.html">Communities</a>
+          <a class="nav-link" href="support.html">Support</a>
+          <a class="nav-link" href="calender.html">Calendar</a>
+        </nav>
+      </div>
+      <div class="nav-right">
+        <a class="notif-icon" href="notifications.html" title="Notifications">N</a>
+        <div class="avatar">A</div>
+      </div>
+    </header>
+
+    <main class="account-main">
+      <section class="account-card">
+        <div class="account-card-grid">
+          <div class="account-info">
+            <h2>Your Account</h2>
+
+            <form id="accountForm" class="account-form">
+              <label class="field-label">Full Name</label>
+              <input type="text" id="fullName" placeholder="Your full name" />
+
+              <label class="field-label">Email</label>
+              <input type="email" id="email" placeholder="you@example.com" />
+
+              <div class="form-actions">
+                <button type="submit" class="primary-btn">Save Changes</button>
+                <button type="button" id="signOutBtn" class="secondary-btn">Sign Out</button>
+              </div>
+
+              <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--border-subtle);">
+
+              <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">All new users start as <strong>Member</strong>. Use "Request Admin Role" to ask for promotion.</p>
+
+              <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+                <div class="extra-actions">
+                  <button type="button" id="sendResetEmail" class="secondary-btn">Send Password Reset Email</button>
+                </div>
+                <div>
+                  <button type="button" id="requestAdminBtn" class="secondary-btn">Request Admin Role</button>
+                </div>
+              </div>
+
+              <div id="accountMessage" class="account-message" role="status" aria-live="polite"></div>
+            </form>
+          </div>
+
+          <aside class="profile-side">
+            <div class="photo-wrapper">
+              <img id="photoPreview" src="logo.png" alt="Profile photo" />
+              <input type="file" id="photoInput" accept="image/*" />
+              <button id="uploadPhotoBtn" class="secondary-btn">Upload Photo</button>
+              <div class="upload-hint">Large uploads can take a minute on slower connections.</div>
+            </div>
+            <div class="account-meta">
+              <div><strong>UID:</strong> <span id="userUid">—</span></div>
+              <div><strong>Role:</strong> <span id="userRole">Member</span></div>
+              <div><strong>Member since:</strong> <span id="memberSince">—</span></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Reauthentication modal -->
+  <div id="reauthModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card">
+      <h3>Verify Your Identity</h3>
+      <p>Please enter your current password to proceed with sensitive changes.</p>
+      <input type="password" id="reauthPassword" placeholder="Current password" />
+      <div class="modal-actions">
+        <button id="reauthCancel" class="secondary-btn">Cancel</button>
+        <button id="reauthConfirm" class="primary-btn">Confirm</button>
+      </div>
+      <div id="reauthMessage" class="account-message"></div>
+    </div>
+  </div>
+
+  <!-- Spam check popup -->
+  <div id="spamPopup" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card">
+      <h3>✓ Email Sent</h3>
+      <p>A password reset email has been sent. <strong>Please check your spam folder</strong> if you don't see it in your inbox within a few minutes.</p>
+      <div class="modal-actions">
+        <button id="spamPopupOk" class="primary-btn">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut, updateProfile, updateEmail, reauthenticateWithCredential, EmailAuthProvider, updatePassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
+      authDomain: "webmaster-v4-0.firebaseapp.com",
+      projectId: "webmaster-v4-0",
+      storageBucket: "webmaster-v4-0.firebasestorage.app",
+      messagingSenderId: "413556961992",
+      appId: "1:413556961992:web:899600895ecb68eb9debfd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    const accountForm = document.getElementById('accountForm');
+    const accountMessage = document.getElementById('accountMessage');
+    const photoInput = document.getElementById('photoInput');
+    const photoPreview = document.getElementById('photoPreview');
+    const uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
+    const userUidEl = document.getElementById('userUid');
+    const memberSinceEl = document.getElementById('memberSince');
+    const userRoleEl = document.getElementById('userRole');
+
+    let currentUser = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        // Not signed in — redirect to sign-in page
+        window.location.href = 'index.html';
+        return;
+      }
+      if (!user.emailVerified) {
+        await signOut(auth);
+        window.location.href = 'index.html?verify=1';
+        return;
+      }
+      currentUser = user;
+      // Bootstrap founders (temporary for school project)
+      const BOOTSTRAP_FOUNDERS = [
+        'prayag.patel5240@gmail.com',
+        'choppapurandhar@gmail.com'
+      ];
+      if (user.email && BOOTSTRAP_FOUNDERS.includes(user.email.toLowerCase())) {
+        if (userRoleEl) userRoleEl.textContent = 'founder';
+      }
+      // Prefill fields
+      document.getElementById('fullName').value = user.displayName || '';
+      document.getElementById('email').value = user.email || '';
+      userUidEl.textContent = user.uid;
+      if (user.metadata && user.metadata.creationTime) {
+        memberSinceEl.textContent = new Date(user.metadata.creationTime).toLocaleDateString();
+      }
+
+      if (user.photoURL) {
+        photoPreview.src = user.photoURL;
+      }
+
+      // Try to fetch extended profile from Firestore
+      try {
+        const docRef = doc(db, 'users', user.uid);
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          const data = snap.data();
+          if (userRoleEl) {
+            userRoleEl.textContent = data.role ? data.role : 'Member';
+          }
+          if (data.photoURL && !user.photoURL) {
+            photoPreview.src = data.photoURL;
+          }
+        }
+
+        // If this user's email is in the bootstrap list, ensure they are founder
+        if (user.email && BOOTSTRAP_FOUNDERS.includes(user.email.toLowerCase())) {
+          // Persist to Firestore so other pages see the role (merge to avoid clobbering)
+          try {
+            await setDoc(doc(db, 'users', user.uid), { role: 'founder' }, { merge: true });
+            console.log('Bootstrapped founder role for', user.email);
+            showToast('Founder role applied (bootstrap)', 'success');
+            if (userRoleEl) userRoleEl.textContent = 'founder';
+          } catch (err) {
+            console.warn('Failed to persist bootstrap role:', err);
+          }
+        }
+      } catch (err) {
+        console.warn('Could not fetch user doc:', err);
+      }
+    });
+
+    // Utility: toast
+    function showToast(message, type = 'info', timeout = 4000) {
+      const container = document.getElementById('toastContainer');
+      const el = document.createElement('div');
+      el.className = `toast toast-${type}`;
+      el.textContent = message;
+      container.appendChild(el);
+      setTimeout(() => el.classList.add('show'), 50);
+      setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, timeout);
+    }
+
+    // Upload photo to Firebase Storage and update profile
+    uploadPhotoBtn.addEventListener('click', async () => {
+      const file = photoInput.files[0];
+      if (!file) {
+        accountMessage.textContent = 'Please choose a file first.';
+        accountMessage.style.color = '#ef4444';
+        return;
+      }
+      accountMessage.textContent = 'Uploading...';
+      accountMessage.style.color = '#333';
+      try {
+        const storageReference = storageRef(storage, `profilePictures/${currentUser.uid}`);
+        const uploadTask = uploadBytesResumable(storageReference, file);
+        accountMessage.textContent = 'Uploading... 0%';
+        accountMessage.style.color = '#333';
+        const url = await new Promise((resolve, reject) => {
+          uploadTask.on('state_changed', (snapshot) => {
+            const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+            accountMessage.textContent = `Uploading... ${percent}%`;
+          }, reject, async () => {
+            try {
+              const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+              resolve(downloadUrl);
+            } catch (err) {
+              reject(err);
+            }
+          });
+        });
+        // Update Firebase Auth profile and Firestore
+        await updateProfile(currentUser, { photoURL: url });
+        await setDoc(doc(db, 'users', currentUser.uid), { photoURL: url }, { merge: true });
+        photoPreview.src = url;
+        accountMessage.textContent = 'Photo uploaded and profile updated.';
+        accountMessage.style.color = '#2563eb';
+        showToast('Profile photo updated', 'success');
+      } catch (err) {
+        console.error(err);
+        accountMessage.textContent = 'Upload failed.';
+        accountMessage.style.color = '#ef4444';
+        showToast('Photo upload failed', 'error');
+      }
+    });
+
+    // Save changes (display name, email, password) with inline reauth modal
+    let pendingChanges = null;
+    accountForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
+      const newName = document.getElementById('fullName').value.trim();
+      const newEmail = document.getElementById('email').value.trim();
+
+      accountMessage.textContent = '';
+
+      // Basic client-side validation
+      if (newEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+        accountMessage.textContent = 'Invalid email format.';
+        accountMessage.style.color = '#ef4444';
+        showToast('Invalid email format', 'error');
+        return;
+      }
+
+      // Determine whether reauthentication is required
+      const needsReauth = (newEmail && newEmail !== currentUser.email);
+
+      // Apply non-sensitive updates first (display name)
+      try {
+        if (newName && newName !== currentUser.displayName) {
+          await updateProfile(currentUser, { displayName: newName });
+          await setDoc(doc(db, 'users', currentUser.uid), { name: newName }, { merge: true });
+          showToast('Display name updated', 'success');
+        }
+      } catch (err) {
+        console.error('Update failed', err);
+        showToast('Failed to update profile', 'error');
+      }
+
+      if (!needsReauth) {
+        showToast('Profile updated', 'success');
+        accountMessage.textContent = 'Profile updated successfully.';
+        accountMessage.style.color = '#2563eb';
+        return;
+      }
+
+      // Save pending sensitive changes and open modal
+      pendingChanges = { newEmail };
+      document.getElementById('reauthPassword').value = '';
+      document.getElementById('reauthMessage').textContent = '';
+      document.getElementById('reauthModal').classList.add('open');
+    });
+
+    // Reauth modal handlers
+    document.getElementById('reauthCancel').addEventListener('click', () => {
+      document.getElementById('reauthModal').classList.remove('open');
+      pendingChanges = null;
+      showToast('Operation cancelled', 'info');
+    });
+
+    document.getElementById('reauthConfirm').addEventListener('click', async () => {
+      const pw = document.getElementById('reauthPassword').value;
+      const msgEl = document.getElementById('reauthMessage');
+      if (!pw) {
+        msgEl.textContent = 'Please enter your current password.';
+        msgEl.style.color = '#ef4444';
+        return;
+      }
+      msgEl.textContent = 'Verifying...';
+      msgEl.style.color = '#333';
+      try {
+        const cred = EmailAuthProvider.credential(currentUser.email, pw);
+        await reauthenticateWithCredential(currentUser, cred);
+
+        // Proceed with pending changes
+        if (pendingChanges) {
+          if (pendingChanges.newEmail && pendingChanges.newEmail !== currentUser.email) {
+            await updateEmail(currentUser, pendingChanges.newEmail);
+            await setDoc(doc(db, 'users', currentUser.uid), { email: pendingChanges.newEmail }, { merge: true });
+            showToast('Email updated', 'success');
+          }
+          accountMessage.textContent = 'Profile updated successfully.';
+          accountMessage.style.color = '#2563eb';
+          pendingChanges = null;
+        }
+        document.getElementById('reauthModal').classList.remove('open');
+      } catch (err) {
+        console.error('Reauth failed', err);
+        msgEl.textContent = 'Verification failed: ' + (err.message || '');
+        msgEl.style.color = '#ef4444';
+        showToast('Verification failed', 'error');
+      }
+    });
+
+    // Send password reset email
+    document.getElementById('sendResetEmail').addEventListener('click', async () => {
+      if (!currentUser || !currentUser.email) return;
+      try {
+        await sendPasswordResetEmail(auth, currentUser.email);
+        accountMessage.textContent = 'Password reset email sent to ' + currentUser.email;
+        accountMessage.style.color = '#2563eb';
+        // Show spam-check popup
+        document.getElementById('spamPopup').classList.add('open');
+        showToast('Reset email sent', 'success');
+      } catch (err) {
+        console.error(err);
+        accountMessage.textContent = 'Error sending reset email: ' + err.message;
+        accountMessage.style.color = '#ef4444';
+        showToast('Failed to send reset email', 'error');
+      }
+    });
+
+    // Request admin role
+    document.getElementById('requestAdminBtn').addEventListener('click', async () => {
+      if (!currentUser) return showToast('You must be signed in', 'error');
+      try {
+        // Create a role request doc
+        const payload = {
+          requestedRole: 'admin',
+          status: 'pending',
+          createdBy: currentUser.uid,
+          createdByEmail: currentUser.email || null,
+          createdAt: serverTimestamp()
+        };
+        const reqRef = await addDoc(collection(db, 'roleRequests'), payload);
+        // Create notification for admins/founders
+        await addDoc(collection(db, 'notifications'), {
+          type: 'roleRequest',
+          itemType: 'roleRequest',
+          itemId: reqRef.id,
+          requestorId: currentUser.uid,
+          title: 'Admin Role Request',
+          message: `${currentUser.email || 'A user'} has requested admin access.`,
+          recipientsRole: ['admin','founder'],
+          status: 'unread',
+          createdBy: currentUser.uid,
+          createdByEmail: currentUser.email || null,
+          createdAt: serverTimestamp()
+        });
+        showToast('Admin request submitted', 'success');
+        accountMessage.textContent = 'Admin request submitted. An admin will review it.';
+        accountMessage.style.color = '#2563eb';
+      } catch (err) {
+        console.error('Role request failed', err);
+        showToast('Failed to request admin role', 'error');
+      }
+    });
+
+    document.getElementById('spamPopupOk').addEventListener('click', () => {
+      document.getElementById('spamPopup').classList.remove('open');
+    });
+
+    // Sign out
+    document.getElementById('signOutBtn').addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>

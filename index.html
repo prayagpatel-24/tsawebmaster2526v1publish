@@ -89,6 +89,23 @@
             background: #4563d9;
         }
 
+        .auth-secondary-btn {
+            padding: 10px 16px;
+            background: #eef2ff;
+            color: #2e63e5;
+            border: 1px solid #c7d2fe;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .auth-secondary-btn:hover {
+            background: #e0e7ff;
+            border-color: #a5b4fc;
+        }
+
         .auth-switch-text {
             text-align: center;
             margin-top: 16px;
@@ -130,6 +147,7 @@
                     <input type="email" id="signInEmail" placeholder="Email" required />
                     <input type="password" id="signInPassword" placeholder="Password" required />
                     <button type="submit" class="auth-submit-btn">Sign In</button>
+                    <button type="button" id="resendVerificationBtn" class="auth-secondary-btn">Resend Verification Email</button>
                 </form>
                 <p class="auth-switch-text">Don't have an account? <a href="#" id="switchToSignUp">Sign Up</a></p>
                 <div class="error-message" id="signInError"></div>
@@ -155,8 +173,8 @@
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { getFirestore, setDoc, doc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         // Firebase configuration
         const firebaseConfig = {
@@ -176,6 +194,12 @@
         // Check if user is logged in
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                if (!user.emailVerified) {
+                    signInError.textContent = 'Please verify your email before signing in.';
+                    signInError.classList.add('show');
+                    signOut(auth);
+                    return;
+                }
                 window.location.href = 'main.html';
             }
         });
@@ -189,6 +213,16 @@
         const signUpFormElement = document.getElementById('signUpFormElement');
         const signInError = document.getElementById('signInError');
         const signUpError = document.getElementById('signUpError');
+        const resendVerificationBtn = document.getElementById('resendVerificationBtn');
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('verify') === '1') {
+            signInError.textContent = 'Please verify your email before signing in.';
+            signInError.classList.add('show');
+        }
+        const BOOTSTRAP_FOUNDERS = [
+            'prayag.patel5240@gmail.com',
+            'choppapurandhar@gmail.com'
+        ];
 
         // Switch to Sign Up
         switchToSignUp.addEventListener('click', function(e) {
@@ -215,6 +249,38 @@
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
+                    if (!user.emailVerified) {
+                        sendEmailVerification(user)
+                            .then(() => {
+                                signInError.textContent = 'Verification email sent. Please check your inbox.';
+                                signInError.classList.add('show');
+                            })
+                            .catch(() => {
+                                signInError.textContent = 'Please verify your email before signing in.';
+                                signInError.classList.add('show');
+                            })
+                            .finally(() => {
+                                signOut(auth);
+                            });
+                        return;
+                    }
+                    // Bootstrap founders
+                    if (user.email && BOOTSTRAP_FOUNDERS.includes(user.email.toLowerCase())) {
+                        setDoc(doc(db, "users", user.uid), { role: 'founder' }, { merge: true }).catch(() => {});
+                    }
+                    // Notify admins/founders of login
+                    addDoc(collection(db, 'notifications'), {
+                        type: 'auth',
+                        itemType: 'login',
+                        itemId: user.uid,
+                        title: 'User Login',
+                        message: `${user.email || 'A user'} signed in.`,
+                        recipientsRole: ['admin','founder'],
+                        status: 'unread',
+                        createdBy: user.uid,
+                        createdByEmail: user.email || null,
+                        createdAt: serverTimestamp()
+                    }).catch(() => {});
                     window.location.href = 'main.html';
                 })
                 .catch((error) => {
@@ -260,6 +326,24 @@
                         createdAt: new Date()
                     });
 
+                    if (email && BOOTSTRAP_FOUNDERS.includes(email.toLowerCase())) {
+                        setDoc(doc(db, "users", user.uid), { role: 'founder' }, { merge: true }).catch(() => {});
+                    }
+
+                    // Notify admins/founders of signup
+                    addDoc(collection(db, 'notifications'), {
+                        type: 'auth',
+                        itemType: 'signup',
+                        itemId: user.uid,
+                        title: 'New Signup',
+                        message: `${email} created a new account.`,
+                        recipientsRole: ['admin','founder'],
+                        status: 'unread',
+                        createdBy: user.uid,
+                        createdByEmail: email,
+                        createdAt: serverTimestamp()
+                    }).catch(() => {});
+
                     // Send email verification
                     sendEmailVerification(user)
                         .then(() => {
@@ -294,6 +378,37 @@
                     }
                     signUpError.textContent = message;
                     signUpError.classList.add('show');
+                });
+        });
+
+        // Resend verification email
+        resendVerificationBtn.addEventListener('click', function() {
+            const email = document.getElementById('signInEmail').value;
+            const password = document.getElementById('signInPassword').value;
+            if (!email || !password) {
+                signInError.textContent = 'Enter your email and password to resend verification.';
+                signInError.classList.add('show');
+                return;
+            }
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    if (user.emailVerified) {
+                        signInError.textContent = 'Your email is already verified. You can sign in.';
+                        signInError.classList.add('show');
+                        signOut(auth);
+                        return;
+                    }
+                    return sendEmailVerification(user).then(() => {
+                        signInError.textContent = 'Verification email resent. Please check your inbox.';
+                        signInError.classList.add('show');
+                        signOut(auth);
+                    });
+                })
+                .catch((error) => {
+                    signInError.textContent = 'Unable to resend verification. Check your credentials.';
+                    signInError.classList.add('show');
+                    console.error('Resend verification error:', error);
                 });
         });
     </script>

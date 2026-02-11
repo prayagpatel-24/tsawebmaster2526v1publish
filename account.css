@@ -1,0 +1,153 @@
+/* Account page specific styles */
+.account-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+}
+
+.account-card {
+  background: var(--white);
+  max-width: 640px;
+  width: 100%;
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border-subtle);
+}
+
+.account-card h2 {
+  margin-bottom: 18px;
+  font-family: "Lora", serif;
+  font-size: 26px;
+  color: var(--text-dark);
+  text-align: left;
+}
+
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field-label {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.account-form input,
+.account-form select {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-subtle);
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.secondary-btn {
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: linear-gradient(to bottom, #e2e8f0, #cbd5e1);
+  color: var(--text-dark);
+  border: none;
+  font-weight: 600;
+}
+
+.account-message {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+@media (max-width: 720px) {
+  .nav-links { display: none; }
+  .account-card { padding: 20px; margin: 12px; }
+}
+
+/* Grid layout for account card */
+.account-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 20px;
+  align-items: start;
+}
+
+.profile-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.photo-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.upload-hint {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.photo-wrapper img {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 999px;
+  border: 4px solid rgba(255,255,255,0.9);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.photo-wrapper input[type="file"] {
+  width: 100%;
+}
+
+.account-meta { font-size: 13px; color: var(--text-muted); }
+
+@media (max-width: 900px) {
+  .account-card-grid { grid-template-columns: 1fr; }
+  .profile-side { flex-direction: row; align-items: center; gap: 12px; }
+  .photo-wrapper img { width: 96px; height: 96px; }
+}
+
+/* Reauth modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15,23,42,0.45);
+  z-index: 2000;
+}
+.modal-backdrop.open { display: flex; }
+.modal-card {
+  background: var(--white);
+  padding: 20px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.14);
+  text-align: left;
+}
+.modal-card h3 { margin: 0 0 8px; }
+.modal-card p { margin: 0 0 12px; color: var(--text-muted); }
+.modal-card input { width: 100%; padding: 10px 12px; margin-bottom: 12px; border-radius: 8px; border: 1px solid var(--border-subtle); }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* Toasts */
+#toastContainer { position: fixed; right: 20px; bottom: 20px; z-index: 3000; display: flex; flex-direction: column; gap: 8px; }
+.toast { background: rgba(0,0,0,0.85); color: white; padding: 10px 14px; border-radius: 8px; transform: translateY(8px); opacity: 0; transition: all 240ms ease; }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-success { background: linear-gradient(90deg,#16a34a,#059669); }
+.toast-error { background: linear-gradient(90deg,#dc2626,#b91c1c); }
+.toast-info { background: linear-gradient(90deg,#2563eb,#1e40af); }
