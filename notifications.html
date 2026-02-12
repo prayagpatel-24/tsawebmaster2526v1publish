@@ -4,33 +4,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Notifications - Ripple</title>
+
+  <!-- Same fonts as the rest of the site -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Courgette&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="main.css">
   <link rel="stylesheet" href="notifications.css">
-
 </head>
 <body>
-  <header class="nav">
-    <div class="nav-left">
-      <div><img src="logo.png" width="75px"></div>
-      <div class="logo-text">Ripple</div>
-      <button class="hamburger" aria-label="Toggle navigation menu">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-      </button>
-      <nav class="nav-links">
-        <a class="nav-link" href="main.html">Home</a>
-        <a class="nav-link" href="resources.html">Resources</a>
-        <a class="nav-link" href="communites.html">Communities</a>
-        <a class="nav-link" href="support.html">Support</a>
-        <a class="nav-link" href="calender.html">Calendar</a>
-      </nav>
-    </div>
-    <div class="nav-right">
-      <a class="notif-icon" href="notifications.html" title="Notifications">N</a>
-      <div class="avatar" id="avatarBtn" title="Account" style="cursor:pointer"></div>
-    </div>
-  </header>
+  <div id="header-placeholder"></div>
 
   <main class="notif-page">
     <div class="notif-shell">
@@ -303,5 +288,71 @@
       });
     });
   </script>
+  <script>
+  // Load shared header
+  document.addEventListener('DOMContentLoaded', function () {
+    const headerPlaceholder = document.getElementById('header-placeholder');
+    if (headerPlaceholder) {
+      fetch('header.html')
+        .then(response => response.text())
+        .then(html => {
+          headerPlaceholder.innerHTML = html;
+
+          // After header is injected, wire up hamburger behavior
+          const hamburger = headerPlaceholder.querySelector('.hamburger');
+          const navLinks = headerPlaceholder.querySelector('.nav-links');
+
+          if (hamburger && navLinks) {
+            hamburger.addEventListener('click', function (event) {
+              event.stopPropagation();
+              navLinks.classList.toggle('open');
+            });
+
+            document.addEventListener('click', function (event) {
+              if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+                navLinks.classList.remove('open');
+              }
+            });
+
+            const navLinkElements = headerPlaceholder.querySelectorAll('.nav-link');
+            navLinkElements.forEach(link => {
+              link.addEventListener('click', function () {
+                navLinks.classList.remove('open');
+              });
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error loading header:', error);
+        });
+    }
+  });
+    document.addEventListener('DOMContentLoaded', function () {
+    const headerPlaceholder = document.getElementById('header-placeholder');
+    if (headerPlaceholder) {
+      fetch('header.html')
+        .then(response => response.text())
+        .then(html => {
+          headerPlaceholder.innerHTML = html;
+
+          // Set active link for this page
+          const current = 'notifications.html'; // this page
+          const links = headerPlaceholder.querySelectorAll('.nav-link');
+          links.forEach(link => {
+            if (link.getAttribute('href') === current) {
+              link.classList.add('active');
+            } else {
+              link.classList.remove('active');
+            }
+          });
+
+          // existing hamburger wiring here...
+        })
+        .catch(error => {
+          console.error('Error loading header:', error);
+        });
+    }
+  });
+</script>
 </body>
 </html>

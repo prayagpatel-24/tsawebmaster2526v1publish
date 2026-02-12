@@ -9,28 +9,8 @@
 <link rel="stylesheet" href="support.css">
 </head>
 <body style="width:100%; overflow-x: hidden;">
-  <header class="nav">
-    <div class="nav-left">
-      <div><img src="logo.png" width="75px"></div>
-      <div class="logo-text">Ripple</div>
-      <button class="hamburger" aria-label="Toggle navigation menu">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-      </button>
-      <nav class="nav-links">
-        <a class="nav-link" href="main.html">Home</a>
-        <a class="nav-link" href="resources.html">Resources</a>
-        <a class="nav-link" href="communites.html">Communities</a>
-        <a class="nav-link active" href="support.html">Support</a>
-        <a class="nav-link" href="calender.html">Calendar</a>
-      </nav>
-    </div>
-    <div class="nav-right">
-      <a class="notif-icon" href="notifications.html" title="Notifications">N</a>
-      <div class="avatar"></div>
-    </div>
-  </header>
+  <div id="header-placeholder"></div>
+
 
 <div class="title">Ripple AI Assistant</div>
 <div class="subtitle">Ask me anything about opportunities, events, or our mission</div>
@@ -44,44 +24,10 @@
     <div class="send-btn db">➤</div>
 </div>
 
-<footer class="footer" style="margin-top: 100px;">
-  <div class="footer-top">
-    <div>
-      <div class="footer-logo-row">
-        <div><img src="logo.png" width="75px"></div>
-        <div class="footer-logo-text-main">Ripple</div>
-      </div>
-      <p>
-        Creating ripples of change across our<br />
-        community, one small action at a time.
-      </p>
-    </div>
-
-    <div>
-      <div class="footer-section-title">Our Team</div>
-      <ul class="footer-list">
-        <li>Purandhar Ram Choppa</li>
-        <li>Prayag Patel</li>
-        <li>Mihir Malladi</li>
-        <li>Advay Pradeep</li>
-        <li>Saaketh Alla</li>
-      </ul>
-    </div>
-
-    <div>
-      <div class="footer-section-title">Get in Touch</div>
-      <ul class="footer-list">
-        <li>hello@ripple.community</li>
-        <li>Terms of Use</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="footer-line"></div>
-  <div class="footer-bottom">
-    © 2025 Ripple — All Rights Reserved
-  </div>
+<footer class="footer" style="margin-top: 221px; width: 100%">
+  <div id="footer-placeholder"></div>
 </footer>
+
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
@@ -259,37 +205,7 @@ onAuthStateChanged(auth, (user) => {
       avatar.onclick = () => window.location.href = 'account.html';
     }
     
-    if (navRight && !document.querySelector('.sign-out-btn')) {
-      const signOutBtn = document.createElement('button');
-      signOutBtn.textContent = 'Sign Out';
-      signOutBtn.className = 'sign-out-btn';
-      signOutBtn.style.padding = '8px 16px';
-      signOutBtn.style.background = 'linear-gradient(to bottom, #ef4444, #dc2626)';
-      signOutBtn.style.color = 'white';
-      signOutBtn.style.border = 'none';
-      signOutBtn.style.borderRadius = '999px';
-      signOutBtn.style.cursor = 'pointer';
-      signOutBtn.style.fontSize = '14px';
-      signOutBtn.style.fontWeight = '600';
-      signOutBtn.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.25)';
-      signOutBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
-      signOutBtn.onclick = function() {
-        signOut(auth).then(() => {
-          window.location.href = 'main.html';
-        }).catch((error) => {
-          console.error('Sign out error:', error);
-        });
-      };
-      signOutBtn.onmouseover = () => {
-        signOutBtn.style.transform = 'translateY(-1px)';
-        signOutBtn.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.35)';
-      };
-      signOutBtn.onmouseout = () => {
-        signOutBtn.style.transform = 'translateY(0)';
-        signOutBtn.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.25)';
-      };
-      navRight.appendChild(signOutBtn);
-    }
+
   } else {
     if (avatar) {
       avatar.textContent = '';
@@ -353,6 +269,86 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const footerPlaceholder = document.getElementById('footer-placeholder');
+    if (footerPlaceholder) {
+      fetch('footer.html')
+        .then(response => response.text())
+        .then(html => {
+          footerPlaceholder.innerHTML = html;
+        })
+        .catch(error => {
+          console.error('Error loading footer:', error);
+        });
+    }
+  });
+</script>
+<script>
+  // Load shared header
+  document.addEventListener('DOMContentLoaded', function () {
+    const headerPlaceholder = document.getElementById('header-placeholder');
+    if (headerPlaceholder) {
+      fetch('header.html')
+        .then(response => response.text())
+        .then(html => {
+          headerPlaceholder.innerHTML = html;
 
+          // After header is injected, wire up hamburger behavior
+          const hamburger = headerPlaceholder.querySelector('.hamburger');
+          const navLinks = headerPlaceholder.querySelector('.nav-links');
+
+          if (hamburger && navLinks) {
+            hamburger.addEventListener('click', function (event) {
+              event.stopPropagation();
+              navLinks.classList.toggle('open');
+            });
+
+            document.addEventListener('click', function (event) {
+              if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+                navLinks.classList.remove('open');
+              }
+            });
+
+            const navLinkElements = headerPlaceholder.querySelectorAll('.nav-link');
+            navLinkElements.forEach(link => {
+              link.addEventListener('click', function () {
+                navLinks.classList.remove('open');
+              });
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error loading header:', error);
+        });
+    }
+  });
+  document.addEventListener('DOMContentLoaded', function () {
+  const headerPlaceholder = document.getElementById('header-placeholder');
+  if (headerPlaceholder) {
+    fetch('header.html')
+      .then(response => response.text())
+      .then(html => {
+        headerPlaceholder.innerHTML = html;
+
+        // Set active link for this page
+        const current = 'support.html'; // this page
+        const links = headerPlaceholder.querySelectorAll('.nav-link');
+        links.forEach(link => {
+          if (link.getAttribute('href') === current) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+
+        // existing hamburger wiring here...
+      })
+      .catch(error => {
+        console.error('Error loading header:', error);
+      });
+  }
+});
+</script>
 </body>
 </html>
