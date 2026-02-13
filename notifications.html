@@ -151,14 +151,9 @@
       notifList.appendChild(card);
     }
 
-    // Bootstrap list for founders (temporary for school project)
-    const BOOTSTRAP_FOUNDERS = [
-      'prayag.patel5240@gmail.com',
-      'choppapurandhar@gmail.com'
-    ];
-
     // Test notification creator
     window.createTestNotification = async () => {
+      
       console.log('Test notification button clicked');
       const user = auth.currentUser;
       console.log('Current user:', user ? user.email : 'NOT SIGNED IN');
@@ -169,17 +164,17 @@
       try {
         console.log('Creating test notification for', user.email);
         const testData = {
-          type: 'test',
-          itemType: 'system',
-          itemId: user.uid + '_' + Date.now(),
-          title: '🧪 Test Notification',
-          message: `Test created at ${new Date().toLocaleString()}`,
-          recipientsRole: ['admin','founder'],
-          status: 'unread',
-          createdBy: user.uid,
-          createdByEmail: user.email || null,
-          createdAt: serverTimestamp()
-        };
+        type: 'test',
+        itemType: 'system',
+        itemId: user.uid + '_' + Date.now(),
+        title: '🧪 Test Notification',
+        message: `Test created at ${new Date().toLocaleString()}`,
+        status: 'unread',  // ← ADD THIS
+        createdBy: user.uid,
+        createdByEmail: user.email || null,
+        createdAt: serverTimestamp()
+        // Remove recipientsRole - let rules handle it
+      };
         console.log('Test data:', testData);
         console.log('Calling addDoc...');
         
@@ -197,12 +192,6 @@
         alert('Failed: ' + (err.message || JSON.stringify(err)));
       }
     };
-
-    // Wire up test button immediately
-    const testNotifBtn = document.getElementById('testNotifBtn');
-    if (testNotifBtn) {
-      testNotifBtn.addEventListener('click', window.createTestNotification);
-    }
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
@@ -234,17 +223,6 @@
       const snap = await getDoc(docRef);
       let role = snap.exists() && snap.data().role ? snap.data().role : 'member';
 
-      // If this user's email is in the bootstrap list, treat them as founder and persist
-      if (user.email && BOOTSTRAP_FOUNDERS.includes(user.email.toLowerCase())) {
-        role = 'founder';
-        try {
-          await setDoc(doc(db, 'users', user.uid), { role: 'founder' }, { merge: true });
-          console.log('Bootstrapped founder role for', user.email);
-        } catch (err) {
-          console.warn('Failed to persist bootstrap founder role:', err);
-        }
-      }
-
       if (role !== 'admin' && role !== 'founder') {
         if (testNotifBtn) testNotifBtn.style.display = 'none';
         notifList.innerHTML = '<div class="notif-empty">You have no moderation privileges. Contact an admin to gain access.</div>';
@@ -253,6 +231,8 @@
 
       if (testNotifBtn) {
         testNotifBtn.style.display = 'inline-flex';
+        // Wire up test button immediately
+        testNotifBtn.addEventListener('click', window.createTestNotification);
       }
 
       // Admin/founder: listen for approval notifications

@@ -219,10 +219,6 @@
             signInError.textContent = 'Please verify your email before signing in.';
             signInError.classList.add('show');
         }
-        const BOOTSTRAP_FOUNDERS = [
-            'prayag.patel5240@gmail.com',
-            'choppapurandhar@gmail.com'
-        ];
 
         // Switch to Sign Up
         switchToSignUp.addEventListener('click', function(e) {
@@ -263,10 +259,6 @@
                                 signOut(auth);
                             });
                         return;
-                    }
-                    // Bootstrap founders
-                    if (user.email && BOOTSTRAP_FOUNDERS.includes(user.email.toLowerCase())) {
-                        setDoc(doc(db, "users", user.uid), { role: 'founder' }, { merge: true }).catch(() => {});
                     }
                     // Notify admins/founders of login
                     addDoc(collection(db, 'notifications'), {
@@ -325,10 +317,6 @@
                         email: email,
                         createdAt: new Date()
                     });
-
-                    if (email && BOOTSTRAP_FOUNDERS.includes(email.toLowerCase())) {
-                        setDoc(doc(db, "users", user.uid), { role: 'founder' }, { merge: true }).catch(() => {});
-                    }
 
                     // Notify admins/founders of signup
                     addDoc(collection(db, 'notifications'), {
