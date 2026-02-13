@@ -66,8 +66,10 @@
 }
 
 @media (max-width: 720px) {
-  .nav-links { display: none; }
-  .account-card { padding: 20px; margin: 12px; }
+  .account-card { 
+    padding: 20px; 
+    margin: 12px; 
+  }
 }
 
 /* Grid layout for account card */
