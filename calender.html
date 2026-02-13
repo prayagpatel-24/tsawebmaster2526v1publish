@@ -6,310 +6,241 @@
   <title>Ripple Calendar</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
-  <!-- Same fonts as main.html -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Courgette&display=swap" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
-  <!-- Shared layout + header styles, then page-specific styles -->
   <link rel="stylesheet" href="main.css">
   <link rel="stylesheet" href="calender.css">
 </head>
 <body>
   <div class="page">
-  <div id="header-placeholder"></div>
+    <div id="header-placeholder"></div>
 
-<div class="main">
-  <h1>Your Event Calendar</h1>
-  <p>Manage your volunteer commitments</p>
-</div>
-
-<div class="page-wrapper">
-  <div class="calendar-box">
-    <div class="calendar-header">
-      <div class="nav-btn" id="prevMonth">‹</div>
-      <div id="monthTitle">November 2025</div>
-      <div class="nav-btn" id="nextMonth">›</div>
+    <div class="main">
+      <h1>Your Event Calendar</h1>
+      <p>Manage your volunteer commitments</p>
     </div>
 
-    <div class="calendar" role="region" aria-label="Google Calendar events">
-      <div style="padding:16px;border:1px solid #e6e6e6;border-radius:8px;background:#fafafa;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <strong>Google Calendar</strong>
-          <small style="color:#666;font-size:13px">Click a day to view events</small>
+    <div class="page-wrapper">
+      <div class="calendar-box">
+        <div class="calendar-header">
+          <div class="nav-btn" id="prevMonth">‹</div>
+          <div id="monthTitle">November 2025</div>
+          <div class="nav-btn" id="nextMonth">›</div>
         </div>
 
-        
-        <div id="calendarGrid"></div>
+        <div class="calendar" role="region" aria-label="Community calendar events">
+          <div style="padding:16px;border:1px solid #e6e6e6;border-radius:8px;background:#fafafa;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <strong>Community Calendar</strong>
+              <small style="color:#666;font-size:13px">Click a day to view events</small>
+            </div>
+            <div id="calendarGrid"></div>
+            <div id="dayEvents" style="margin-top:12px;"></div>
+          </div>
+        </div>
+      </div>
 
-        
-        <div id="dayEvents" style="margin-top:12px;"></div>
+      <div class="right-col">
+        <div class="card hov" style="background-color: #e2eaf3; border: 2px solid #b0d9ee;">
+          <div class="card-title">
+            <i class="fa-regular fa-lightbulb"></i>
+            Recommended for You
+          </div>
+          <small>Based on your interests</small>
 
+          <div class="event-box hov">
+            <div class="event-title">Walk for Wellness</div>
+            <p class="event-desc">5K community walk promoting physical and mental health awareness and fundraising for local health programs.</p>
+            <button class="event-btn dark" onclick="reso()">View Event</button>
+          </div>
+        </div>
+
+        <div class="card hov" style="border: 1px solid #b1b1b1;">
+          <div class="card-title">Your Upcoming Events</div>
+          <div id="upcomingEventsList"></div>
+        </div>
       </div>
     </div>
+
+    <footer class="footer" style="margin-top: 100px; width: 100%">
+      <div id="footer-placeholder"></div>
+    </footer>
   </div>
 
-  <div class="right-col">
-    <div class="card hov" style="background-color: #e2eaf3; border: 2px solid #b0d9ee;">
-      <div class="card-title">
-        <i class="fa-regular fa-lightbulb"></i>
-        Recommended for You
-      </div>
-      <small>Based on your interests</small>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { getFirestore, collection, query, where, onSnapshot, doc, setDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-      <div class="event-box hov">
-        <div class="event-title" >Walk for Wellness</div>
-        <p class="event-desc">5K community walk promoting physical and mental health awareness and fundraising for local health programs.</p>
-        <button class="event-btn dark" onclick="reso()">View Event</button>
-      </div>
-    </div>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
+      authDomain: "webmaster-v4-0.firebaseapp.com",
+      projectId: "webmaster-v4-0",
+      storageBucket: "webmaster-v4-0.firebasestorage.app",
+      messagingSenderId: "413556961992",
+      appId: "1:413556961992:web:899600895ecb68eb9debfd"
+    };
 
-    <div class="card hov"  style="border: 1px solid #b1b1b1;">
-      <div class="card-title">Your Upcoming Events</div>
-      <div id="upcomingEventsList"></div>
-    </div>
-  </div>
-</div>
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-<footer class="footer" style="margin-top: 100px; width: 100%">
-  <div id="footer-placeholder"></div>
-</footer>
-</div>
-
-<!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-  import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
-    authDomain: "webmaster-v4-0.firebaseapp.com",
-    projectId: "webmaster-v4-0",
-    storageBucket: "webmaster-v4-0.firebasestorage.app",
-    messagingSenderId: "413556961992",
-    appId: "1:413556961992:web:899600895ecb68eb9debfd"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  window.signOutUser = function() {
-    signOut(auth).then(() => {
-      location.reload();
-    }).catch((error) => {
-      console.error('Sign out error:', error);
-    });
-  };
-
-  onAuthStateChanged(auth, (user) => {
-    const avatar = document.querySelector('.avatar');
-    const navRight = document.querySelector('.nav-right');
-    if (user) {
-      if (!user.emailVerified) {
-        signOut(auth).finally(() => {
-          window.location.href = 'index.html?verify=1';
-        });
-        return;
+    function getVisitorId() {
+      const key = 'rippleVisitorId';
+      let id = localStorage.getItem(key);
+      if (!id) {
+        id = `visitor_${Math.random().toString(36).slice(2, 10)}_${Date.now().toString(36)}`;
+        localStorage.setItem(key, id);
       }
-      window.pendingLoginHint = user.email || null;
-      const initial = (user.email || '').charAt(0).toUpperCase();
-      if (avatar) {
-        if (user.photoURL) {
-          avatar.style.backgroundImage = `url('${user.photoURL}')`;
-          avatar.style.backgroundSize = 'cover';
-          avatar.style.backgroundPosition = 'center';
-          avatar.textContent = '';
-        } else {
-          avatar.style.backgroundImage = '';
-          avatar.textContent = initial;
-        }
-        avatar.style.cursor = 'pointer';
-        avatar.onclick = () => window.location.href = 'account.html';
-      }
-
-      // Load signed-up events for this user
-      const signupQuery = query(collection(db, 'eventSignups'), where('createdBy', '==', user.uid));
-      onSnapshot(signupQuery, (snapshot) => {
-        const list = [];
-        snapshot.forEach(docSnap => {
-          const data = docSnap.data();
-          list.push({
-            summary: data.title || '(No title)',
-            dateKey: data.date ? new Date(data.date).toISOString().slice(0, 10) : null,
-            time: data.time || 'All day',
-            location: data.location || ''
-          });
-        });
-        window.localEventSignups = list.filter(ev => ev.dateKey);
-        if (window.renderUserEvents) {
-          window.renderUserEvents(window.localEventSignups);
-        }
-        if (window.refreshCalendarEvents) {
-          window.refreshCalendarEvents();
-        }
-      });
-
-      const approvedEventsQuery = query(collection(db, 'events'));
-      onSnapshot(approvedEventsQuery, (snapshot) => {
-        const list = [];
-        snapshot.forEach(docSnap => {
-          const data = docSnap.data();
-          list.push({
-            summary: data.title || '(No title)',
-            dateKey: data.date ? new Date(data.date).toISOString().slice(0, 10) : null,
-            time: data.time || 'All day',
-            location: data.location || ''
-          });
-        });
-        window.localApprovedEvents = list.filter(ev => ev.dateKey);
-        if (window.renderUserEvents) {
-          window.renderUserEvents((window.localEventSignups || []).concat(window.localApprovedEvents || []));
-        }
-        if (window.refreshCalendarEvents) {
-          window.refreshCalendarEvents();
-        }
-      });
-
-      // Load saved resources for this user (show on calendar by save date)
-      const resourceQuery = query(collection(db, 'resourceSaves'), where('createdBy', '==', user.uid));
-      onSnapshot(resourceQuery, (snapshot) => {
-        const list = [];
-        snapshot.forEach(docSnap => {
-          const data = docSnap.data();
-          const dateKey = data.dateKey || null;
-          list.push({
-            summary: `Saved Resource: ${data.title || '(No title)'}`,
-            dateKey: dateKey,
-            time: 'Saved',
-            location: ''
-          });
-        });
-        window.localResourceSaves = list.filter(ev => ev.dateKey);
-        if (window.renderUserEvents) {
-          window.renderUserEvents(window.localEventSignups || []);
-        }
-        if (window.refreshCalendarEvents) {
-          window.refreshCalendarEvents();
-        }
-      });
-    } else {
-      window.pendingLoginHint = null;
-      if (avatar) {
-        avatar.textContent = '';
-        avatar.style.backgroundImage = '';
-        avatar.onclick = () => window.location.href = 'index.html';
-      }
-      const signOutBtn = document.querySelector('.sign-out-btn');
-      if (signOutBtn) signOutBtn.remove();
-
-      if (navRight && !document.querySelector('.sign-in-btn')) {
-        const signInBtn = document.createElement('button');
-        signInBtn.textContent = 'Sign In';
-        signInBtn.className = 'sign-in-btn';
-        signInBtn.style.padding = '8px 16px';
-        signInBtn.style.background = 'linear-gradient(to bottom, #4c7dff, #2e63e5)';
-        signInBtn.style.color = 'white';
-        signInBtn.style.border = 'none';
-        signInBtn.style.borderRadius = '999px';
-        signInBtn.style.cursor = 'pointer';
-        signInBtn.style.fontSize = '14px';
-        signInBtn.style.fontWeight = '600';
-        signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
-        signInBtn.onclick = () => window.location.href = 'index.html';
-        navRight.appendChild(signInBtn);
-      }
+      return id;
     }
-  });
-</script>
 
-<script>
-  window.pendingLoginHint = null;
+    async function getPublicIp() {
+      const cached = localStorage.getItem('ripplePublicIp');
+      if (cached) return cached;
+      try {
+        const resp = await fetch('https://api.ipify.org?format=json', { cache: 'no-store' });
+        const data = await resp.json();
+        const ip = data && data.ip ? data.ip : '';
+        if (ip) {
+          localStorage.setItem('ripplePublicIp', ip);
+          return ip;
+        }
+      } catch (err) {
+        console.warn('IP fetch failed:', err.message);
+      }
+      return '';
+    }
 
-  (function insertGCal() {
-    const root = document.createElement('div');
-    root.id = 'gcal-root';
-    root.style.position = 'fixed';
-    root.style.right = '20px';
-    root.style.bottom = '20px';
-    root.style.maxWidth = '360px';
-    root.style.zIndex = '9999';
+    async function resolveParticipantIdentity(user) {
+      if (user) {
+        const identity = {
+          participantId: `uid:${user.uid}`,
+          participantType: 'account',
+          uid: user.uid,
+          ip: null
+        };
+        await setDoc(doc(db, 'participantIdentities', identity.participantId), {
+          ...identity,
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+        return identity;
+      }
 
-    const panel = document.createElement('div');
-    panel.style.background = '#fff';
-    panel.style.padding = '12px';
-    panel.style.borderRadius = '8px';
-    panel.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)';
+      const visitorId = getVisitorId();
+      const ip = await getPublicIp();
+      const participantId = ip ? `ip:${ip}` : `visitor:${visitorId}`;
+      const identity = {
+        participantId,
+        participantType: ip ? 'ip' : 'visitor',
+        uid: null,
+        ip: ip || null
+      };
+      await setDoc(doc(db, 'participantIdentities', identity.participantId), {
+        ...identity,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      return identity;
+    }
 
-    const btnRow = document.createElement('div');
-    btnRow.style.display = 'flex';
-    btnRow.style.gap = '8px';
-    btnRow.style.alignItems = 'center';
-    btnRow.style.marginBottom = '8px';
+    function toDateKey(raw) {
+      if (!raw) return null;
+      if (typeof raw === 'string') {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+        const parsed = new Date(raw);
+        return isNaN(parsed) ? null : parsed.toISOString().slice(0, 10);
+      }
+      if (raw && typeof raw.toDate === 'function') {
+        return raw.toDate().toISOString().slice(0, 10);
+      }
+      return null;
+    }
 
-    const authorizeButton = document.createElement('button');
-    authorizeButton.id = 'authorize_button';
-    authorizeButton.textContent = 'Authorize Google Calendar';
-    authorizeButton.style.flex = '1';
-    authorizeButton.style.padding = '8px 12px';
-    authorizeButton.style.borderRadius = '8px';
-    authorizeButton.style.border = 'none';
-    authorizeButton.style.background = '#1a73e8';
-    authorizeButton.style.color = '#fff';
-    authorizeButton.style.cursor = 'pointer';
-    authorizeButton.disabled = true;
-
-    btnRow.appendChild(authorizeButton);
-    panel.appendChild(btnRow);
-
-    const eventsContainer = document.createElement('div');
-    eventsContainer.id = 'events_container';
-    eventsContainer.style.maxHeight = '300px';
-    eventsContainer.style.overflow = 'auto';
-    eventsContainer.style.fontSize = '14px';
-    eventsContainer.style.color = '#222';
-
-    panel.appendChild(eventsContainer);
-    root.appendChild(panel);
-    document.body.appendChild(root);
-
-    const CLIENT_ID = '1052147186085-mo0674iqsjktif9oauo7k4rqajnsv8ka.apps.googleusercontent.com';
-    const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
-
-    let tokenClient;
-    let currentAccessToken = null;
-    let calendarEvents = [];
+    window.localApprovedEvents = [];
     window.localEventSignups = [];
     window.localResourceSaves = [];
+    window.localFallbackEventSignups = [];
+    window.localFallbackResourceSaves = [];
+    window.calendarCurrentDate = new Date();
+    window.calendarDataUnsubs = [];
+    window.calendarIdentityId = null;
 
-    // =================== Calendar Rendering ===================
-    const monthTitle = document.getElementById('monthTitle');
-    const calendarGrid = document.getElementById('calendarGrid');
-    const dayEvents = document.getElementById('dayEvents');
-    const prevMonth = document.getElementById('prevMonth');
-    const nextMonth = document.getElementById('nextMonth');
+    function loadLocalFallbackItems(identityId) {
+      try {
+        const eventItems = JSON.parse(localStorage.getItem('rippleLocalEventSignups') || '[]');
+        const filteredEvents = eventItems.filter(item => !item.participantId || item.participantId === identityId);
+        window.localFallbackEventSignups = filteredEvents.map(item => ({
+          summary: item.title || '(No title)',
+          dateKey: toDateKey(item.dateKey || item.date),
+          time: item.time || 'All day',
+          location: item.location || '',
+          sourceType: 'localEventSignup',
+          localId: item._localTs || `${item.title || ''}|${item.dateKey || item.date || ''}|${item.time || ''}`
+        })).filter(item => !!item.dateKey);
+      } catch (_) {
+        window.localFallbackEventSignups = [];
+      }
 
-    let currentDate = new Date();
-
-    function formatDateKey(d) {
-      return d.toISOString().slice(0, 10);
+      try {
+        const resourceItems = JSON.parse(localStorage.getItem('rippleLocalResourceSaves') || '[]');
+        const filteredResources = resourceItems.filter(item => !item.participantId || item.participantId === identityId);
+        window.localFallbackResourceSaves = filteredResources.map(item => ({
+          summary: `Saved Resource: ${item.title || '(No title)'}`,
+          dateKey: toDateKey(item.dateKey || item.date),
+          time: 'Saved',
+          location: '',
+          sourceType: 'localResourceSave',
+          localId: item._localTs || `${item.title || ''}|${item.dateKey || item.date || ''}`
+        })).filter(item => !!item.dateKey);
+      } catch (_) {
+        window.localFallbackResourceSaves = [];
+      }
     }
 
-    function getAllEvents() {
-      return calendarEvents.concat(window.localEventSignups || [], window.localResourceSaves || [], window.localApprovedEvents || []);
+    function allCalendarItems() {
+      const combined = (window.localApprovedEvents || [])
+        .concat(window.localEventSignups || [])
+        .concat(window.localResourceSaves || [])
+        .concat(window.localFallbackEventSignups || [])
+        .concat(window.localFallbackResourceSaves || []);
+      const unique = new Map();
+      combined.forEach((item) => {
+        const key = [item.summary || '', item.dateKey || '', item.time || '', item.location || ''].join('|');
+        if (!unique.has(key)) unique.set(key, item);
+      });
+      return Array.from(unique.values());
     }
 
-    function renderCalendar() {
+    function renderDayEvents(dateKey) {
+      const dayEvents = document.getElementById('dayEvents');
+      const events = allCalendarItems().filter(ev => ev.dateKey === dateKey);
+      if (!events.length) {
+        dayEvents.innerHTML = `<div style="margin-top:12px;"><strong>No events on ${dateKey}</strong></div>`;
+        return;
+      }
+      dayEvents.innerHTML = `<div style="margin-top:12px;"><strong>Events on ${dateKey}</strong></div>` +
+        events.map(ev => `
+          <div style="margin-top:8px; padding:8px; border:1px solid #ddd; border-radius:8px;">
+            <div><strong>${ev.summary || '(No title)'}</strong></div>
+            <div style="font-size:12px; color:#555;">${ev.time || 'All day'}</div>
+            <div style="font-size:12px; color:#777;">${ev.location || ''}</div>
+          </div>
+        `).join('');
+    }
+
+    function renderCalendarMonth() {
+      const monthTitle = document.getElementById('monthTitle');
+      const calendarGrid = document.getElementById('calendarGrid');
+
+      const currentDate = window.calendarCurrentDate || new Date();
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
-
       const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
-
-      const startDay = firstDay.getDay(); // 0-6 (Sun-Sat)
+      const startDay = firstDay.getDay();
       const totalDays = lastDay.getDate();
 
       const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -324,8 +255,8 @@
           ${Array.from({length: totalDays}, (_, i) => {
             const day = i + 1;
             const dateObj = new Date(year, month, day);
-            const key = formatDateKey(dateObj);
-            const hasEvent = getAllEvents().some(ev => ev.dateKey === key);
+            const key = dateObj.toISOString().slice(0, 10);
+            const hasEvent = allCalendarItems().some(ev => ev.dateKey === key);
             return `
               <div class="cal-day ${hasEvent ? 'has-event' : ''}" data-date="${key}" style="padding:10px; border:1px solid #e0e0e0; border-radius:8px; cursor:pointer; text-align:center;">
                 <div style="font-weight:600;">${day}</div>
@@ -337,197 +268,310 @@
       `;
 
       document.querySelectorAll('.cal-day').forEach(el => {
-        el.addEventListener('click', () => {
-          const dateKey = el.getAttribute('data-date');
-          showDayEvents(dateKey);
-        });
+        el.addEventListener('click', () => renderDayEvents(el.getAttribute('data-date')));
       });
     }
 
-    function showDayEvents(dateKey) {
-      const events = getAllEvents().filter(ev => ev.dateKey === dateKey);
-
-      if (events.length === 0) {
-        dayEvents.innerHTML = `<div style="margin-top:12px;"><strong>No events on ${dateKey}</strong></div>`;
-        return;
-      }
-
-      dayEvents.innerHTML = `<div style="margin-top:12px;"><strong>Events on ${dateKey}</strong></div>` +
-        events.map(ev => `
-          <div style="margin-top:8px; padding:8px; border:1px solid #ddd; border-radius:8px;">
-            <div><strong>${ev.summary || '(No title)'}</strong></div>
-            <div style="font-size:12px; color:#555;">${ev.time}</div>
-            <div style="font-size:12px; color:#777;">${ev.location || ''}</div>
-          </div>
-        `).join('');
-    }
-
-    prevMonth.addEventListener('click', () => {
-      currentDate.setMonth(currentDate.getMonth() - 1);
-      renderCalendar();
-    });
-
-    nextMonth.addEventListener('click', () => {
-      currentDate.setMonth(currentDate.getMonth() + 1);
-      renderCalendar();
-    });
-
-    // =================== Calendar API ===================
-    function normalizeEvents(items) {
-      const events = (items || []).map(ev => {
-        const start = ev.start?.dateTime || ev.start?.date;
-        const dateKey = start ? start.slice(0, 10) : null;
-        const time = ev.start?.dateTime ? new Date(ev.start.dateTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'All day';
-        return {
-          summary: ev.summary,
-          dateKey,
-          time,
-          location: ev.location,
-        };
-      }).filter(ev => ev.dateKey);
-
-      return events;
-    }
-
-    function listUpcomingEventsWithToken(accessToken) {
-      eventsContainer.innerHTML = '<em>Loading events...</em>';
-      const now = encodeURIComponent(new Date().toISOString());
-
-      const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${now}&singleEvents=true&orderBy=startTime&maxResults=250`;
-      fetch(url, {
-        headers: { Authorization: `Bearer ${accessToken}` }
-      })
-      .then(r => r.json())
-      .then(data => {
-        calendarEvents = normalizeEvents(data.items);
-        renderCalendar();
-        eventsContainer.innerHTML = '<div>Calendar loaded. Click a day.</div>';
-      })
-      .catch(err => {
-        console.error(err);
-        eventsContainer.innerHTML = '<div>Error loading calendar.</div>';
-      });
-    }
-
-    // =================== GIS OAuth ===================
-    function onTokenResponse(resp) {
-      currentAccessToken = resp.access_token;
-      listUpcomingEventsWithToken(currentAccessToken);
-    }
-
-    function gisLoadCallback() {
-      tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES,
-        callback: onTokenResponse,
-      });
-      authorizeButton.disabled = false;
-    }
-
-    authorizeButton.addEventListener('click', () => {
-      tokenClient.requestAccessToken({
-        login_hint: window.pendingLoginHint || undefined,
-        prompt: 'consent'
-      });
-    });
-
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    script.onload = gisLoadCallback;
-    document.head.appendChild(script);
-
-    window.refreshCalendarEvents = function() {
-      renderCalendar();
-    };
-
-    window.renderUserEvents = function(list) {
+    function renderUpcomingEvents() {
       const container = document.getElementById('upcomingEventsList');
       if (!container) return;
-      const combined = (list || []).concat(window.localResourceSaves || []);
-      if (!combined.length) {
+
+      const upcoming = allCalendarItems()
+        .slice()
+        .sort((a, b) => (a.dateKey || '').localeCompare(b.dateKey || ''))
+        .slice(0, 6);
+
+      if (!upcoming.length) {
         container.innerHTML = '<div class="coastal hov" style="border: 2px solid #e2e2e2;"><div class="event-title">No upcoming events yet</div><p class="event-desc">Sign up for an event or save a resource to see it here.</p></div>';
         return;
       }
-      const items = combined.slice(0, 6).map(ev => {
-        const dateText = ev.dateKey || '';
+
+      container.innerHTML = upcoming.map(ev => {
         const location = ev.location ? `<br><i class="fa fa-map-pin"></i> ${ev.location}` : '';
+        const removeBtn = ev.sourceType && ev.sourceType !== 'approvedEvent'
+          ? `<button class="event-btn" type="button" data-remove-key="${encodeURIComponent(ev.sourceType + '::' + (ev.docId || ev.localId || ''))}" style="margin-top:8px;">Remove</button>`
+          : '';
         return `<div class="coastal hov" style="border: 2px solid #e2e2e2; margin-top: 8px;">
           <div class="event-title">${ev.summary}</div>
-          <p class="event-desc"><i class="fa fa-calendar"></i> ${dateText}${location}</p>
+          <p class="event-desc"><i class="fa fa-calendar"></i> ${ev.dateKey || ''}${location}</p>
+          ${removeBtn}
         </div>`;
       }).join('');
-      container.innerHTML = items;
-    };
 
-  })();
-</script>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const footerPlaceholder = document.getElementById('footer-placeholder');
-    if (footerPlaceholder) {
-      fetch('footer.html')
-        .then(response => response.text())
-        .then(html => {
-          footerPlaceholder.innerHTML = html;
-        })
-        .catch(error => {
-          console.error('Error loading footer:', error);
-        });
-    }
-  });
-</script>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const headerPlaceholder = document.getElementById('header-placeholder');
-    if (!headerPlaceholder) return;
-
-    fetch('header.html')
-      .then(response => response.text())
-      .then(html => {
-        headerPlaceholder.innerHTML = html;
-
-        // 1) Set active link for this page automatically
-        const path = window.location.pathname.split('/').pop(); // gets "main.html"
-        const links = headerPlaceholder.querySelectorAll('.nav-link');
-        links.forEach(link => {
-          const href = link.getAttribute('href');
-          if (href === path) {
-            link.classList.add('active');
-          } else {
-            link.classList.remove('active');
+      container.querySelectorAll('button[data-remove-key]').forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const encoded = btn.getAttribute('data-remove-key');
+          const raw = decodeURIComponent(encoded || '');
+          const [sourceType, id] = raw.split('::');
+          try {
+            await removeUpcomingItem(sourceType, id);
+          } catch (err) {
+            console.error('Failed to remove upcoming item:', err);
+            alert('Failed to remove this item.');
           }
         });
+      });
+    }
 
-        // 2) Wire up hamburger menu
-        const hamburger = headerPlaceholder.querySelector('.hamburger');
-        const navLinks = headerPlaceholder.querySelector('.nav-links');
+    function fallbackLocalId(item) {
+      const baseTitle = item.title || '';
+      const baseDate = item.dateKey || item.date || '';
+      const baseTime = item.time || '';
+      return item._localTs || `${baseTitle}|${baseDate}|${baseTime}`;
+    }
 
-        if (hamburger && navLinks) {
-          hamburger.addEventListener('click', function (event) {
-            event.stopPropagation();
-            navLinks.classList.toggle('open');
+    function removeLocalFallbackById(storageKey, localId) {
+      const current = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      const next = current.filter(item => String(fallbackLocalId(item)) !== String(localId));
+      localStorage.setItem(storageKey, JSON.stringify(next));
+    }
+
+    async function removeUpcomingItem(sourceType, id) {
+      if (!sourceType || !id) return;
+      if (sourceType === 'eventSignup') {
+        await deleteDoc(doc(db, 'eventSignups', id));
+      } else if (sourceType === 'resourceSave') {
+        await deleteDoc(doc(db, 'resourceSaves', id));
+      } else if (sourceType === 'localEventSignup') {
+        removeLocalFallbackById('rippleLocalEventSignups', id);
+        loadLocalFallbackItems(window.calendarIdentityId || '');
+        refreshCalendarUI();
+      } else if (sourceType === 'localResourceSave') {
+        removeLocalFallbackById('rippleLocalResourceSaves', id);
+        loadLocalFallbackItems(window.calendarIdentityId || '');
+        refreshCalendarUI();
+      }
+    }
+
+    function refreshCalendarUI() {
+      renderCalendarMonth();
+      renderUpcomingEvents();
+    }
+
+    function listenForCalendarData(identityId) {
+      loadLocalFallbackItems(identityId);
+      refreshCalendarUI();
+
+      if (Array.isArray(window.calendarDataUnsubs)) {
+        window.calendarDataUnsubs.forEach(unsub => {
+          try { unsub(); } catch (_) {}
+        });
+      }
+      window.calendarDataUnsubs = [];
+
+      const approvedEventsQuery = query(collection(db, 'events'));
+      const unsubApproved = onSnapshot(approvedEventsQuery, (snapshot) => {
+        const list = [];
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const dateKey = toDateKey(data.dateKey || data.date || data.dateText || data.createdAt);
+          if (!dateKey) return;
+          list.push({
+            summary: data.title || '(No title)',
+            dateKey,
+            time: data.time || 'All day',
+            location: data.location || ''
           });
+        });
+        window.localApprovedEvents = list;
+        refreshCalendarUI();
+      });
+      window.calendarDataUnsubs.push(unsubApproved);
 
-          document.addEventListener('click', function (event) {
-            if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
-              navLinks.classList.remove('open');
+      const signupQuery = query(collection(db, 'eventSignups'), where('participantId', '==', identityId));
+      const unsubSignups = onSnapshot(signupQuery, (snapshot) => {
+        const list = [];
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const dateKey = toDateKey(data.dateKey || data.date || data.createdAt);
+          if (!dateKey) return;
+          list.push({
+            docId: docSnap.id,
+            summary: data.title || '(No title)',
+            dateKey,
+            time: data.time || 'All day',
+            location: data.location || '',
+            sourceType: 'eventSignup'
+          });
+        });
+        window.localEventSignups = list;
+        refreshCalendarUI();
+      });
+      window.calendarDataUnsubs.push(unsubSignups);
+
+      const resourceQuery = query(collection(db, 'resourceSaves'), where('participantId', '==', identityId));
+      const unsubResources = onSnapshot(resourceQuery, (snapshot) => {
+        const list = [];
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const dateKey = toDateKey(data.dateKey || data.createdAt);
+          if (!dateKey) return;
+          list.push({
+            docId: docSnap.id,
+            summary: `Saved Resource: ${data.title || '(No title)'}`,
+            dateKey,
+            time: 'Saved',
+            location: '',
+            sourceType: 'resourceSave'
+          });
+        });
+        window.localResourceSaves = list;
+        refreshCalendarUI();
+      });
+      window.calendarDataUnsubs.push(unsubResources);
+    }
+
+    window.signOutUser = function() {
+      signOut(auth).then(() => {
+        location.reload();
+      }).catch((error) => {
+        console.error('Sign out error:', error);
+      });
+    };
+
+    window.reso = function() {
+      window.location.href = 'resources.html?tab=events';
+    };
+
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      const current = window.calendarCurrentDate || new Date();
+      current.setMonth(current.getMonth() - 1);
+      window.calendarCurrentDate = current;
+      renderCalendarMonth();
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      const current = window.calendarCurrentDate || new Date();
+      current.setMonth(current.getMonth() + 1);
+      window.calendarCurrentDate = current;
+      renderCalendarMonth();
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      const avatar = document.querySelector('.avatar');
+      const navRight = document.querySelector('.nav-right');
+
+      if (user) {
+        const initial = (user.email || '').charAt(0).toUpperCase();
+        if (avatar) {
+          if (user.photoURL) {
+            avatar.style.backgroundImage = `url('${user.photoURL}')`;
+            avatar.style.backgroundSize = 'cover';
+            avatar.style.backgroundPosition = 'center';
+            avatar.textContent = '';
+          } else {
+            avatar.style.backgroundImage = '';
+            avatar.textContent = initial;
+          }
+          avatar.style.cursor = 'pointer';
+          avatar.onclick = () => window.location.href = 'account.html';
+        }
+      } else {
+        if (avatar) {
+          avatar.textContent = '';
+          avatar.style.backgroundImage = '';
+          avatar.onclick = () => window.location.href = 'login.html';
+        }
+        const signOutBtn = document.querySelector('.sign-out-btn');
+        if (signOutBtn) signOutBtn.remove();
+
+        if (navRight && !document.querySelector('.sign-in-btn')) {
+          const signInBtn = document.createElement('button');
+          signInBtn.textContent = 'Sign In';
+          signInBtn.className = 'sign-in-btn';
+          signInBtn.style.padding = '8px 16px';
+          signInBtn.style.background = 'linear-gradient(to bottom, #4c7dff, #2e63e5)';
+          signInBtn.style.color = 'white';
+          signInBtn.style.border = 'none';
+          signInBtn.style.borderRadius = '999px';
+          signInBtn.style.cursor = 'pointer';
+          signInBtn.style.fontSize = '14px';
+          signInBtn.style.fontWeight = '600';
+          signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
+          signInBtn.onclick = () => window.location.href = 'login.html';
+          navRight.appendChild(signInBtn);
+        }
+      }
+
+      const identity = await resolveParticipantIdentity(user);
+      const identityId = identity.participantId;
+      window.calendarIdentityId = identityId;
+      if (!window.calendarListenersStartedFor || window.calendarListenersStartedFor !== identityId) {
+        window.calendarListenersStartedFor = identityId;
+        listenForCalendarData(identityId);
+      }
+      refreshCalendarUI();
+    });
+
+    refreshCalendarUI();
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const footerPlaceholder = document.getElementById('footer-placeholder');
+      if (footerPlaceholder) {
+        fetch('footer.html')
+          .then(response => response.text())
+          .then(html => {
+            footerPlaceholder.innerHTML = html;
+          })
+          .catch(error => {
+            console.error('Error loading footer:', error);
+          });
+      }
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const headerPlaceholder = document.getElementById('header-placeholder');
+      if (!headerPlaceholder) return;
+
+      fetch('header.html')
+        .then(response => response.text())
+        .then(html => {
+          headerPlaceholder.innerHTML = html;
+
+          const path = window.location.pathname.split('/').pop();
+          const links = headerPlaceholder.querySelectorAll('.nav-link');
+          links.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href === path) {
+              link.classList.add('active');
+            } else {
+              link.classList.remove('active');
             }
           });
 
-          const navLinkElements = headerPlaceholder.querySelectorAll('.nav-link');
-          navLinkElements.forEach(link => {
-            link.addEventListener('click', function () {
-              navLinks.classList.remove('open');
+          const hamburger = headerPlaceholder.querySelector('.hamburger');
+          const navLinks = headerPlaceholder.querySelector('.nav-links');
+
+          if (hamburger && navLinks) {
+            hamburger.addEventListener('click', function (event) {
+              event.stopPropagation();
+              navLinks.classList.toggle('open');
             });
-          });
-        }
-      })
-      .catch(error => {
-        console.error('Error loading header:', error);
-      });
-  });
-</script>
+
+            document.addEventListener('click', function (event) {
+              if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+                navLinks.classList.remove('open');
+              }
+            });
+
+            const navLinkElements = headerPlaceholder.querySelectorAll('.nav-link');
+            navLinkElements.forEach(link => {
+              link.addEventListener('click', function () {
+                navLinks.classList.remove('open');
+              });
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error loading header:', error);
+        });
+    });
+  </script>
+<script src="bubble-transition.js"></script>
 </body>
 </html>

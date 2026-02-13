@@ -800,18 +800,21 @@ a:visited {
   transform: translateY(-1px);
 }
 
-.modal-form-actions button.submit-btn {
+.modal-form-actions button.submit-btn,
+.modal-form-actions a.submit-btn {
   background: linear-gradient(to bottom, #4c7dff, #2e63e5);
   color: white;
   box-shadow: 0 8px 16px rgba(76, 125, 255, 0.3);
 }
 
-.modal-form-actions button.submit-btn:hover {
+.modal-form-actions button.submit-btn:hover,
+.modal-form-actions a.submit-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 24px rgba(76, 125, 255, 0.4);
 }
 
-.modal-form-actions button.submit-btn:active {
+.modal-form-actions button.submit-btn:active,
+.modal-form-actions a.submit-btn:active {
   transform: translateY(0);
 }
 

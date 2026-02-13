@@ -129,19 +129,36 @@
     const userRoleEl = document.getElementById('userRole');
 
     let currentUser = null;
+    const guestId = localStorage.getItem('rippleVisitorId') || `visitor_${Math.random().toString(36).slice(2, 10)}_${Date.now().toString(36)}`;
+    const guestProfileKey = 'rippleGuestProfile';
+    localStorage.setItem('rippleVisitorId', guestId);
+
+    function setGuestModeUI() {
+      const guestProfile = JSON.parse(localStorage.getItem(guestProfileKey) || '{}');
+      currentUser = null;
+      document.getElementById('fullName').value = guestProfile.name || '';
+      document.getElementById('email').value = guestProfile.email || '';
+      userUidEl.textContent = guestId;
+      memberSinceEl.textContent = 'Guest session';
+      if (userRoleEl) userRoleEl.textContent = 'Guest';
+      const signOutBtn = document.getElementById('signOutBtn');
+      if (signOutBtn) signOutBtn.style.display = 'none';
+      uploadPhotoBtn.disabled = true;
+      photoInput.disabled = true;
+      accountMessage.textContent = 'Guest mode enabled. Sign-in is optional.';
+      accountMessage.style.color = '#2563eb';
+    }
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        // Not signed in — redirect to sign-in page
-        window.location.href = 'index.html';
-        return;
-      }
-      if (!user.emailVerified) {
-        await signOut(auth);
-        window.location.href = 'index.html?verify=1';
+        setGuestModeUI();
         return;
       }
       currentUser = user;
+      uploadPhotoBtn.disabled = false;
+      photoInput.disabled = false;
+      const signOutBtn = document.getElementById('signOutBtn');
+      if (signOutBtn) signOutBtn.style.display = 'inline-flex';
 
       // Update header avatar (same as other pages)
       const avatar = document.querySelector('.avatar');
@@ -202,6 +219,10 @@
 
     // Upload photo to Firebase Storage and update profile
     uploadPhotoBtn.addEventListener('click', async () => {
+      if (!currentUser) {
+        showToast('Sign-in optional, but photo upload needs an account', 'info');
+        return;
+      }
       const file = photoInput.files[0];
       if (!file) {
         accountMessage.textContent = 'Please choose a file first.';
@@ -247,7 +268,15 @@
     let pendingChanges = null;
     accountForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!currentUser) return;
+      if (!currentUser) {
+        const guestName = document.getElementById('fullName').value.trim();
+        const guestEmail = document.getElementById('email').value.trim();
+        localStorage.setItem(guestProfileKey, JSON.stringify({ name: guestName, email: guestEmail }));
+        accountMessage.textContent = 'Guest profile saved locally.';
+        accountMessage.style.color = '#2563eb';
+        showToast('Guest profile saved', 'success');
+        return;
+      }
       const newName = document.getElementById('fullName').value.trim();
       const newEmail = document.getElementById('email').value.trim();
 
@@ -333,7 +362,10 @@
 
     // Send password reset email
     document.getElementById('sendResetEmail').addEventListener('click', async () => {
-      if (!currentUser || !currentUser.email) return;
+      if (!currentUser || !currentUser.email) {
+        showToast('Sign-in optional, but reset email needs an account', 'info');
+        return;
+      }
       try {
         await sendPasswordResetEmail(auth, currentUser.email);
         accountMessage.textContent = 'Password reset email sent to ' + currentUser.email;
@@ -351,14 +383,17 @@
 
     // Request admin role
     document.getElementById('requestAdminBtn').addEventListener('click', async () => {
-      if (!currentUser) return showToast('You must be signed in', 'error');
       try {
+        const typedEmail = (document.getElementById('email').value || '').trim();
+        const actorId = currentUser ? currentUser.uid : guestId;
+        const actorEmail = currentUser ? (currentUser.email || null) : (typedEmail || null);
         // Create a role request doc
         const payload = {
           requestedRole: 'admin',
           status: 'pending',
-          createdBy: currentUser.uid,
-          createdByEmail: currentUser.email || null,
+          createdBy: actorId,
+          createdByEmail: actorEmail,
+          actorType: currentUser ? 'user' : 'guest',
           createdAt: serverTimestamp()
         };
         const reqRef = await addDoc(collection(db, 'roleRequests'), payload);
@@ -367,13 +402,13 @@
           type: 'roleRequest',
           itemType: 'roleRequest',
           itemId: reqRef.id,
-          requestorId: currentUser.uid,
+          requestorId: actorId,
           title: 'Admin Role Request',
-          message: `${currentUser.email || 'A user'} has requested admin access.`,
+          message: `${actorEmail || 'A guest user'} has requested admin access.`,
           recipientsRole: ['admin','founder'],
           status: 'unread',
-          createdBy: currentUser.uid,
-          createdByEmail: currentUser.email || null,
+          createdBy: actorId,
+          createdByEmail: actorEmail,
           createdAt: serverTimestamp()
         });
         showToast('Admin request submitted', 'success');
@@ -392,7 +427,7 @@
     // Sign out
     document.getElementById('signOutBtn').addEventListener('click', async () => {
       await signOut(auth);
-      window.location.href = 'index.html';
+      window.location.href = 'main.html';
     });
   </script>
   <script>
@@ -462,5 +497,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .catch(e => console.error('Header load failed:', e));
 });
 </script>
+<script src="bubble-transition.js"></script>
+  <script src="bubble-nav.js"></script>
 </body>
 </html>

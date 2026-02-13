@@ -1,0 +1,133 @@
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(180deg, #accedf, #4aacdd, #accedf);
+}
+
+#bubble-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+.group-page {
+  max-width: 980px;
+  margin: 40px auto 80px;
+  padding: 0 20px;
+}
+
+.group-card {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 18px;
+  box-shadow: 0 20px 36px rgba(15, 23, 42, 0.16);
+  padding: 24px;
+}
+
+.group-media {
+  width: 100%;
+  aspect-ratio: 16 / 8;
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #d4ebf8, #9ecde5);
+  border: 1px solid #c5deec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.group-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.group-media-fallback {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2e5d7d;
+}
+
+.group-title {
+  margin: 16px 0 8px;
+  font-size: 36px;
+  line-height: 1.2;
+  color: #1f2937;
+}
+
+.group-description {
+  margin: 0 0 20px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.group-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.join-facebook-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: 1px solid #2f6ea8;
+  background: linear-gradient(to bottom, #4c7dff, #2e63e5);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 6px 14px rgba(46, 99, 229, 0.35);
+}
+
+.join-facebook-btn:hover {
+  filter: brightness(1.05);
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: 1px solid #a8c2d6;
+  background: #e7f1f8;
+  color: #184362;
+  font-weight: 700;
+}
+
+.coral-strip {
+  width: 100%;
+  margin-top: 30px;
+}
+
+.coral-strip img {
+  width: 100%;
+  display: block;
+  height: auto;
+}
+
+@media (max-width: 700px) {
+  .group-title {
+    font-size: 28px;
+  }
+
+  .group-description {
+    font-size: 16px;
+  }
+}

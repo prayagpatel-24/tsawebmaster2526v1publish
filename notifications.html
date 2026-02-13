@@ -19,12 +19,8 @@
 
   <main class="notif-page">
     <div class="notif-shell">
-      <h1>Notifications & Moderation</h1>
-      <p class="small-muted">Pending items for admins/founders will show here. Approve or deny submissions directly.</p>
-      <div class="notif-tools">
-        <button id="testNotifBtn" class="approve-btn" type="button">Create Test Notification</button>
-      </div>
-
+      <h1>Notifications</h1>
+      <p class="small-muted">Moderation results, event signups, saved resources, and role request updates appear here.</p>
       <div id="notifList"></div>
     </div>
   </main>
@@ -49,214 +45,360 @@
     window.__notifModuleLoaded = true;
 
     const notifList = document.getElementById('notifList');
+    let activeUnsubs = [];
+    let currentUserRole = 'member';
+    let activeUser = null;
 
-    function renderNotif(docSnap) {
-      const data = docSnap.data();
-      const id = docSnap.id;
-
-      const card = document.createElement('div');
-      card.className = 'notif-card';
-      const left = document.createElement('div'); left.className = 'notif-left';
-      const title = document.createElement('div'); title.className = 'notif-title';
-      title.textContent = data.title || data.message || 'Notification';
-      const meta = document.createElement('div'); meta.className = 'notif-meta';
-      meta.textContent = `${data.itemType || ''} • Submitted by ${data.createdByEmail || 'unknown'}`;
-      left.appendChild(title); left.appendChild(meta);
-
-      const actions = document.createElement('div'); actions.className = 'notif-actions';
-
-      if ((data.type === 'approval' || data.type === 'roleRequest' || data.type === 'test') && data.status === 'unread') {
-        const approve = document.createElement('button'); approve.className = 'approve-btn'; approve.textContent = 'Approve';
-        const deny = document.createElement('button'); deny.className = 'deny-btn'; deny.textContent = 'Deny';
-
-        approve.addEventListener('click', async () => {
-          // Approve: move pending doc to live collection and update notification
-          try {
-            if (data.type === 'test') {
-              // Just mark test as handled
-              await updateDoc(doc(db, 'notifications', id), { status: 'handled', handledBy: auth.currentUser.uid, handledAt: serverTimestamp(), result: 'approved' });
-              card.remove();
-              alert('Test notification approved.');
-            } else if (data.type === 'roleRequest') {
-              // Approve role request: promote user to admin
-              const reqRef = doc(db, 'roleRequests', data.itemId);
-              const reqSnap = await getDoc(reqRef);
-              if (!reqSnap.exists()) throw new Error('Role request not found');
-              const reqData = reqSnap.data();
-              const requestorId = reqData.createdBy || data.requestorId || reqData.requestorId;
-              if (!requestorId) throw new Error('Requester not found');
-              // update user role
-              await setDoc(doc(db, 'users', requestorId), { role: 'admin' }, { merge: true });
-              // update request status
-              await updateDoc(reqRef, { status: 'approved', moderatedBy: auth.currentUser.uid, moderatedAt: serverTimestamp() });
-              // update notification
-              await updateDoc(doc(db, 'notifications', id), { status: 'handled', handledBy: auth.currentUser.uid, handledAt: serverTimestamp(), result: 'approved' });
-              card.remove();
-              alert('Role request approved. The user is now an admin.');
-            } else {
-              const itemRef = doc(db, data.itemType === 'event' ? 'pendingEvents' : 'pendingResources', data.itemId);
-              const itemSnap = await getDoc(itemRef);
-              if (!itemSnap.exists()) throw new Error('Item not found');
-              const itemData = itemSnap.data();
-              // create live doc
-              await addDoc(collection(db, data.itemType === 'event' ? 'events' : 'resources'), { ...itemData, status: 'approved', approvedAt: serverTimestamp() });
-              // update pending item status
-              await updateDoc(itemRef, { status: 'approved', moderatedBy: auth.currentUser.uid, moderatedAt: serverTimestamp() });
-              // mark notification as handled
-              await updateDoc(doc(db, 'notifications', id), { status: 'handled', handledBy: auth.currentUser.uid, handledAt: serverTimestamp(), result: 'approved' });
-              card.remove();
-              alert('Item approved and published.');
-            }
-          } catch (err) {
-            console.error(err);
-            alert('Failed to approve item: ' + err.message);
-          }
-        });
-
-        deny.addEventListener('click', async () => {
-          try {
-            if (data.type === 'test') {
-              // Just mark test as handled
-              await updateDoc(doc(db, 'notifications', id), { status: 'handled', handledBy: auth.currentUser.uid, handledAt: serverTimestamp(), result: 'denied' });
-              card.remove();
-              alert('Test notification denied.');
-            } else if (data.type === 'roleRequest') {
-              const reqRef = doc(db, 'roleRequests', data.itemId);
-              await updateDoc(reqRef, { status: 'denied', moderatedBy: auth.currentUser.uid, moderatedAt: serverTimestamp() });
-              await updateDoc(doc(db, 'notifications', id), { status: 'handled', handledBy: auth.currentUser.uid, handledAt: serverTimestamp(), result: 'denied' });
-              card.remove();
-              alert('Role request denied.');
-            } else {
-              const itemRef = doc(db, data.itemType === 'event' ? 'pendingEvents' : 'pendingResources', data.itemId);
-              await updateDoc(itemRef, { status: 'denied', moderatedBy: auth.currentUser.uid, moderatedAt: serverTimestamp() });
-              await updateDoc(doc(db, 'notifications', id), { status: 'handled', handledBy: auth.currentUser.uid, handledAt: serverTimestamp(), result: 'denied' });
-              card.remove();
-              alert('Item denied.');
-            }
-          } catch (err) {
-            console.error(err);
-            alert('Failed to deny item: ' + err.message);
-          }
-        });
-
-        actions.appendChild(approve);
-        actions.appendChild(deny);
-      } else {
-        const info = document.createElement('div'); info.textContent = data.message || '';
-        actions.appendChild(info);
-      }
-
-      card.appendChild(left);
-      card.appendChild(actions);
-      notifList.appendChild(card);
+    function clearListeners() {
+      activeUnsubs.forEach((unsub) => {
+        try { unsub(); } catch (_) {}
+      });
+      activeUnsubs = [];
     }
 
-    // Test notification creator
-    window.createTestNotification = async () => {
-      
-      console.log('Test notification button clicked');
-      const user = auth.currentUser;
-      console.log('Current user:', user ? user.email : 'NOT SIGNED IN');
-      if (!user) {
-        alert('Not signed in. Please sign in and try again.');
-        return;
+    function getVisitorId() {
+      const key = 'rippleVisitorId';
+      let id = localStorage.getItem(key);
+      if (!id) {
+        id = `visitor_${Math.random().toString(36).slice(2, 10)}_${Date.now().toString(36)}`;
+        localStorage.setItem(key, id);
       }
+      return id;
+    }
+
+    async function getPublicIp() {
+      const cached = localStorage.getItem('ripplePublicIp');
+      if (cached) return cached;
       try {
-        console.log('Creating test notification for', user.email);
-        const testData = {
-        type: 'test',
-        itemType: 'system',
-        itemId: user.uid + '_' + Date.now(),
-        title: '🧪 Test Notification',
-        message: `Test created at ${new Date().toLocaleString()}`,
-        status: 'unread',  // ← ADD THIS
-        createdBy: user.uid,
-        createdByEmail: user.email || null,
-        createdAt: serverTimestamp()
-        // Remove recipientsRole - let rules handle it
-      };
-        console.log('Test data:', testData);
-        console.log('Calling addDoc...');
-        
-        // Add timeout to catch hanging promises
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Write timeout - check Firestore rules')), 5000)
-        );
-        const writePromise = addDoc(collection(db, 'notifications'), testData);
-        
-        const ref = await Promise.race([writePromise, timeoutPromise]);
-        console.log('✓ Test notification created successfully with ID:', ref.id);
-        alert('✓ Test notification created! ID: ' + ref.id);
+        const resp = await fetch('https://api.ipify.org?format=json', { cache: 'no-store' });
+        const data = await resp.json();
+        const ip = data && data.ip ? data.ip : '';
+        if (ip) {
+          localStorage.setItem('ripplePublicIp', ip);
+          return ip;
+        }
       } catch (err) {
-        console.error('Test notification failed:', err.code, err.message, err);
-        alert('Failed: ' + (err.message || JSON.stringify(err)));
+        console.warn('IP fetch failed:', err.message);
       }
-    };
+      return '';
+    }
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = 'index.html';
-        return;
-      }
-
-      // Header avatar
-      const avatar = document.querySelector('.avatar');
-      if (avatar) {
-        const initial = (user.email || '').charAt(0).toUpperCase();
-        if (user.photoURL) {
-          avatar.style.backgroundImage = `url('${user.photoURL}')`;
-          avatar.style.backgroundSize = 'cover';
-          avatar.style.backgroundPosition = 'center';
-          avatar.textContent = '';
-        } else {
-          avatar.style.backgroundImage = '';
-          avatar.textContent = initial;
-        }
-        avatar.style.cursor = 'pointer';
-        avatar.onclick = () => window.location.href = 'account.html';
+    async function resolveParticipantIdentity(user) {
+      if (user) {
+        const identity = {
+          participantId: `uid:${user.uid}`,
+          participantType: 'account',
+          uid: user.uid,
+          createdBy: user.uid,
+          createdByEmail: user.email || null,
+          ip: null
+        };
+        await setDoc(doc(db, 'participantIdentities', identity.participantId), {
+          ...identity,
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+        return identity;
       }
 
-      const testNotifBtn = document.getElementById('testNotifBtn');
+      const visitorId = getVisitorId();
+      const ip = await getPublicIp();
+      const participantId = ip ? `ip:${ip}` : `visitor:${visitorId}`;
+      const identity = {
+        participantId,
+        participantType: ip ? 'ip' : 'visitor',
+        uid: null,
+        createdBy: visitorId,
+        createdByEmail: null,
+        ip: ip || null
+      };
+      await setDoc(doc(db, 'participantIdentities', identity.participantId), {
+        ...identity,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      return identity;
+    }
 
-      // Only admins/founders should see pending approvals
-      const docRef = doc(db, 'users', user.uid);
-      const snap = await getDoc(docRef);
-      let role = snap.exists() && snap.data().role ? snap.data().role : 'member';
+    function isAdminRole(role) {
+      const normalized = (role || '').toLowerCase();
+      return normalized === 'admin' || normalized === 'founder';
+    }
 
-      if (role !== 'admin' && role !== 'founder') {
-        if (testNotifBtn) testNotifBtn.style.display = 'none';
-        notifList.innerHTML = '<div class="notif-empty">You have no moderation privileges. Contact an admin to gain access.</div>';
-        return;
+    function isRoleRequestForModeration(data) {
+      if (data.type !== 'roleRequest') return false;
+      const status = (data.status || '').toLowerCase();
+      if (!(status === 'unread' || status === 'pending')) return false;
+      if (Array.isArray(data.recipientsRole) && data.recipientsRole.length) {
+        return data.recipientsRole.some(r => ['admin', 'founder'].includes((r || '').toLowerCase()));
+      }
+      return true;
+    }
+
+    function isAdminRecipientNotification(data) {
+      if (!Array.isArray(data.recipientsRole) || !data.recipientsRole.length) return false;
+      return data.recipientsRole.some(r => ['admin', 'founder'].includes((r || '').toLowerCase()));
+    }
+
+    function formatTimestamp(raw) {
+      if (!raw) return '';
+      try {
+        const date = typeof raw.toDate === 'function' ? raw.toDate() : new Date(raw);
+        if (isNaN(date)) return '';
+        return date.toLocaleString();
+      } catch (_) {
+        return '';
+      }
+    }
+
+    function buildMeta(data) {
+      const bits = [];
+      if (data.itemType) bits.push(data.itemType);
+      if (data.status) bits.push(`status: ${data.status}`);
+      if (data.createdByEmail) bits.push(`by ${data.createdByEmail}`);
+      const when = formatTimestamp(data.createdAt);
+      if (when) bits.push(when);
+      return bits.join(' • ') || 'Notification';
+    }
+
+    function shouldShowPersonalNotification(data, identity, user) {
+      const participantMatch = data.participantId && data.participantId === identity.participantId;
+      const createdByMatch = data.createdBy && data.createdBy === identity.createdBy;
+      const emailMatch = !!(user && data.createdByEmail && user.email && data.createdByEmail === user.email);
+      const recipientMatch = data.recipientParticipantId && data.recipientParticipantId === identity.participantId;
+      if (isAdminRecipientNotification(data)) {
+        return participantMatch || recipientMatch;
+      }
+      return participantMatch || createdByMatch || emailMatch || recipientMatch;
+    }
+
+    async function handleRoleRequestDecision(notificationId, data, decision) {
+      if (!activeUser || !isAdminRole(currentUserRole)) return;
+      const approved = decision === 'approved';
+      const reqRef = doc(db, 'roleRequests', data.itemId);
+      const reqSnap = await getDoc(reqRef);
+      if (!reqSnap.exists()) throw new Error('Role request not found');
+      const reqData = reqSnap.data();
+      const requestorId = reqData.createdBy || data.requestorId || reqData.requestorId || null;
+      const requestorEmail = reqData.createdByEmail || data.createdByEmail || null;
+
+      if (approved && requestorId && !String(requestorId).startsWith('visitor_')) {
+        await setDoc(doc(db, 'users', requestorId), { role: 'admin' }, { merge: true });
       }
 
-      if (testNotifBtn) {
-        testNotifBtn.style.display = 'inline-flex';
-        // Wire up test button immediately
-        testNotifBtn.addEventListener('click', window.createTestNotification);
-      }
+      await updateDoc(reqRef, {
+        status: approved ? 'approved' : 'denied',
+        moderatedBy: activeUser.uid,
+        moderatedAt: serverTimestamp()
+      });
 
-      // Admin/founder: listen for approval notifications
-      const q = query(collection(db, 'notifications'), where('type', 'in', ['approval', 'roleRequest', 'test']));
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        console.log('Notifications snapshot received:', snapshot.size, 'items');
-        notifList.innerHTML = '';
-        if (snapshot.empty) {
-          notifList.innerHTML = '<div class="notif-empty">✓ No pending items. You are all caught up!</div>';
-          return;
-        }
-        snapshot.forEach(docSnap => {
-          const data = docSnap.data();
-          console.log('Rendering notification:', data.type, '|', data.title);
-          // only show if still pending/unread
-          if (data.status === 'unread' || data.status === 'pending') {
-            renderNotif(docSnap);
-          }
+      await updateDoc(doc(db, 'notifications', notificationId), {
+        status: 'handled',
+        result: approved ? 'approved' : 'denied',
+        handledBy: activeUser.uid,
+        handledAt: serverTimestamp()
+      });
+
+      if (requestorId) {
+        const recipientParticipantId = String(requestorId).startsWith('visitor_') ? `visitor:${requestorId}` : `uid:${requestorId}`;
+        await addDoc(collection(db, 'notifications'), {
+          type: 'roleRequestResult',
+          itemType: 'roleRequest',
+          itemId: data.itemId,
+          title: approved ? 'Admin Request Approved' : 'Admin Request Denied',
+          message: approved
+            ? 'Your admin role request was approved.'
+            : 'Your admin role request was denied.',
+          status: 'unread',
+          createdBy: requestorId,
+          createdByEmail: requestorEmail,
+          participantId: recipientParticipantId,
+          recipientParticipantId,
+          moderatedBy: activeUser.uid,
+          moderatedByEmail: activeUser.email || null,
+          createdAt: serverTimestamp()
         });
+      }
+    }
+
+    function renderNotifications(list, identity, isAdmin) {
+      notifList.innerHTML = '';
+      if (!list.length) {
+        notifList.innerHTML = '<div class="notif-empty">No notifications yet.</div>';
+        return;
+      }
+
+      list
+        .slice()
+        .sort((a, b) => {
+          const at = a.data.createdAt && typeof a.data.createdAt.toMillis === 'function' ? a.data.createdAt.toMillis() : 0;
+          const bt = b.data.createdAt && typeof b.data.createdAt.toMillis === 'function' ? b.data.createdAt.toMillis() : 0;
+          return bt - at;
+        })
+        .forEach(({ id, data }) => {
+          const card = document.createElement('div');
+          card.className = 'notif-card';
+          const left = document.createElement('div');
+          left.className = 'notif-left';
+          const title = document.createElement('div');
+          title.className = 'notif-title';
+          title.textContent = data.title || data.message || 'Notification';
+          const meta = document.createElement('div');
+          meta.className = 'notif-meta';
+          meta.textContent = buildMeta(data);
+          left.appendChild(title);
+          left.appendChild(meta);
+
+          const actions = document.createElement('div');
+          actions.className = 'notif-actions';
+
+          if (isAdmin && isRoleRequestForModeration(data)) {
+            const approve = document.createElement('button');
+            approve.className = 'approve-btn';
+            approve.type = 'button';
+            approve.textContent = 'Approve';
+            approve.addEventListener('click', async () => {
+              try {
+                await handleRoleRequestDecision(id, data, 'approved');
+              } catch (err) {
+                console.error(err);
+                alert('Failed to approve role request: ' + err.message);
+              }
+            });
+
+            const deny = document.createElement('button');
+            deny.className = 'deny-btn';
+            deny.type = 'button';
+            deny.textContent = 'Deny';
+            deny.addEventListener('click', async () => {
+              try {
+                await handleRoleRequestDecision(id, data, 'denied');
+              } catch (err) {
+                console.error(err);
+                alert('Failed to deny role request: ' + err.message);
+              }
+            });
+            actions.appendChild(approve);
+            actions.appendChild(deny);
+          } else {
+            const info = document.createElement('div');
+            info.textContent = data.message || '';
+            actions.appendChild(info);
+          }
+
+          card.appendChild(left);
+          card.appendChild(actions);
+          notifList.appendChild(card);
+        });
+    }
+
+    function attachQuery(sourceMaps, key, q, identity, user, isAdmin) {
+      const unsub = onSnapshot(q, (snapshot) => {
+        const map = new Map();
+        snapshot.forEach((docSnap) => {
+          map.set(docSnap.id, { id: docSnap.id, data: docSnap.data() });
+        });
+        sourceMaps.set(key, map);
+        const merged = new Map();
+        sourceMaps.forEach((srcMap) => {
+          srcMap.forEach((entry, id) => merged.set(id, entry));
+        });
+        const list = Array.from(merged.values()).filter(({ data }) => {
+          if (isAdmin && isRoleRequestForModeration(data)) return true;
+          if (isAdmin && isAdminRecipientNotification(data)) return true;
+          return shouldShowPersonalNotification(data, identity, user);
+        });
+        renderNotifications(list, identity, isAdmin);
       }, (err) => {
         console.error('Notifications listener error:', err);
-        notifList.innerHTML = '<div class="notif-empty">⚠ Unable to load notifications. Check Firestore rules. Error: ' + err.message + '</div>';
+        notifList.innerHTML = `<div class="notif-empty">Unable to load notifications: ${err.message}</div>`;
       });
+      activeUnsubs.push(unsub);
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      clearListeners();
+      activeUser = user || null;
+
+      const avatar = document.querySelector('.avatar');
+      const navRight = document.querySelector('.nav-right');
+      if (user) {
+        if (avatar) {
+          const initial = (user.email || '').charAt(0).toUpperCase();
+          if (user.photoURL) {
+            avatar.style.backgroundImage = `url('${user.photoURL}')`;
+            avatar.style.backgroundSize = 'cover';
+            avatar.style.backgroundPosition = 'center';
+            avatar.textContent = '';
+          } else {
+            avatar.style.backgroundImage = '';
+            avatar.textContent = initial;
+          }
+          avatar.style.cursor = 'pointer';
+          avatar.onclick = () => window.location.href = 'account.html';
+        }
+        const signInBtn = document.querySelector('.sign-in-btn');
+        if (signInBtn) signInBtn.remove();
+        const roleDoc = await getDoc(doc(db, 'users', user.uid));
+        currentUserRole = roleDoc.exists() && roleDoc.data().role ? roleDoc.data().role : 'member';
+      } else {
+        currentUserRole = 'member';
+        if (avatar) {
+          avatar.textContent = '';
+          avatar.style.backgroundImage = '';
+          avatar.onclick = () => window.location.href = 'login.html';
+        }
+        const signOutBtn = document.querySelector('.sign-out-btn');
+        if (signOutBtn) signOutBtn.remove();
+        if (navRight && !document.querySelector('.sign-in-btn')) {
+          const signInBtn = document.createElement('button');
+          signInBtn.textContent = 'Sign In';
+          signInBtn.className = 'sign-in-btn';
+          signInBtn.style.padding = '8px 16px';
+          signInBtn.style.background = 'linear-gradient(to bottom, #4c7dff, #2e63e5)';
+          signInBtn.style.color = 'white';
+          signInBtn.style.border = 'none';
+          signInBtn.style.borderRadius = '999px';
+          signInBtn.style.cursor = 'pointer';
+          signInBtn.style.fontSize = '14px';
+          signInBtn.style.fontWeight = '600';
+          signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
+          signInBtn.onclick = () => window.location.href = 'login.html';
+          navRight.appendChild(signInBtn);
+        }
+      }
+
+      const identity = await resolveParticipantIdentity(user);
+      const isAdmin = isAdminRole(currentUserRole);
+      const sourceMaps = new Map();
+
+      const qByParticipant = query(collection(db, 'notifications'), where('participantId', '==', identity.participantId));
+      attachQuery(sourceMaps, 'participant', qByParticipant, identity, user, isAdmin);
+
+      const qByRecipient = query(collection(db, 'notifications'), where('recipientParticipantId', '==', identity.participantId));
+      attachQuery(sourceMaps, 'recipient', qByRecipient, identity, user, isAdmin);
+
+      const qByCreator = query(collection(db, 'notifications'), where('createdBy', '==', identity.createdBy));
+      attachQuery(sourceMaps, 'creator', qByCreator, identity, user, isAdmin);
+
+      if (user && user.email) {
+        const qByEmail = query(collection(db, 'notifications'), where('createdByEmail', '==', user.email));
+        attachQuery(sourceMaps, 'email', qByEmail, identity, user, isAdmin);
+      }
+
+      if (isAdmin) {
+        const qRoleRequests = query(collection(db, 'notifications'), where('type', '==', 'roleRequest'));
+        attachQuery(sourceMaps, 'roleRequests', qRoleRequests, identity, user, isAdmin);
+        const qAdminRecipients = query(collection(db, 'notifications'), where('recipientsRole', 'array-contains-any', ['admin', 'founder']));
+        attachQuery(sourceMaps, 'adminRecipients', qAdminRecipients, identity, user, isAdmin);
+      }
     });
+
+    window.signOutUser = function() {
+      signOut(auth).then(() => {
+        location.reload();
+      }).catch((error) => {
+        console.error('Sign out error:', error);
+      });
+    };
   </script>
  <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -268,8 +410,7 @@
       .then(html => {
         headerPlaceholder.innerHTML = html;
 
-        // 1) Set active link for this page automatically
-        const path = window.location.pathname.split('/').pop(); // gets "main.html"
+        const path = window.location.pathname.split('/').pop();
         const links = headerPlaceholder.querySelectorAll('.nav-link');
         links.forEach(link => {
           const href = link.getAttribute('href');
@@ -280,7 +421,6 @@
           }
         });
 
-        // 2) Wire up hamburger menu
         const hamburger = headerPlaceholder.querySelector('.hamburger');
         const navLinks = headerPlaceholder.querySelector('.nav-links');
 
@@ -309,5 +449,6 @@
       });
   });
 </script>
+<script src="bubble-transition.js"></script>
 </body>
 </html>

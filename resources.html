@@ -52,6 +52,12 @@
           <option>Support Groups</option>
         </select>
       </div>
+      <div class="modal-form-group">
+        <input id="resourceUrl" type="text" placeholder="Resource URL (https://...)" />
+      </div>
+      <div class="modal-form-group">
+        <input id="resourceHotline" type="text" placeholder="Hotline number (optional if URL provided)" />
+      </div>
       <div class="modal-form-actions">
         <button type="button" id="cancelResourceBtn" class="cancel-btn">Cancel</button>
         <button type="submit" class="submit-btn">Save Resource</button>
@@ -72,6 +78,8 @@
       <div class="event-detail-desc" id="resourceDetailDesc"></div>
     </div>
     <div class="modal-form-actions">
+      <button type="button" id="resourceDetailRemoveBtn" class="cancel-btn">Remove Resource</button>
+      <a id="resourceDetailActionBtn" class="submit-btn" href="#" target="_blank" rel="noopener noreferrer" style="display:none; text-decoration:none; align-items:center; justify-content:center;">Open Resource</a>
       <button type="button" id="resourceDetailSaveBtn" class="submit-btn">Save Resource</button>
     </div>
   </div>
@@ -86,12 +94,18 @@
 <button class="dark">Support Groups</button>
 </div>
 <div class="cards">
-<div class="card cardMen hov"><h3>Forsyth Mindfulness Starter</h3><p>Local breathing and mindfulness guides for busy schedules.</p><p>Short routines you can do between classes or after practice.</p><div class="tag blue">Mental Health</div></div>
-<div class="card cardMen hov"><h3>Talk It Out: Anxiety Support</h3><p>Local and school‑friendly coping strategies and check‑ins.</p><p>Quick tips and links to nearby community support.</p><div class="tag blue">Mental Health</div></div>
-<div class="card cardVol hov"><h3>Forsyth Healthy Plate</h3><p>Simple nutrition ideas using groceries from local markets.</p><p>Meal planning tips for families and student athletes.</p><div class="tag orange">Nutrition</div></div>
-<div class="card cardEnv hov"><h3>Move More Forsyth</h3><p>Beginner routines and walking paths around the county.</p><p>Great for weekends, parks, and neighborhood strolls.</p><div class="tag green">Physical Health</div></div>
-<div class="card cardCom hov"><h3>Community Wellness Nights</h3><p>Local workshops on stress, sleep, and balance.</p><p>Yoga, tai chi, and resilience sessions hosted nearby.</p><div class="tag purple">Wellness</div></div>
-<div class="card cardDon hov"><h3>Forsyth Support Groups</h3><p>Directory of peer groups for families and students.</p><p>Mix of in‑person and virtual meetups in the county.</p><div class="tag red">Support Groups</div></div>
+<div class="card cardMen hov" data-url="https://988lifeline.org/" data-hotline="988"><h3>988 Suicide & Crisis Lifeline</h3><p>24/7 immediate support for mental health crises and emotional distress.</p><p>Call, text, or chat with trained counselors for free support.</p><div class="tag blue">Mental Health</div></div>
+<div class="card cardMen hov" data-url="https://www.samhsa.gov/find-help/national-helpline" data-hotline="1-800-662-4357"><h3>SAMHSA National Helpline</h3><p>Confidential referral and information service for mental health and substance use support.</p><p>Available 24/7 in English and Spanish.</p><div class="tag blue">Mental Health</div></div>
+<div class="card cardDon hov" data-url="https://www.theplaceofforsyth.org/" data-hotline="770-887-1098"><h3>The Place Forsyth</h3><p>Local support hub for food assistance, donations, and community services.</p><p>Find local drives and support programs for families in need.</p><div class="tag red">Support Groups</div></div>
+<div class="card cardEnv hov" data-url="https://www.cdc.gov/physical-activity-basics/benefits/index.html"><h3>CDC Physical Activity Basics</h3><p>Evidence-based guides for building a weekly movement routine.</p><p>Great starter resource for all fitness levels.</p><div class="tag green">Physical Health</div></div>
+<div class="card cardVol hov" data-url="https://www.myplate.gov/"><h3>USDA MyPlate Nutrition Guide</h3><p>Practical meal-planning tips and nutrition basics for families and students.</p><p>Use food-group tools and healthy recipe ideas.</p><div class="tag orange">Nutrition</div></div>
+<div class="card cardCom hov" data-url="https://www.nimh.nih.gov/health/topics/caring-for-your-mental-health"><h3>NIMH Wellness Toolkit</h3><p>Science-backed strategies for stress management, sleep, and daily routines.</p><p>Helpful for students, parents, and busy schedules.</p><div class="tag purple">Wellness</div></div>
+<div class="card cardDon hov" data-url="https://www.nami.org/support-education/support-groups/"><h3>NAMI Support Groups</h3><p>Find peer-led support groups for individuals and families.</p><p>Includes options for ongoing weekly support.</p><div class="tag red">Support Groups</div></div>
+<div class="card cardMen hov" data-url="https://www.crisistextline.org/" data-hotline="Text HOME to 741741"><h3>Crisis Text Line</h3><p>Free text-based support with trained crisis counselors.</p><p>Ideal when calling is difficult or privacy is needed.</p><div class="tag blue">Mental Health</div></div>
+<div class="card cardEnv hov" data-url="https://www.keepforsythcountybeautiful.org/"><h3>Keep Forsyth County Beautiful</h3><p>Environmental volunteer opportunities, cleanups, and recycling education.</p><p>Join local efforts focused on sustainability and water quality.</p><div class="tag green">Physical Health</div></div>
+<div class="card cardVol hov" data-url="https://www.eatright.org/"><h3>Academy of Nutrition and Dietetics</h3><p>Trusted nutrition education from registered dietitians.</p><p>Browse healthy eating guides for all age groups.</p><div class="tag orange">Nutrition</div></div>
+<div class="card cardCom hov" data-url="https://www.sleepfoundation.org/"><h3>Sleep Foundation Guides</h3><p>Actionable sleep hygiene tips and routines for better recovery.</p><p>Includes teen and student-friendly recommendations.</p><div class="tag purple">Wellness</div></div>
+<div class="card cardDon hov" data-url="https://www.forsythpl.org/"><h3>Forsyth County Public Library Programs</h3><p>Community classes, support events, and educational workshops.</p><p>Track local meetups and public wellness sessions.</p><div class="tag red">Support Groups</div></div>
 </div>
 </div>
 
@@ -120,6 +134,12 @@
       </div>
       <div class="modal-form-group">
         <textarea id="eventDesc" placeholder="Event description" rows="4"></textarea>
+      </div>
+      <div class="modal-form-group">
+        <input id="eventUrl" type="text" placeholder="Event page URL (https://...)" />
+      </div>
+      <div class="modal-form-group">
+        <input id="eventHotline" type="text" placeholder="Hotline number (optional if URL provided)" />
       </div>
       <div class="modal-form-group">
         <label for="eventCategory">Category</label>
@@ -152,6 +172,8 @@
     </div>
     <div class="modal-form-actions">
       <button type="button" id="eventDetailEditBtn" class="cancel-btn" style="display:none;">Edit Event</button>
+      <button type="button" id="eventDetailRemoveBtn" class="cancel-btn">Remove Event</button>
+      <a id="eventDetailActionBtn" class="submit-btn" href="#" target="_blank" rel="noopener noreferrer" style="display:none; text-decoration:none; align-items:center; justify-content:center;">Open Event Link</a>
       <button type="button" id="eventDetailSignupBtn" class="submit-btn">Sign Up</button>
     </div>
   </div>
@@ -172,6 +194,19 @@
 <div class="card cardDon hov" data-title="Sharon Forks Book Drive" data-date="Mar 29, 2026" data-time="11:00 AM - 2:00 PM" data-location="Sharon Forks Library" data-desc="Collect and sort books for local classrooms and family literacy." data-category="Donation Drives"><h3>Sharon Forks Book Drive</h3><p>Mar 29, 2026 | 11:00 AM – 2:00 PM<br>Sharon Forks Library</p><p>Collect and sort books for local classrooms and family literacy.</p><div class="tag red">Donation Drives</div></div>
 <div class="card cardCom hov" data-title="Forsyth Cultural Expo" data-date="Apr 5, 2026" data-time="12:00 PM - 6:00 PM" data-location="Forsyth Central Park" data-desc="Celebrate community traditions with performances, food, and art." data-category="Community Events"><h3>Forsyth Cultural Expo</h3><p>Apr 5, 2026 | 12:00 PM – 6:00 PM<br>Forsyth Central Park</p><p>Celebrate community traditions with performances, food, and art.</p><div class="tag purple">Community Events</div></div>
 <div class="card cardEnv hov" data-title="Fowler Park Reforestation" data-date="Apr 12, 2026" data-time="9:30 AM - 1:30 PM" data-location="Fowler Park" data-desc="Plant native trees to strengthen Forsyth County green spaces." data-category="Environmental"><h3>Fowler Park Reforestation</h3><p>Apr 12, 2026 | 9:30 AM – 1:30 PM<br>Fowler Park</p><p>Plant native trees to strengthen Forsyth County green spaces.</p><div class="tag green">Environmental</div></div>
+<div class="card cardCom hov" data-title="Summer Kickoff Community Fair" data-date="Jun 6, 2026" data-time="10:00 AM - 4:00 PM" data-location="Cumming Fairgrounds" data-desc="Kick off summer with booths, youth clubs, and family activities." data-category="Community Events"><h3>Summer Kickoff Community Fair</h3><p>Jun 6, 2026 | 10:00 AM – 4:00 PM<br>Cumming Fairgrounds</p><p>Kick off summer with booths, youth clubs, and family activities.</p><div class="tag purple">Community Events</div></div>
+<div class="card cardEnv hov" data-title="Lanier Shoreline Cleanup" data-date="Jun 13, 2026" data-time="8:00 AM - 11:30 AM" data-location="Lake Lanier North Dock" data-desc="Collect shoreline litter and protect wildlife habitats around Lanier." data-category="Environmental"><h3>Lanier Shoreline Cleanup</h3><p>Jun 13, 2026 | 8:00 AM – 11:30 AM<br>Lake Lanier North Dock</p><p>Collect shoreline litter and protect wildlife habitats around Lanier.</p><div class="tag green">Environmental</div></div>
+<div class="card cardVol hov" data-title="Youth Volunteer Orientation Day" data-date="Jun 20, 2026" data-time="11:00 AM - 1:00 PM" data-location="Forsyth Service Center" data-desc="Get matched with summer volunteer projects for teens and families." data-category="Volunteering"><h3>Youth Volunteer Orientation Day</h3><p>Jun 20, 2026 | 11:00 AM – 1:00 PM<br>Forsyth Service Center</p><p>Get matched with summer volunteer projects for teens and families.</p><div class="tag orange">Volunteering</div></div>
+<div class="card cardMen hov" data-title="Mindful Summer Reset Workshop" data-date="Jun 27, 2026" data-time="9:30 AM - 11:30 AM" data-location="Sharon Forks Community Hall" data-desc="Guided stress-management and mindfulness tools for summer routines." data-category="Mental Health"><h3>Mindful Summer Reset Workshop</h3><p>Jun 27, 2026 | 9:30 AM – 11:30 AM<br>Sharon Forks Community Hall</p><p>Guided stress-management and mindfulness tools for summer routines.</p><div class="tag blue">Mental Health</div></div>
+<div class="card cardDon hov" data-title="Backpack Essentials Drive" data-date="Jul 4, 2026" data-time="12:00 PM - 3:00 PM" data-location="Midway Park Pavilion" data-desc="Donate school essentials to prepare students for the fall semester." data-category="Donation Drives"><h3>Backpack Essentials Drive</h3><p>Jul 4, 2026 | 12:00 PM – 3:00 PM<br>Midway Park Pavilion</p><p>Donate school essentials to prepare students for the fall semester.</p><div class="tag red">Donation Drives</div></div>
+<div class="card cardCom hov" data-title="Neighborhood Picnic and Games" data-date="Jul 11, 2026" data-time="1:00 PM - 5:00 PM" data-location="Sawnee Mountain Preserve Lawn" data-desc="Community picnic with music, games, and local nonprofit booths." data-category="Community Events"><h3>Neighborhood Picnic and Games</h3><p>Jul 11, 2026 | 1:00 PM – 5:00 PM<br>Sawnee Mountain Preserve Lawn</p><p>Community picnic with music, games, and local nonprofit booths.</p><div class="tag purple">Community Events</div></div>
+<div class="card cardEnv hov" data-title="Trail Water Station Volunteer Day" data-date="Jul 18, 2026" data-time="7:30 AM - 10:30 AM" data-location="Big Creek Greenway Mile 3" data-desc="Support runners and walkers while promoting hydration and safety." data-category="Environmental"><h3>Trail Water Station Volunteer Day</h3><p>Jul 18, 2026 | 7:30 AM – 10:30 AM<br>Big Creek Greenway Mile 3</p><p>Support runners and walkers while promoting hydration and safety.</p><div class="tag green">Environmental</div></div>
+<div class="card cardMen hov" data-title="Community Wellness Check-In" data-date="Jul 25, 2026" data-time="10:00 AM - 12:00 PM" data-location="Forsyth Central Library" data-desc="Open discussion circle on burnout, boundaries, and community care." data-category="Mental Health"><h3>Community Wellness Check-In</h3><p>Jul 25, 2026 | 10:00 AM – 12:00 PM<br>Forsyth Central Library</p><p>Open discussion circle on burnout, boundaries, and community care.</p><div class="tag blue">Mental Health</div></div>
+<div class="card cardVol hov" data-title="Senior Center Support Shift" data-date="Aug 1, 2026" data-time="9:00 AM - 1:00 PM" data-location="Cumming Senior Center" data-desc="Help with meal prep, games, and activity support for seniors." data-category="Volunteering"><h3>Senior Center Support Shift</h3><p>Aug 1, 2026 | 9:00 AM – 1:00 PM<br>Cumming Senior Center</p><p>Help with meal prep, games, and activity support for seniors.</p><div class="tag orange">Volunteering</div></div>
+<div class="card cardDon hov" data-title="Community Hygiene Kit Drive" data-date="Aug 8, 2026" data-time="11:00 AM - 2:00 PM" data-location="Vickery Village Plaza" data-desc="Assemble hygiene kits for families and individuals in need." data-category="Donation Drives"><h3>Community Hygiene Kit Drive</h3><p>Aug 8, 2026 | 11:00 AM – 2:00 PM<br>Vickery Village Plaza</p><p>Assemble hygiene kits for families and individuals in need.</p><div class="tag red">Donation Drives</div></div>
+<div class="card cardCom hov" data-title="Local Arts and Culture Night" data-date="Aug 15, 2026" data-time="5:30 PM - 8:30 PM" data-location="Cumming City Center Stage" data-desc="Celebrate local artists, student performers, and neighborhood stories." data-category="Community Events"><h3>Local Arts and Culture Night</h3><p>Aug 15, 2026 | 5:30 PM – 8:30 PM<br>Cumming City Center Stage</p><p>Celebrate local artists, student performers, and neighborhood stories.</p><div class="tag purple">Community Events</div></div>
+<div class="card cardEnv hov" data-title="End-of-Summer Park Cleanup" data-date="Aug 22, 2026" data-time="8:30 AM - 12:00 PM" data-location="Fowler Park East Entrance" data-desc="Close out summer with park cleanup and recycling education stations." data-category="Environmental"><h3>End-of-Summer Park Cleanup</h3><p>Aug 22, 2026 | 8:30 AM – 12:00 PM<br>Fowler Park East Entrance</p><p>Close out summer with park cleanup and recycling education stations.</p><div class="tag green">Environmental</div></div>
+<div class="card cardMen hov" data-title="Back-to-School Resilience Session" data-date="Aug 29, 2026" data-time="10:30 AM - 12:00 PM" data-location="South Forsyth High Commons" data-desc="Practical tools for managing stress and routines before school starts." data-category="Mental Health"><h3>Back-to-School Resilience Session</h3><p>Aug 29, 2026 | 10:30 AM – 12:00 PM<br>South Forsyth High Commons</p><p>Practical tools for managing stress and routines before school starts.</p><div class="tag blue">Mental Health</div></div>
 </div>
 </div>
 <footer class="footer" style="margin-top: 100px; width: 100%">
@@ -197,6 +232,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const eventDetailDesc = document.getElementById('eventDetailDesc');
   const eventDetailSignupBtn = document.getElementById('eventDetailSignupBtn');
   const eventDetailEditBtn = document.getElementById('eventDetailEditBtn');
+  const eventDetailRemoveBtn = document.getElementById('eventDetailRemoveBtn');
+  const eventDetailActionBtn = document.getElementById('eventDetailActionBtn');
 
   // Resource modal
   const resourceModal = document.getElementById('resourceModal');
@@ -212,6 +249,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const resourceDetailMeta = document.getElementById('resourceDetailMeta');
   const resourceDetailDesc = document.getElementById('resourceDetailDesc');
   const resourceDetailSaveBtn = document.getElementById('resourceDetailSaveBtn');
+  const resourceDetailRemoveBtn = document.getElementById('resourceDetailRemoveBtn');
+  const resourceDetailActionBtn = document.getElementById('resourceDetailActionBtn');
 
   // Toggle functionality
   const toggleBtns = document.querySelectorAll('.toggle-btns button');
@@ -250,16 +289,56 @@ document.addEventListener('DOMContentLoaded', function() {
     return (value || '').toLowerCase();
   }
 
+  function logFirebaseError(context, err, extra = {}) {
+    console.error(`[Firebase:${context}]`, {
+      code: err && err.code ? err.code : 'unknown',
+      message: err && err.message ? err.message : String(err),
+      ...extra,
+      raw: err
+    });
+  }
+
+  function toDateKey(value) {
+    if (!value) return '';
+    if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+    const parsed = new Date(value);
+    if (isNaN(parsed)) return '';
+    return parsed.toISOString().slice(0, 10);
+  }
+
+  function formatDateForDisplay(value) {
+    if (!value) return '';
+    const parsed = new Date(value);
+    if (isNaN(parsed)) return value;
+    return parsed.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function normalizeUrl(value) {
+    const v = (value || '').trim();
+    if (!v) return '';
+    if (/^https?:\/\//i.test(v)) return v;
+    return `https://${v}`;
+  }
+
+  function hasActionTarget(url, hotline) {
+    return !!((url || '').trim() || (hotline || '').trim());
+  }
+
   function setEventCardData(card, data) {
     card.dataset.title = data.title || '';
     card.dataset.date = data.date || '';
+    card.dataset.dateKey = data.dateKey || toDateKey(data.date) || '';
     card.dataset.time = data.time || '';
     card.dataset.location = data.location || '';
     card.dataset.desc = data.desc || '';
     card.dataset.category = data.category || '';
+    card.dataset.url = data.url || '';
+    card.dataset.hotline = data.hotline || '';
     card.dataset.status = data.status || '';
+    card.dataset.docId = data.docId || '';
+    card.dataset.sourceFirestore = data.sourceFirestore ? '1' : '';
     card.dataset.search = normalizeText(
-      [data.title, data.date, data.time, data.location, data.desc, data.category].join(' ')
+      [data.title, data.date, data.time, data.location, data.desc, data.category, data.url, data.hotline].join(' ')
     );
   }
 
@@ -268,10 +347,44 @@ document.addEventListener('DOMContentLoaded', function() {
     card.dataset.desc1 = data.desc1 || '';
     card.dataset.desc2 = data.desc2 || '';
     card.dataset.category = data.category || '';
+    card.dataset.url = data.url || '';
+    card.dataset.hotline = data.hotline || '';
     card.dataset.status = data.status || '';
+    card.dataset.docId = data.docId || '';
+    card.dataset.sourceFirestore = data.sourceFirestore ? '1' : '';
     card.dataset.search = normalizeText(
-      [data.title, data.desc1, data.desc2, data.category].join(' ')
+      [data.title, data.desc1, data.desc2, data.category, data.url, data.hotline].join(' ')
     );
+  }
+
+  async function removeEventCard(card) {
+    if (!card) return;
+    const title = card.dataset.title || '';
+    const docId = card.dataset.docId || '';
+    const isFirestoreItem = card.dataset.sourceFirestore === '1';
+
+    if (isFirestoreItem && docId && window.deleteEventByDocId) {
+      await window.deleteEventByDocId(docId);
+    }
+
+    removePendingLocalByTitle('pendingEvents', title);
+    card.remove();
+    applyEventFilters();
+  }
+
+  async function removeResourceCard(card) {
+    if (!card) return;
+    const title = card.dataset.title || '';
+    const docId = card.dataset.docId || '';
+    const isFirestoreItem = card.dataset.sourceFirestore === '1';
+
+    if (isFirestoreItem && docId && window.deleteResourceByDocId) {
+      await window.deleteResourceByDocId(docId, title);
+    }
+
+    removePendingLocalByTitle('pendingResources', title);
+    card.remove();
+    applyResourceFilters();
   }
 
   function loadPendingLocal(key) {
@@ -306,6 +419,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const now = Date.now();
     const next = list.filter(it => !it._ts || (now - it._ts) <= maxAgeMs);
     savePendingLocal(key, next);
+  }
+
+  function saveLocalActionFallback(key, payload) {
+    try {
+      const current = JSON.parse(localStorage.getItem(key) || '[]');
+      current.unshift({ ...payload, _localTs: Date.now() });
+      localStorage.setItem(key, JSON.stringify(current.slice(0, 200)));
+    } catch (err) {
+      console.warn('Local action fallback save failed:', err.message);
+    }
   }
 
   function applyResourceFilters() {
@@ -367,14 +490,18 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!card) return;
     const title = card.dataset.title || card.querySelector('h3')?.textContent || 'Event';
     const date = card.dataset.date || '';
+    const dateKey = card.dataset.dateKey || toDateKey(date) || '';
     const time = card.dataset.time || '';
     const location = card.dataset.location || '';
     const desc = card.dataset.desc || '';
     const category = card.dataset.category || (card.querySelector('.tag')?.textContent || '');
+    const url = card.dataset.url || '';
+    const hotline = card.dataset.hotline || '';
 
     eventDetailTitle.textContent = title;
     eventDetailMeta.textContent = [date, time, location].filter(Boolean).join(' | ');
-    eventDetailDesc.textContent = desc || 'No description provided.';
+    const actionLine = hotline ? ` Hotline: ${hotline}` : '';
+    eventDetailDesc.textContent = (desc || 'No description provided.') + actionLine;
     if (card.dataset.status === 'pending') {
       eventDetailDesc.textContent = `${eventDetailDesc.textContent} (Pending approval)`;
     }
@@ -401,24 +528,66 @@ document.addEventListener('DOMContentLoaded', function() {
       eventDetailEditBtn.style.display = 'none';
     }
 
+    if (eventDetailActionBtn) {
+      if (url) {
+        eventDetailActionBtn.style.display = 'inline-flex';
+        eventDetailActionBtn.textContent = 'Open Event Link';
+        eventDetailActionBtn.href = normalizeUrl(url);
+        eventDetailActionBtn.target = '_blank';
+      } else if (hotline) {
+        const tel = `tel:${hotline.replace(/[^\d+]/g, '')}`;
+        eventDetailActionBtn.style.display = 'inline-flex';
+        eventDetailActionBtn.textContent = `Call ${hotline}`;
+        eventDetailActionBtn.href = tel;
+        eventDetailActionBtn.target = '_self';
+      } else {
+        eventDetailActionBtn.style.display = 'none';
+        eventDetailActionBtn.href = '#';
+      }
+    }
+
     eventDetailSignupBtn.onclick = function() {
       if (window.createEventSignup) {
         window.createEventSignup({
           title,
-          date,
+          date: dateKey || date,
+          dateKey: dateKey || toDateKey(date),
           time,
           location,
           desc,
-          category
+          category,
+          url,
+          hotline
         }).then(() => {
           alert('You are signed up for this event. Check notifications for details.');
           closeEventDetailModal();
         }).catch(err => {
-          console.error('Signup failed', err);
-          alert('Failed to sign up for this event.');
+          logFirebaseError('eventSignup.ui', err, { title, dateKey });
+          saveLocalActionFallback('rippleLocalEventSignups', {
+            title,
+            date: dateKey || date,
+            dateKey: dateKey || toDateKey(date),
+            time,
+            location,
+            desc,
+            category
+          });
+          alert('Event signup was saved locally on this device.');
+          closeEventDetailModal();
         });
       } else {
         alert('Signup is not available right now.');
+      }
+    };
+
+    eventDetailRemoveBtn.onclick = async function() {
+      if (!confirm(`Remove event "${title}"?`)) return;
+      try {
+        await removeEventCard(card);
+        closeEventDetailModal();
+      } catch (err) {
+        console.error('Event removal failed', err);
+        alert('Failed to remove this event.');
       }
     };
 
@@ -432,10 +601,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const desc1 = card.dataset.desc1 || card.querySelectorAll('p')[0]?.textContent || '';
     const desc2 = card.dataset.desc2 || card.querySelectorAll('p')[1]?.textContent || '';
     const category = card.dataset.category || (card.querySelector('.tag')?.textContent || '');
+    const resourceDocId = card.dataset.docId || '';
+    const url = card.dataset.url || '';
+    const hotline = card.dataset.hotline || '';
 
     resourceDetailTitle.textContent = title;
     resourceDetailMeta.textContent = category || 'Resource';
-    resourceDetailDesc.textContent = [desc1, desc2].filter(Boolean).join(' ');
+    const detailParts = [desc1, desc2].filter(Boolean);
+    if (hotline) detailParts.push(`Hotline: ${hotline}`);
+    resourceDetailDesc.textContent = detailParts.join(' ');
     if (card.dataset.status === 'pending') {
       resourceDetailDesc.textContent = `${resourceDetailDesc.textContent} (Pending approval)`;
     }
@@ -452,22 +626,65 @@ document.addEventListener('DOMContentLoaded', function() {
       resourceDetailModalContent.classList.add(categoryMap[category]);
     }
 
+    if (resourceDetailActionBtn) {
+      if (url) {
+        resourceDetailActionBtn.style.display = 'inline-flex';
+        resourceDetailActionBtn.textContent = 'Open Resource';
+        resourceDetailActionBtn.href = normalizeUrl(url);
+        resourceDetailActionBtn.target = '_blank';
+      } else if (hotline) {
+        const tel = `tel:${hotline.replace(/[^\d+]/g, '')}`;
+        resourceDetailActionBtn.style.display = 'inline-flex';
+        resourceDetailActionBtn.textContent = `Call ${hotline}`;
+        resourceDetailActionBtn.href = tel;
+        resourceDetailActionBtn.target = '_self';
+      } else {
+        resourceDetailActionBtn.style.display = 'none';
+        resourceDetailActionBtn.href = '#';
+      }
+    }
+
     resourceDetailSaveBtn.onclick = function() {
       if (window.createResourceSave) {
         window.createResourceSave({
           title,
           desc1,
           desc2,
-          category
+          category,
+          resourceDocId,
+          url,
+          hotline
         }).then(() => {
           alert('Resource saved. Check notifications for details.');
           closeResourceDetailModal();
         }).catch(err => {
-          console.error('Save failed', err);
-          alert('Failed to save this resource.');
+          logFirebaseError('resourceSave.ui', err, { title, resourceDocId });
+          saveLocalActionFallback('rippleLocalResourceSaves', {
+            title,
+            desc1,
+            desc2,
+            category,
+            resourceDocId,
+            url,
+            hotline,
+            dateKey: new Date().toISOString().slice(0, 10)
+          });
+          alert('Resource save was stored locally on this device.');
+          closeResourceDetailModal();
         });
       } else {
         alert('Save is not available right now.');
+      }
+    };
+
+    resourceDetailRemoveBtn.onclick = async function() {
+      if (!confirm(`Remove resource "${title}"?`)) return;
+      try {
+        await removeResourceCard(card);
+        closeResourceDetailModal();
+      } catch (err) {
+        console.error('Resource removal failed', err);
+        alert('Failed to remove this resource.');
       }
     };
 
@@ -491,11 +708,13 @@ document.addEventListener('DOMContentLoaded', function() {
     editingEventCard = card;
     if (eventModalTitle) eventModalTitle.textContent = 'Edit Event';
     document.getElementById('eventTitle').value = card.dataset.title || '';
-    const parsedDate = card.dataset.date ? new Date(card.dataset.date) : null;
+    const parsedDate = (card.dataset.dateKey || card.dataset.date) ? new Date(card.dataset.dateKey || card.dataset.date) : null;
     document.getElementById('eventDate').value = parsedDate && !isNaN(parsedDate) ? parsedDate.toISOString().slice(0, 10) : '';
     document.getElementById('eventTime').value = card.dataset.time || '';
     document.getElementById('eventLocation').value = card.dataset.location || '';
     document.getElementById('eventDesc').value = card.dataset.desc || '';
+    document.getElementById('eventUrl').value = card.dataset.url || '';
+    document.getElementById('eventHotline').value = card.dataset.hotline || '';
     document.getElementById('eventCategory').value = card.dataset.category || 'Community Events';
     updateEventModalStyle();
     openModal();
@@ -561,7 +780,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const h3 = document.createElement('h3'); h3.textContent = data.title || 'Untitled Event';
     const p1 = document.createElement('p');
-    const dateText = data.date || '';
+    const dateKey = data.dateKey || toDateKey(data.date) || '';
+    const dateText = formatDateForDisplay(dateKey || data.date || '');
     p1.textContent = (dateText ? dateText : '') + (data.time ? ' | ' + data.time : '');
     p1.appendChild(document.createElement('br'));
     p1.appendChild(document.createTextNode(data.location || ''));
@@ -577,11 +797,16 @@ document.addEventListener('DOMContentLoaded', function() {
     setEventCardData(card, {
       title: data.title,
       date: dateText,
+      dateKey,
       time: data.time,
       location: data.location,
       desc: data.desc,
       category: data.category,
-      status: data.status || ''
+      url: data.url || '',
+      hotline: data.hotline || '',
+      status: data.status || '',
+      docId: data.docId || '',
+      sourceFirestore: !!data.sourceFirestore
     });
     setupEventCard(card);
     return card;
@@ -618,7 +843,11 @@ document.addEventListener('DOMContentLoaded', function() {
       desc1: data.desc1,
       desc2: data.desc2,
       category: data.category,
-      status: data.status || ''
+      url: data.url || '',
+      hotline: data.hotline || '',
+      status: data.status || '',
+      docId: data.docId || '',
+      sourceFirestore: !!data.sourceFirestore
     });
     card.addEventListener('click', function() {
       openResourceDetail(card);
@@ -628,38 +857,68 @@ document.addEventListener('DOMContentLoaded', function() {
 
   window.renderEventsFromFirestore = function(list) {
     if (!cards) return;
+    // Replace Firestore-backed cards from scratch so removals stay in sync.
+    Array.from(cards.querySelectorAll('.card'))
+      .filter(card => card.dataset.sourceFirestore === '1')
+      .forEach(card => card.remove());
+
     list.forEach(item => {
       const match = Array.from(cards.querySelectorAll('.card')).find(card => {
         const title = (card.dataset.title || card.querySelector('h3')?.textContent || '').trim().toLowerCase();
-        return title && item.title && title === item.title.trim().toLowerCase();
+        return card.dataset.sourceFirestore !== '1' && title && item.title && title === item.title.trim().toLowerCase();
       });
       if (match) {
-        match.classList.remove('pending-card');
-        match.dataset.status = '';
-        removePendingLocalByTitle('pendingEvents', item.title);
+        setEventCardData(match, {
+          title: item.title,
+          date: item.date || '',
+          time: item.time || '',
+          location: item.location || '',
+          desc: item.desc || '',
+          category: item.category || 'Community Events',
+          url: item.url || '',
+          hotline: item.hotline || '',
+          status: '',
+          docId: item.docId || '',
+          sourceFirestore: true
+        });
       } else {
         const card = buildEventCardFromData(item);
         cards.appendChild(card);
       }
+      removePendingLocalByTitle('pendingEvents', item.title);
     });
     applyEventFilters();
   };
 
   window.renderResourcesFromFirestore = function(list) {
     if (!resourceCards) return;
+    // Replace Firestore-backed cards from scratch so removals stay in sync.
+    Array.from(resourceCards.querySelectorAll('.card'))
+      .filter(card => card.dataset.sourceFirestore === '1')
+      .forEach(card => card.remove());
+
     list.forEach(item => {
       const match = Array.from(resourceCards.querySelectorAll('.card')).find(card => {
         const title = (card.dataset.title || card.querySelector('h3')?.textContent || '').trim().toLowerCase();
-        return title && item.title && title === item.title.trim().toLowerCase();
+        return card.dataset.sourceFirestore !== '1' && title && item.title && title === item.title.trim().toLowerCase();
       });
       if (match) {
-        match.classList.remove('pending-card');
-        match.dataset.status = '';
-        removePendingLocalByTitle('pendingResources', item.title);
+        setResourceCardData(match, {
+          title: item.title,
+          desc1: item.desc1 || '',
+          desc2: item.desc2 || '',
+          category: item.category || 'Wellness',
+          url: item.url || '',
+          hotline: item.hotline || '',
+          status: '',
+          docId: item.docId || '',
+          sourceFirestore: true
+        });
       } else {
         const card = buildResourceCardFromData(item);
         resourceCards.appendChild(card);
       }
+      removePendingLocalByTitle('pendingResources', item.title);
     });
     applyResourceFilters();
   };
@@ -687,12 +946,19 @@ document.addEventListener('DOMContentLoaded', function() {
     e.preventDefault();
     const title = document.getElementById('eventTitle').value.trim();
     const date = document.getElementById('eventDate').value;
+    const dateKey = toDateKey(date);
     const time = document.getElementById('eventTime').value;
     const location = document.getElementById('eventLocation').value.trim();
     const desc = document.getElementById('eventDesc').value.trim();
+    const url = normalizeUrl(document.getElementById('eventUrl').value.trim());
+    const hotline = document.getElementById('eventHotline').value.trim();
     const category = document.getElementById('eventCategory').value;
 
     if(!title) return;
+    if (!hasActionTarget(url, hotline)) {
+      alert('Add either an event URL or hotline number.');
+      return;
+    }
 
     if (isEditingEvent && editingEventCard) {
       const tag = editingEventCard.querySelector('.tag');
@@ -701,14 +967,14 @@ document.addEventListener('DOMContentLoaded', function() {
       const p2 = editingEventCard.querySelectorAll('p')[1];
 
       h3.textContent = title;
-      const dateText = date ? (new Date(date).toLocaleDateString()) : '';
+      const dateText = formatDateForDisplay(dateKey || date);
       p1.textContent = (dateText ? dateText : '') + (time ? ' | ' + time : '');
       p1.appendChild(document.createElement('br'));
       p1.appendChild(document.createTextNode(location));
       p2.textContent = desc;
       tag.textContent = category;
 
-      setEventCardData(editingEventCard, { title, date: dateText || date, time, location, desc, category, status: editingEventCard.dataset.status || '' });
+      setEventCardData(editingEventCard, { title, date: dateText || date, dateKey: dateKey || '', time, location, desc, category, url, hotline, status: editingEventCard.dataset.status || '' });
       applyEventFilters();
       closeModal();
       return;
@@ -731,7 +997,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const h3 = document.createElement('h3'); h3.textContent = title;
     const p1 = document.createElement('p');
-    const dateText = date ? (new Date(date).toLocaleDateString()) : '';
+    const dateText = formatDateForDisplay(dateKey || date);
     p1.textContent = (dateText ? dateText : '') + (time ? ' | ' + time : '');
     p1.appendChild(document.createElement('br'));
     p1.appendChild(document.createTextNode(location));
@@ -744,21 +1010,22 @@ document.addEventListener('DOMContentLoaded', function() {
     card.appendChild(p2);
     card.appendChild(tagDiv);
 
-    setEventCardData(card, { title, date: dateText || date, time, location, desc, category, status: 'pending' });
-    setupEventCard(card);
-
-    card.classList.add('pending-card');
-    if (cards) cards.insertBefore(card, cards.firstChild);
-    addPendingLocal('pendingEvents', { title, date: dateText || date, time, location, desc, category, status: 'pending' });
-    applyEventFilters();
-    if (window.createPendingEvent) {
-      window.createPendingEvent({ title, date, time, location, desc, category })
-        .then(() => {
-          alert('Event submitted for review. An admin will approve it shortly.');
+    if (window.createModeratedEvent) {
+      window.createModeratedEvent({ title, date: dateKey || date, dateKey: dateKey || '', time, location, desc, category, url, hotline })
+        .then((result) => {
+          if (!result.approved) {
+            alert(`Event was rejected by AI moderation: ${result.reason}`);
+            return;
+          }
+          setEventCardData(card, { title, date: dateText || date, dateKey: dateKey || '', time, location, desc, category, url, hotline, status: '' });
+          setupEventCard(card);
+          if (cards) cards.insertBefore(card, cards.firstChild);
+          applyEventFilters();
+          alert(`Event approved: ${result.reason}`);
         })
         .catch(err => {
-          console.error('Error submitting event for review', err);
-          alert('Failed to submit event for review.');
+          console.error('Error during AI event moderation', err);
+          alert('Failed to moderate and publish event.');
         })
         .finally(() => {
           closeModal();
@@ -774,8 +1041,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const desc1 = document.getElementById('resourceDesc1').value.trim();
     const desc2 = document.getElementById('resourceDesc2').value.trim();
     const category = document.getElementById('resourceCategory').value;
+    const url = normalizeUrl(document.getElementById('resourceUrl').value.trim());
+    const hotline = document.getElementById('resourceHotline').value.trim();
 
     if(!title) return;
+    if (!hasActionTarget(url, hotline)) {
+      alert('Add either a resource URL or hotline number.');
+      return;
+    }
 
     const card = document.createElement('div');
     card.className = 'card hov';
@@ -802,20 +1075,21 @@ document.addEventListener('DOMContentLoaded', function() {
     card.appendChild(p2);
     card.appendChild(tagDiv);
 
-    setResourceCardData(card, { title, desc1, desc2, category, status: 'pending' });
-    card.classList.add('pending-card');
-
-    if(resourceCards) resourceCards.insertBefore(card, resourceCards.firstChild);
-    addPendingLocal('pendingResources', { title, desc1, desc2, category, status: 'pending' });
-    applyResourceFilters();
-    if (window.createPendingResource) {
-      window.createPendingResource({ title, desc1, desc2, category })
-        .then(() => {
-          alert('Resource submitted for review. An admin will approve it shortly.');
+    if (window.createModeratedResource) {
+      window.createModeratedResource({ title, desc1, desc2, category, url, hotline })
+        .then((result) => {
+          if (!result.approved) {
+            alert(`Resource was rejected by AI moderation: ${result.reason}`);
+            return;
+          }
+          setResourceCardData(card, { title, desc1, desc2, category, url, hotline, status: '' });
+          if(resourceCards) resourceCards.insertBefore(card, resourceCards.firstChild);
+          applyResourceFilters();
+          alert(`Resource approved: ${result.reason}`);
         })
         .catch(err => {
-          console.error('Error submitting resource for review', err);
-          alert('Failed to submit resource for review.');
+          console.error('Error during AI resource moderation', err);
+          alert('Failed to moderate and publish resource.');
         })
         .finally(() => {
           closeResourceModal();
@@ -858,6 +1132,15 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   document.querySelectorAll('#events-section .card').forEach(card => {
+    const title = card.dataset.title || card.querySelector('h3')?.textContent || '';
+    const date = card.dataset.date || '';
+    const time = card.dataset.time || '';
+    const location = card.dataset.location || '';
+    const desc = card.dataset.desc || card.querySelectorAll('p')[1]?.textContent || '';
+    const category = card.dataset.category || card.querySelector('.tag')?.textContent || '';
+    const url = card.dataset.url || '';
+    const hotline = card.dataset.hotline || '';
+    setEventCardData(card, { title, date, time, location, desc, category, url, hotline, status: card.dataset.status || '' });
     setupEventCard(card);
   });
 
@@ -866,7 +1149,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const desc1 = card.querySelectorAll('p')[0]?.textContent || '';
     const desc2 = card.querySelectorAll('p')[1]?.textContent || '';
     const category = card.querySelector('.tag')?.textContent || '';
-    setResourceCardData(card, { title, desc1, desc2, category });
+    const url = card.dataset.url || '';
+    const hotline = card.dataset.hotline || '';
+    setResourceCardData(card, { title, desc1, desc2, category, url, hotline });
     card.addEventListener('click', function() {
       openResourceDetail(card);
     });
@@ -909,7 +1194,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, serverTimestamp, doc, setDoc, updateDoc, getDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, getDocs, onSnapshot, query, where, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
@@ -926,129 +1211,413 @@ document.addEventListener('DOMContentLoaded', function() {
 
   window.currentUserRole = 'member';
 
-  // Helper: create a pending event and send a notification to admins/founders
-  window.createPendingEvent = async function(eventData) {
-    if (!auth.currentUser) throw new Error('Not authenticated');
+  const MODERATION_API_KEY = "rmSK69XXXz8uoZyNU5kx4m6VrSAoZekS";
+  const MODERATION_API_URL = "https://api.mistral.ai/v1/chat/completions";
+  const MODERATION_MODEL = "mistral-small-latest";
+
+  function parseModerationResult(text) {
+    if (!text) return null;
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) return null;
+    try {
+      const parsed = JSON.parse(match[0]);
+      return {
+        approved: !!parsed.approved,
+        reason: (parsed.reason || "No reason provided").toString().slice(0, 500),
+        risk: (parsed.risk || "unknown").toString().slice(0, 50)
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  function fallbackModeration(itemType, data) {
+    const raw = JSON.stringify(data).toLowerCase();
+    const blockedTerms = ["hate", "kill", "violence", "drug", "weapon", "scam", "fraud", "explicit"];
+    const hasBlocked = blockedTerms.some(term => raw.includes(term));
+    if (hasBlocked) {
+      return {
+        approved: false,
+        reason: `Rejected by fallback moderation for potentially unsafe ${itemType} content.`,
+        risk: "high"
+      };
+    }
+    return {
+      approved: true,
+      reason: `Approved by fallback moderation for ${itemType}.`,
+      risk: "low"
+    };
+  }
+
+  async function moderateWithAI(itemType, data) {
+    const prompt = [
+      "You are a strict safety moderator for community submissions.",
+      `Review this ${itemType} submission and decide if it should be publicly visible.`,
+      "Approve only if content is safe and community-appropriate.",
+      "Reject content that includes hate, violence, self-harm instructions, sexual explicitness, scams, illegal activity, or dangerous misinformation.",
+      "Return JSON only with keys: approved (boolean), reason (string), risk (low|medium|high)."
+    ].join(" ");
+
+    const body = {
+      model: MODERATION_MODEL,
+      temperature: 0,
+      messages: [
+        { role: "system", content: prompt },
+        { role: "user", content: JSON.stringify({ itemType, data }) }
+      ],
+      response_format: { type: "json_object" }
+    };
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    let response;
+    try {
+      response = await fetch(MODERATION_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${MODERATION_API_KEY}`
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    if (!response.ok) {
+      throw new Error(`Moderation API failed (${response.status})`);
+    }
+
+    const payload = await response.json();
+    const text = payload.choices?.[0]?.message?.content || "";
+    const result = parseModerationResult(text);
+    if (!result) throw new Error("Moderation response parse failed");
+    return result;
+  }
+
+  async function moderateSubmission(itemType, data) {
+    try {
+      const result = await moderateWithAI(itemType, data);
+      if (result.approved && String(result.risk).toLowerCase() === 'high') {
+        return {
+          approved: false,
+          reason: 'Rejected due to high-risk content signals.',
+          risk: 'high'
+        };
+      }
+      return result;
+    } catch (err) {
+      logFirebaseError('moderation.ai', err, { itemType });
+      return fallbackModeration(itemType, data);
+    }
+  }
+
+  function oneSentenceReason(reason, fallback) {
+    const src = (reason || fallback || '').toString().trim();
+    if (!src) return fallback || 'Reviewed by moderation.';
+    const normalized = src.replace(/\s+/g, ' ').trim();
+    const split = normalized.match(/^[^.!?]+[.!?]?/);
+    const first = split ? split[0].trim() : normalized;
+    return first.endsWith('.') || first.endsWith('!') || first.endsWith('?') ? first : `${first}.`;
+  }
+
+  async function createModerationNotification(actor, itemType, title, approved, reason) {
+    const shortReason = oneSentenceReason(
+      reason,
+      approved ? 'Accepted because content appears community-safe.' : 'Denied because content did not meet safety rules.'
+    );
+    await addDoc(collection(db, 'notifications'), {
+      type: 'moderationResult',
+      itemType,
+      title: approved ? `${itemType === 'event' ? 'Event' : 'Resource'} Accepted` : `${itemType === 'event' ? 'Event' : 'Resource'} Denied`,
+      message: `${approved ? 'Accepted' : 'Denied'}: ${shortReason}`,
+      status: 'unread',
+      createdBy: actor.createdBy,
+      createdByEmail: actor.createdByEmail,
+      participantId: actor.participantId,
+      participantType: actor.participantType,
+      createdAt: serverTimestamp()
+    });
+  }
+
+  function getVisitorId() {
+    const key = "rippleVisitorId";
+    let id = localStorage.getItem(key);
+    if (!id) {
+      id = `visitor_${Math.random().toString(36).slice(2, 10)}_${Date.now().toString(36)}`;
+      localStorage.setItem(key, id);
+    }
+    return id;
+  }
+
+  async function getPublicIp() {
+    const cached = localStorage.getItem('ripplePublicIp');
+    if (cached) return cached;
+    try {
+      const resp = await fetch('https://api.ipify.org?format=json', { cache: 'no-store' });
+      const data = await resp.json();
+      const ip = data && data.ip ? data.ip : '';
+      if (ip) {
+        localStorage.setItem('ripplePublicIp', ip);
+        return ip;
+      }
+    } catch (err) {
+      console.warn('IP fetch failed:', err.message);
+    }
+    return '';
+  }
+
+  async function resolveParticipantIdentity() {
+    if (auth.currentUser) {
+      const identity = {
+        createdBy: auth.currentUser.uid,
+        createdByEmail: auth.currentUser.email || null,
+        participantId: `uid:${auth.currentUser.uid}`,
+        participantType: 'account',
+        uid: auth.currentUser.uid,
+        ip: null
+      };
+      try {
+        await setDoc(doc(db, 'participantIdentities', identity.participantId), {
+          ...identity,
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+      } catch (err) {
+        logFirebaseError('participantIdentity.account', err, { participantId: identity.participantId });
+      }
+      return identity;
+    }
+
+    const visitorId = getVisitorId();
+    const ip = await getPublicIp();
+    const participantId = ip ? `ip:${ip}` : `visitor:${visitorId}`;
+    const identity = {
+      createdBy: visitorId,
+      createdByEmail: null,
+      participantId,
+      participantType: ip ? 'ip' : 'visitor',
+      uid: null,
+      ip: ip || null
+    };
+    try {
+      await setDoc(doc(db, 'participantIdentities', identity.participantId), {
+        ...identity,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+    } catch (err) {
+      logFirebaseError('participantIdentity.guest', err, { participantId: identity.participantId });
+    }
+    return identity;
+  }
+
+  function saveLocalSignup(key, payload) {
+    try {
+      const current = JSON.parse(localStorage.getItem(key) || '[]');
+      current.unshift({ ...payload, _localTs: Date.now() });
+      localStorage.setItem(key, JSON.stringify(current.slice(0, 200)));
+    } catch (err) {
+      console.warn('Local signup fallback storage failed:', err.message);
+    }
+  }
+
+  window.createModeratedEvent = async function(eventData) {
+    const moderation = await moderateSubmission("event", eventData);
+    const actor = await resolveParticipantIdentity();
+    const dateKey = toDateKey(eventData.dateKey || eventData.date);
+    const status = moderation.approved ? "approved" : "rejected";
+    const targetCollection = moderation.approved ? "events" : "rejectedEvents";
     const payload = {
       ...eventData,
-      createdBy: auth.currentUser.uid,
-      createdByEmail: auth.currentUser.email || null,
-      status: 'pending',
-      createdAt: serverTimestamp()
+      dateKey,
+      date: dateKey || eventData.date || '',
+      ...actor,
+      status,
+      moderationReason: moderation.reason,
+      moderationRisk: moderation.risk,
+      moderatedBy: "ai",
+      createdAt: serverTimestamp(),
+      moderatedAt: serverTimestamp()
     };
-    const ref = await addDoc(collection(db, 'pendingEvents'), payload);
-    // create notification for admins/founders
-    await addDoc(collection(db, 'notifications'), {
-      type: 'approval',
-      itemType: 'event',
-      itemId: ref.id,
-      title: eventData.title,
-      message: `New event submitted: ${eventData.title}`,
-      recipientsRole: ['admin','founder'],
-      status: 'unread',
-      createdBy: auth.currentUser.uid,
-      createdByEmail: auth.currentUser.email || null,
-      createdAt: serverTimestamp()
-    });
-    // notify submitter
-    await addDoc(collection(db, 'notifications'), {
-      type: 'submission',
-      itemType: 'event',
-      itemId: ref.id,
-      title: 'Event Submitted',
-      message: `Your event "${eventData.title}" is pending approval.`,
-      createdBy: auth.currentUser.uid,
-      createdByEmail: auth.currentUser.email || null,
-      status: 'unread',
-      createdAt: serverTimestamp()
-    });
-    return ref;
+    const ref = await addDoc(collection(db, targetCollection), payload);
+    await createModerationNotification(actor, 'event', eventData.title, moderation.approved, moderation.reason);
+    return { approved: moderation.approved, reason: moderation.reason, id: ref.id };
   };
 
   // Helper: create an event signup and notify the user
   window.createEventSignup = async function(eventData) {
-    if (!auth.currentUser) throw new Error('Not authenticated');
+    const actor = await resolveParticipantIdentity();
+    const dateKey = toDateKey(eventData.dateKey || eventData.date);
     const payload = {
       ...eventData,
-      createdBy: auth.currentUser.uid,
-      createdByEmail: auth.currentUser.email || null,
+      dateKey,
+      date: dateKey || eventData.date || '',
+      createdBy: actor.createdBy,
+      createdByEmail: actor.createdByEmail,
+      participantId: actor.participantId,
+      participantType: actor.participantType,
       createdAt: serverTimestamp()
     };
-    const ref = await addDoc(collection(db, 'eventSignups'), payload);
-    await addDoc(collection(db, 'notifications'), {
-      type: 'eventSignup',
-      itemType: 'event',
-      itemId: ref.id,
-      title: eventData.title,
-      message: `You signed up for ${eventData.title}.`,
-      createdBy: auth.currentUser.uid,
-      createdByEmail: auth.currentUser.email || null,
-      status: 'unread',
-      createdAt: serverTimestamp()
-    });
+    let ref = null;
+    try {
+      ref = await addDoc(collection(db, 'eventSignups'), payload);
+    } catch (err) {
+      logFirebaseError('eventSignup.write', err, { participantId: actor.participantId, title: eventData.title });
+      saveLocalSignup('rippleLocalEventSignups', {
+        ...eventData,
+        dateKey: dateKey || '',
+        participantId: actor.participantId,
+        participantType: actor.participantType
+      });
+      return { id: `local_${Date.now()}` };
+    }
+    try {
+      await addDoc(collection(db, 'notifications'), {
+        type: 'eventSignup',
+        itemType: 'event',
+        itemId: ref.id,
+        title: eventData.title,
+        message: `You signed up for ${eventData.title}.`,
+        createdBy: actor.createdBy,
+        createdByEmail: actor.createdByEmail,
+        participantId: actor.participantId,
+        participantType: actor.participantType,
+        status: 'unread',
+        createdAt: serverTimestamp()
+      });
+    } catch (err) {
+      logFirebaseError('eventSignup.notification', err, { participantId: actor.participantId, title: eventData.title });
+    }
     return ref;
   };
 
   // Helper: save a resource for the current user
   window.createResourceSave = async function(resourceData) {
-    if (!auth.currentUser) throw new Error('Not authenticated');
+    const actor = await resolveParticipantIdentity();
     const payload = {
       ...resourceData,
       dateKey: new Date().toISOString().slice(0, 10),
-      createdBy: auth.currentUser.uid,
-      createdByEmail: auth.currentUser.email || null,
+      createdBy: actor.createdBy,
+      createdByEmail: actor.createdByEmail,
+      participantId: actor.participantId,
+      participantType: actor.participantType,
       createdAt: serverTimestamp()
     };
-    const ref = await addDoc(collection(db, 'resourceSaves'), payload);
-    await addDoc(collection(db, 'notifications'), {
-      type: 'resourceSave',
-      itemType: 'resource',
-      itemId: ref.id,
-      title: resourceData.title,
-      message: `You saved ${resourceData.title}.`,
-      createdBy: auth.currentUser.uid,
-      createdByEmail: auth.currentUser.email || null,
-      status: 'unread',
-      createdAt: serverTimestamp()
-    });
+    let ref = null;
+    try {
+      ref = await addDoc(collection(db, 'resourceSaves'), payload);
+    } catch (err) {
+      logFirebaseError('resourceSave.write', err, { participantId: actor.participantId, title: resourceData.title });
+      saveLocalSignup('rippleLocalResourceSaves', {
+        ...resourceData,
+        dateKey: payload.dateKey,
+        participantId: actor.participantId,
+        participantType: actor.participantType
+      });
+      return { id: `local_${Date.now()}` };
+    }
+    try {
+      await addDoc(collection(db, 'notifications'), {
+        type: 'resourceSave',
+        itemType: 'resource',
+        itemId: ref.id,
+        title: resourceData.title,
+        message: `You saved ${resourceData.title}.`,
+        createdBy: actor.createdBy,
+        createdByEmail: actor.createdByEmail,
+        participantId: actor.participantId,
+        participantType: actor.participantType,
+        status: 'unread',
+        createdAt: serverTimestamp()
+      });
+    } catch (err) {
+      logFirebaseError('resourceSave.notification', err, { participantId: actor.participantId, title: resourceData.title });
+    }
     return ref;
   };
 
-  // Helper: create a pending resource and notify admins/founders
-  window.createPendingResource = async function(resourceData) {
-    if (!auth.currentUser) throw new Error('Not authenticated');
+  window.createModeratedResource = async function(resourceData) {
+    const moderation = await moderateSubmission("resource", resourceData);
+    const actor = await resolveParticipantIdentity();
+    const status = moderation.approved ? "approved" : "rejected";
+    const targetCollection = moderation.approved ? "resources" : "rejectedResources";
     const payload = {
       ...resourceData,
-      createdBy: auth.currentUser.uid,
-      createdByEmail: auth.currentUser.email || null,
-      status: 'pending',
-      createdAt: serverTimestamp()
+      ...actor,
+      status,
+      moderationReason: moderation.reason,
+      moderationRisk: moderation.risk,
+      moderatedBy: "ai",
+      createdAt: serverTimestamp(),
+      moderatedAt: serverTimestamp()
     };
-    const ref = await addDoc(collection(db, 'pendingResources'), payload);
+    const ref = await addDoc(collection(db, targetCollection), payload);
+    await createModerationNotification(actor, 'resource', resourceData.title, moderation.approved, moderation.reason);
+    return { approved: moderation.approved, reason: moderation.reason, id: ref.id };
+  };
+
+  async function notifyResourceRemovedForParticipant(saveData, resourceDocId, resourceTitle) {
+    const participantId = saveData.participantId || null;
+    const createdBy = saveData.createdBy || null;
+    const createdByEmail = saveData.createdByEmail || null;
+    const participantType = saveData.participantType || null;
     await addDoc(collection(db, 'notifications'), {
-      type: 'approval',
+      type: 'resourceRemoved',
       itemType: 'resource',
-      itemId: ref.id,
-      title: resourceData.title,
-      message: `New resource submitted: ${resourceData.title}`,
-      recipientsRole: ['admin','founder'],
+      title: 'Saved Resource Removed',
+      message: 'A resource you saved is no longer available and was removed from your calendar.',
       status: 'unread',
-      createdBy: auth.currentUser.uid,
-      createdByEmail: auth.currentUser.email || null,
+      participantId,
+      participantType,
+      recipientParticipantId: participantId,
+      createdBy,
+      createdByEmail,
+      resourceDocId: resourceDocId || null,
+      resourceTitle: resourceTitle || saveData.title || null,
       createdAt: serverTimestamp()
     });
-    await addDoc(collection(db, 'notifications'), {
-      type: 'submission',
-      itemType: 'resource',
-      itemId: ref.id,
-      title: 'Resource Submitted',
-      message: `Your resource "${resourceData.title}" is pending approval.`,
-      createdBy: auth.currentUser.uid,
-      createdByEmail: auth.currentUser.email || null,
-      status: 'unread',
-      createdAt: serverTimestamp()
-    });
-    return ref;
+  }
+
+  async function removeResourceSavesAndNotify(resourceDocId, resourceTitle) {
+    const candidates = new Map();
+
+    if (resourceDocId) {
+      const byDocId = await getDocs(query(collection(db, 'resourceSaves'), where('resourceDocId', '==', resourceDocId)));
+      byDocId.forEach((docSnap) => candidates.set(docSnap.id, docSnap));
+    }
+    if (resourceTitle) {
+      const byTitle = await getDocs(query(collection(db, 'resourceSaves'), where('title', '==', resourceTitle)));
+      byTitle.forEach((docSnap) => candidates.set(docSnap.id, docSnap));
+    }
+
+    const notified = new Set();
+    for (const [id, docSnap] of candidates.entries()) {
+      const saveData = docSnap.data() || {};
+      await deleteDoc(doc(db, 'resourceSaves', id));
+      const notifyKey = saveData.participantId || saveData.createdBy || id;
+      if (notified.has(notifyKey)) continue;
+      notified.add(notifyKey);
+      try {
+        await notifyResourceRemovedForParticipant(saveData, resourceDocId, resourceTitle);
+      } catch (err) {
+        logFirebaseError('resourceRemove.notify', err, { participantId: saveData.participantId || null });
+      }
+    }
+  }
+
+  window.deleteEventByDocId = async function(docId) {
+    if (!docId) return;
+    await deleteDoc(doc(db, 'events', docId));
+  };
+
+  window.deleteResourceByDocId = async function(docId, resourceTitle = '') {
+    if (!docId) return;
+    await deleteDoc(doc(db, 'resources', docId));
+    try {
+      await removeResourceSavesAndNotify(docId, resourceTitle || '');
+    } catch (err) {
+      logFirebaseError('resourceRemove.cascade', err, { resourceDocId: docId, resourceTitle });
+    }
   };
 
   window.signOutUser = function() {
@@ -1063,12 +1632,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const avatar = document.querySelector('.avatar');
     const navRight = document.querySelector('.nav-right');
     if (user) {
-      if (!user.emailVerified) {
-        signOut(auth).finally(() => {
-          window.location.href = 'index.html?verify=1';
-        });
-        return;
-      }
       const roleDocRef = doc(db, 'users', user.uid);
       getDoc(roleDocRef).then((snap) => {
         if (snap.exists() && snap.data().role) {
@@ -1122,7 +1685,7 @@ document.addEventListener('DOMContentLoaded', function() {
         signInBtn.style.fontWeight = '600';
         signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
         signInBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
-        signInBtn.onclick = () => window.location.href = 'index.html';
+        signInBtn.onclick = () => window.location.href = 'login.html';
         signInBtn.onmouseover = () => {
           signInBtn.style.transform = 'translateY(-1px)';
           signInBtn.style.boxShadow = '0 6px 16px rgba(76, 125, 255, 0.35)';
@@ -1143,15 +1706,20 @@ document.addEventListener('DOMContentLoaded', function() {
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
       list.push({
+        docId: docSnap.id,
+        sourceFirestore: true,
         title: data.title,
-        date: data.date || data.dateText || '',
+        date: formatDateForDisplay(data.dateKey || data.date || data.dateText || ''),
+        dateKey: data.dateKey || toDateKey(data.date || data.dateText || ''),
         time: data.time || '',
         location: data.location || '',
         desc: data.desc || data.description || '',
-        category: data.category || 'Community Events'
+        category: data.category || 'Community Events',
+        url: data.url || '',
+        hotline: data.hotline || ''
       });
     });
-    if (list.length && window.renderEventsFromFirestore) {
+    if (window.renderEventsFromFirestore) {
       window.renderEventsFromFirestore(list);
     }
   }, () => {});
@@ -1162,18 +1730,23 @@ document.addEventListener('DOMContentLoaded', function() {
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
       list.push({
+        docId: docSnap.id,
+        sourceFirestore: true,
         title: data.title,
         desc1: data.desc1 || data.description || '',
         desc2: data.desc2 || '',
-        category: data.category || 'Wellness'
+        category: data.category || 'Wellness',
+        url: data.url || '',
+        hotline: data.hotline || ''
       });
     });
-    if (list.length && window.renderResourcesFromFirestore) {
+    if (window.renderResourcesFromFirestore) {
       window.renderResourcesFromFirestore(list);
     }
   }, () => {});
 </script>
 <script src="bubbles.js"></script>
+<script src="bubble-nav.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const footerPlaceholder = document.getElementById('footer-placeholder');
@@ -1240,5 +1813,6 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   });
 </script>
+<script src="bubble-transition.js"></script>
 </body>
 </html>

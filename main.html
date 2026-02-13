@@ -26,7 +26,7 @@
       Make an impact, one ripple at a time
     </p>
     <div class="hero-cta">
-      <button class="primary-btn" onclick="redirectit()">Start Your Ripple Today</button>
+      <button class="primary-btn" onclick="window.location.href='login.html'">Let's Get Started with Ripple</button>
     </div>
   </section>
 
@@ -48,7 +48,7 @@
       </div>
 
       <div class="cards-row">
-        <article class="event-card hov">
+        <article class="event-card hov clickable-card" onclick="window.location.href='resources.html?tab=events'">
           <div class="event-title">Coastal Cleanup</div>
           <div class="meta">
             <span class="meta-icon"></span>
@@ -58,11 +58,11 @@
             <span class="meta-icon location"></span>
             <span>Savannah Beach</span>
           </div>
-          <div class="learn-bar dark">Learn More</div>
+          <button class="learn-bar dark" type="button" onclick="event.stopPropagation(); window.location.href='resources.html?tab=events'">Learn More</button>
           <div class="cursor-arrow"></div>
         </article>
 
-        <article class="event-card blue hov">
+        <article class="event-card blue hov clickable-card" onclick="window.location.href='resources.html?tab=events'">
           <div class="event-title">Walk for Wellness</div>
           <div class="meta">
             <span class="meta-icon"></span>
@@ -72,10 +72,10 @@
             <span class="meta-icon location"></span>
             <span>Lanier Trail</span>
           </div>
-          <div class="learn-bar dark">Learn More</div>
+          <button class="learn-bar dark" type="button" onclick="event.stopPropagation(); window.location.href='resources.html?tab=events'">Learn More</button>
         </article>
 
-        <article class="event-card peach hov">
+        <article class="event-card peach hov clickable-card" onclick="window.location.href='resources.html?tab=events'">
           <div class="event-title">Blood Donation Day</div>
           <div class="meta">
             <span class="meta-icon"></span>
@@ -85,14 +85,46 @@
             <span class="meta-icon location"></span>
             <span>Emory Hospital Center</span>
           </div>
-          <div class="learn-bar dark">Learn More</div>
+          <button class="learn-bar dark" type="button" onclick="event.stopPropagation(); window.location.href='resources.html?tab=events'">Learn More</button>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="community-highlights-section">
+    <div class="community-highlights-wrapper">
+      <div class="highlights-header">
+        <h3 class="highlights-title">Community Highlights</h3>
+        <button class="view-all-btn" onclick="window.location.href='communites.html'">Explore Communities</button>
+      </div>
+      <div class="community-highlights-grid">
+        <article class="community-highlight-card hov">
+          <img src="img/Card_Event_1.jpg" alt="Community highlight event" class="community-highlight-image">
+          <div class="community-highlight-content">
+            <h4>Local Event Spotlight</h4>
+            <p>Moments from recent community events and volunteer turnout.</p>
+          </div>
+        </article>
+        <article class="community-highlight-card hov">
+          <img src="img/fowler-park-1.jpg" alt="Fowler Park community activity" class="community-highlight-image">
+          <div class="community-highlight-content">
+            <h4>Fowler Park Cleanup</h4>
+            <p>Volunteers helping keep local parks clean and welcoming.</p>
+          </div>
+        </article>
+        <article class="community-highlight-card hov">
+          <img src="img/road-1.jpg" alt="Neighborhood outreach activity" class="community-highlight-image">
+          <div class="community-highlight-content">
+            <h4>Neighborhood Outreach</h4>
+            <p>Community members connecting and supporting local initiatives.</p>
+          </div>
         </article>
       </div>
     </div>
   </section>
 
   <section class="partnerships-section">
-    <h2 class="partnerships-title" sty>Possible Partnerships</h2>
+    <h2 class="partnerships-title">Partnerships</h2>
     <div class="partnerships-stack">
       <article class="partnership-card left-text">
         <div class="partnership-text-content">
@@ -158,12 +190,6 @@
   };
 
   onAuthStateChanged(auth, (user) => {
-    if (user && !user.emailVerified) {
-      signOut(auth).finally(() => {
-        window.location.href = 'index.html?verify=1';
-      });
-      return;
-    }
     const avatar = document.querySelector('.avatar');
     const navRight = document.querySelector('.nav-right');
     if (user) {
@@ -212,7 +238,7 @@
         signInBtn.style.fontWeight = '600';
         signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
         signInBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
-        signInBtn.onclick = () => window.location.href = 'index.html';
+        signInBtn.onclick = () => window.location.href = 'login.html';
         signInBtn.onmouseover = () => {
           signInBtn.style.transform = 'translateY(-1px)';
           signInBtn.style.boxShadow = '0 6px 16px rgba(76, 125, 255, 0.35)';
@@ -227,6 +253,7 @@
   });
 </script>
 <script src="bubbles.js"></script>
+<script src="bubble-nav.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const footerPlaceholder = document.getElementById('footer-placeholder');
@@ -293,5 +320,6 @@
       });
   });
 </script>
+<script src="bubble-transition.js"></script>
 </body>
 </html>

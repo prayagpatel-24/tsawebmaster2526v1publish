@@ -25,38 +25,38 @@
 
 <div class="groups-container">
     <div class="group-card hov">
-        <h3>Environmental Action Group</h3>
-        <p>Join our community focused on sustainability on our planet!</p>
+        <h3>Keep Forsyth County Beautiful</h3>
+        <p>Volunteer-driven environmental action focused on litter prevention, recycling, waste reduction, and water quality.</p>
         <div class="members">238 members</div>
-        <button class="join-btn dark"><a href="https://www.facebook.com/KFCBorg/mentions/">&#x2197; Join Group</a></button>
+        <a class="join-btn dark" href="community-group.html?group=environmental">&#x2197; Join Group</a>
     </div>
 
     <div class="group-card hov">
-        <h3>Mental Health Support Circle</h3>
-        <p>Join our safe space for mental health discussions!</p>
+        <h3>Forsyth Speaks</h3>
+        <p>A local mental health association providing free counseling and support to help the community thrive.</p>
         <div class="members">602 members</div>
-        <button class="join-btn dark"><a href="https://www.facebook.com/forsythspeaks/">Join Group</a></button>
+        <a class="join-btn dark" href="community-group.html?group=mental">Join Group</a>
     </div>
 
     <div class="group-card hov">
-        <h3>Volunteer Network</h3>
-        <p>Connect to learn about local volunteer opportunities!</p>
+        <h3>Forsyth AYLUS</h3>
+        <p>Youth-led volunteer organization hosting monthly service events including cleanups, drives, and local support.</p>
         <div class="members">842 members</div>
-        <button class="join-btn dark"><a href="https://forsythaylus.org">Join Group</a></button>
+        <a class="join-btn dark" href="community-group.html?group=volunteer">Join Group</a>
     </div>
 
     <div class="group-card hov">
-        <h3>Community Event Hub</h3>
-        <p>Join to stay updated on local gatherings and events!</p>
+        <h3>Cumming City Center</h3>
+        <p>Community events year-round to connect with neighbors, build friendships, and stay in tune with local activities.</p>
         <div class="members">312 members</div>
-        <button class="join-btn dark"><a href="https://www.facebook.com/cummingcitycenter/">Join Group</a></button>
+        <a class="join-btn dark" href="community-group.html?group=events">Join Group</a>
     </div>
 
     <div class="group-card hov">
-        <h3>Donation Drive Coordinators</h3>
-        <p>Join to help organize and participate in donation campaigns!</p>
+        <h3>The Place</h3>
+        <p>A local thrift and donation mission where reused items support families in need and strengthen the community.</p>
         <div class="members">215 members</div>
-        <button class="join-btn dark"><a href="https://www.facebook.com/CASAForsyth">Join Group</a></button>
+        <a class="join-btn dark" href="community-group.html?group=donation">Join Group</a>
     </div>
 </div>
 
@@ -116,12 +116,6 @@
     const avatar = document.querySelector('.avatar');
     const navRight = document.querySelector('.nav-right');
     if (user) {
-      if (!user.emailVerified) {
-        signOut(auth).finally(() => {
-          window.location.href = 'index.html?verify=1';
-        });
-        return;
-      }
       // User is signed in
       const initial = (user.email || '').charAt(0).toUpperCase();
       if (avatar) {
@@ -167,7 +161,7 @@
         signInBtn.style.fontWeight = '600';
         signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
         signInBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
-        signInBtn.onclick = () => window.location.href = 'index.html';
+        signInBtn.onclick = () => window.location.href = 'login.html';
         signInBtn.onmouseover = () => {
           signInBtn.style.transform = 'translateY(-1px)';
           signInBtn.style.boxShadow = '0 6px 16px rgba(76, 125, 255, 0.35)';
@@ -182,6 +176,7 @@
   });
 </script>
 <script src="bubbles.js"></script>
+<script src="bubble-nav.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const footerPlaceholder = document.getElementById('footer-placeholder');
@@ -248,5 +243,6 @@
       });
   });
 </script>
+<script src="bubble-transition.js"></script>
 </body>
 </html>

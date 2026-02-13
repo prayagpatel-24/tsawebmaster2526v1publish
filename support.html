@@ -185,12 +185,6 @@ onAuthStateChanged(auth, (user) => {
   const navRight = document.querySelector('.nav-right');
   
   if (user) {
-    if (!user.emailVerified) {
-      signOut(auth).finally(() => {
-        window.location.href = 'index.html?verify=1';
-      });
-      return;
-    }
     const initial = (user.email || '').charAt(0).toUpperCase();
     if (avatar) {
       if (user.photoURL) {
@@ -229,7 +223,7 @@ onAuthStateChanged(auth, (user) => {
       signInBtn.style.fontWeight = '600';
       signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
       signInBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
-      signInBtn.onclick = () => window.location.href = 'index.html';
+      signInBtn.onclick = () => window.location.href = 'login.html';
       signInBtn.onmouseover = () => {
         signInBtn.style.transform = 'translateY(-1px)';
         signInBtn.style.boxShadow = '0 6px 16px rgba(76, 125, 255, 0.35)';
@@ -336,5 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   });
 </script>
+<script src="bubble-transition.js"></script>
+<script src="bubble-nav.js"></script>
 </body>
 </html>
