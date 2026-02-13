@@ -6,6 +6,7 @@
 <title>Ripple Resources</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Courgette&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="main.css">
 <link rel="stylesheet" href="resources.css">
 </head>
 <body>
@@ -824,29 +825,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Hamburger menu toggle
-  const hamburger = document.querySelector('.hamburger');
-  const navLinks = document.querySelector('.nav-links');
-
-  if (hamburger && navLinks) {
-    hamburger.addEventListener('click', function() {
-      navLinks.classList.toggle('open');
-    });
-
-    document.addEventListener('click', function(event) {
-      if (!hamburger.contains(event.target) && !navLinks.contains(event.target)) {
-        navLinks.classList.remove('open');
-      }
-    });
-
-    const navLinkElements = document.querySelectorAll('.nav-link');
-    navLinkElements.forEach(link => {
-      link.addEventListener('click', function() {
-        navLinks.classList.remove('open');
-      });
-    });
-  }
-
   // Filter functionality for Resources
   const resourceFilterBtns = document.querySelectorAll('#health-section .filters button');
   const resourceSearchInput = document.querySelector('#health-section .search-area input[type="text"]');
@@ -1212,69 +1190,54 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 </script>
 <script>
-  // Load shared header
   document.addEventListener('DOMContentLoaded', function () {
     const headerPlaceholder = document.getElementById('header-placeholder');
-    if (headerPlaceholder) {
-      fetch('header.html')
-        .then(response => response.text())
-        .then(html => {
-          headerPlaceholder.innerHTML = html;
+    if (!headerPlaceholder) return;
 
-          // After header is injected, wire up hamburger behavior
-          const hamburger = headerPlaceholder.querySelector('.hamburger');
-          const navLinks = headerPlaceholder.querySelector('.nav-links');
+    fetch('header.html')
+      .then(response => response.text())
+      .then(html => {
+        headerPlaceholder.innerHTML = html;
 
-          if (hamburger && navLinks) {
-            hamburger.addEventListener('click', function (event) {
-              event.stopPropagation();
-              navLinks.classList.toggle('open');
-            });
-
-            document.addEventListener('click', function (event) {
-              if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
-                navLinks.classList.remove('open');
-              }
-            });
-
-            const navLinkElements = headerPlaceholder.querySelectorAll('.nav-link');
-            navLinkElements.forEach(link => {
-              link.addEventListener('click', function () {
-                navLinks.classList.remove('open');
-              });
-            });
+        // 1) Set active link for this page automatically
+        const path = window.location.pathname.split('/').pop(); // gets "main.html"
+        const links = headerPlaceholder.querySelectorAll('.nav-link');
+        links.forEach(link => {
+          const href = link.getAttribute('href');
+          if (href === path) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
           }
-        })
-        .catch(error => {
-          console.error('Error loading header:', error);
         });
-    }
-  });
-    document.addEventListener('DOMContentLoaded', function () {
-    const headerPlaceholder = document.getElementById('header-placeholder');
-    if (headerPlaceholder) {
-      fetch('header.html')
-        .then(response => response.text())
-        .then(html => {
-          headerPlaceholder.innerHTML = html;
 
-          // Set active link for this page
-          const current = 'resources.html'; // this page
-          const links = headerPlaceholder.querySelectorAll('.nav-link');
-          links.forEach(link => {
-            if (link.getAttribute('href') === current) {
-              link.classList.add('active');
-            } else {
-              link.classList.remove('active');
+        // 2) Wire up hamburger menu
+        const hamburger = headerPlaceholder.querySelector('.hamburger');
+        const navLinks = headerPlaceholder.querySelector('.nav-links');
+
+        if (hamburger && navLinks) {
+          hamburger.addEventListener('click', function (event) {
+            event.stopPropagation();
+            navLinks.classList.toggle('open');
+          });
+
+          document.addEventListener('click', function (event) {
+            if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+              navLinks.classList.remove('open');
             }
           });
 
-          // existing hamburger wiring here...
-        })
-        .catch(error => {
-          console.error('Error loading header:', error);
-        });
-    }
+          const navLinkElements = headerPlaceholder.querySelectorAll('.nav-link');
+          navLinkElements.forEach(link => {
+            link.addEventListener('click', function () {
+              navLinks.classList.remove('open');
+            });
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Error loading header:', error);
+      });
   });
 </script>
 </body>
