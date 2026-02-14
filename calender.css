@@ -17,6 +17,7 @@ body {
   max-width: 1300px;
   width: 100%;
 }
+
 .main h1 {
   text-align: center;
   margin-top: 42px;
@@ -494,4 +495,5 @@ a:visited {
   .footer-top {
     grid-template-columns: 1fr;
   }
+  
 }

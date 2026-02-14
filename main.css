@@ -213,9 +213,9 @@ button {
 .logo-text {
   margin-left: 0 !important;
   padding-left: 0 !important;
-  font-weight: 600;
-  font-size: 20px;
-  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  font-family: "Courgette";
 }
 .nav-links {
   display: flex;
