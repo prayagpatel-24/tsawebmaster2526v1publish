@@ -4,7 +4,6 @@ body {
   background: linear-gradient(180deg, #accedf, #4aacdd, #accedf);
   color: #1F2328;
 }
-
 .nav {
   display: flex;
   align-items: center;
@@ -21,23 +20,18 @@ body {
   top: 0;
   z-index: 1000;
 }
-
 .hov {
   transition: transform 0.25s ease;
 }
-
 .hov:hover {
   transform: scale(1.03);
 }
-
 .dark {
   transition: background-color 0.25s ease;
 }
-
 .dark:hover {
   background-color: rgb(237, 237, 237);
 }
-
 .db {
   transition: background-color 0.25s ease;
 }
@@ -45,13 +39,11 @@ body {
 .db:hover {
   background-color: #2b719f !important;
 }
-
 .nav-left {
   display: flex;
   align-items: center;
   gap: 16px;
 }
-
 .logo-circle {
   width: 40px;
   height: 40px;
@@ -65,7 +57,6 @@ body {
   font-size: 18px;
   position: relative;
 }
-
 .logo-circle::before,
 .logo-circle::after {
   content: "";
@@ -73,17 +64,14 @@ body {
   border-radius: 999px;
   border: 2px solid rgba(255, 255, 255, 0.85);
 }
-
 .logo-circle::before {
   width: 26px;
   height: 26px;
 }
-
 .logo-circle::after {
   width: 18px;
   height: 18px;
 }
-
 .logo-text {
   margin-left: 0 !important;
   padding-left: 0 !important;
@@ -91,7 +79,6 @@ body {
   font-size: 24px;
   font-family: "Courgette";
 }
-
 .nav-links {
   display: flex;
   gap: 68px;
@@ -115,7 +102,6 @@ body {
   cursor: pointer;
   padding: 0;
 }
-
 .hamburger-line {
   width: 30px;
   height: 3px;
@@ -128,20 +114,16 @@ body {
   padding-bottom: 4px;
   text-decoration: none;
 }
-
 .nav-link.active {
   font-weight: 600;
   color: var(--text-dark);
 }
-
 a {
   color: inherit;
 }
-
 a:visited {
   color: inherit;
 }
-
 .nav-link.active::after {
   content: "";
   position: absolute;
@@ -152,13 +134,11 @@ a:visited {
   right: 0;
   bottom: -4px;
 }
-
 .nav-right {
   display: flex;
   align-items: center;
   gap: 18px;
 }
-
 .notif-icon {
   width: 28px;
   height: 28px;
@@ -173,12 +153,10 @@ a:visited {
   font-weight: 700;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 .notif-icon:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
 }
-
 .avatar {
   
   border-radius: 999px;
@@ -192,7 +170,6 @@ a:visited {
   height: 30px;
   font-size: 15px;
 }
-
 .title {
   text-align: center;
   margin-top: 55px;
@@ -200,7 +177,6 @@ a:visited {
   font-weight: 700;
   color: #1F2328;
 }
-
 .subtitle {
   text-align: center;
   margin-top: 12px;
@@ -217,7 +193,6 @@ a:visited {
   border: 1px solid #DFE3E8;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
-
 .message {
   background: #EAF4FF;
   padding: 22px;
@@ -230,7 +205,6 @@ a:visited {
   color: #1F2328;
   margin-bottom: 16px;
 }
-
 .user-message {
   background: #5C7CFF;
   color: white;
@@ -242,37 +216,31 @@ a:visited {
   font-weight: 600;
   color: #1F2328;
 }
-
 .message a {
   color: #5C7CFF;
   text-decoration: none;
   font-weight: 500;
   border-bottom: 1px solid #5C7CFF;
 }
-
 .message a:hover {
   opacity: 0.8;
 }
-
 .message br {
   content: '';
   display: block;
   height: 8px;
 }
-
 .bot-message-container {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 16px;
 }
-
 .message-reactions {
   display: flex;
   gap: 8px;
   margin-top: 4px;
 }
-
 .reaction-btn {
   background: white;
   border: 1px solid #D1D5DB;
@@ -286,18 +254,15 @@ a:visited {
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
 .reaction-btn:hover {
   border-color: #5C7CFF;
   background: #F3F6FA;
   transform: scale(1.1);
 }
-
 .reaction-btn.active {
   background: #5C7CFF;
   border-color: #5C7CFF;
 }
-
 .input-area {
   width: 58%;
   margin: 0 auto 110px auto;
@@ -309,7 +274,6 @@ a:visited {
   border: 1px solid #DFE3E8;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
-
 .input-area input {
   flex: 1;
   border: none;
@@ -317,7 +281,6 @@ a:visited {
   font-size: 16px;
   font-family: 'Inter', sans-serif;
 }
-
 .send-btn {
   background: #5C7CFF;
   width: 43px;
@@ -330,7 +293,6 @@ a:visited {
   font-size: 20px;
   cursor: pointer;
 }
-
 .footer {
   padding: 30px 40px 20px;
   background: #ffffff;
@@ -338,14 +300,12 @@ a:visited {
   font-size: 12px;
   color: #6b7280;
 }
-
 .footer-top {
   display: grid;
   grid-template-columns: 1.3fr 1fr 1fr;
   gap: 40px;
   margin-bottom: 24px;
 }
-
 .footer-logo-row {
   display: flex;
   align-items: center;
@@ -366,7 +326,6 @@ a:visited {
   font-size: 16px;
   position: relative;
 }
-
 .footer-logo-circle::before,
 .footer-logo-circle::after {
   content: "";
@@ -374,53 +333,43 @@ a:visited {
   border-radius: 999px;
   border: 2px solid rgba(255, 255, 255, 0.85);
 }
-
 .footer-logo-circle::before {
   width: 22px;
   height: 22px;
 }
-
 .footer-logo-circle::after {
   width: 15px;
   height: 15px;
 }
-
 .footer-logo-text-main {
   font-weight: 600;
 }
-
 .footer-section-title {
   font-weight: 600;
   margin-bottom: 9px;
   color: #111827;
 }
-
 .footer-list {
   list-style: none;
   line-height: 1.7;
 }
-
 .footer-line {
   height: 1px;
   background: #e5e7eb;
   margin-bottom: 12px;
 }
-
 .footer-bottom {
   text-align: center;
   font-size: 11px;
   color: #9ca3af;
 }
-
 @media (max-width: 900px) {
   .nav {
     padding-inline: 20px;
   }
-
   .hamburger {
     display: flex;
   }
-
   .nav-links {
     position: absolute;
     top: 100%;
@@ -439,13 +388,11 @@ a:visited {
     transition: all 0.3s ease;
     z-index: 1000;
   }
-
   .nav-links.open {
     transform: translateY(0);
     opacity: 1;
     visibility: visible;
   }
-
   .nav-link {
   position: relative;
   padding-bottom: 4px;
@@ -456,7 +403,6 @@ a:visited {
   .nav-link:last-child {
     border-bottom: none;
   }
-
   .hero,
   .section,
   .cta-section,
@@ -465,52 +411,41 @@ a:visited {
   .highlights-section {
     padding-inline: 20px;
   }
-
   .partnership-card {
     grid-template-columns: 1fr;
     gap: 24px;
     padding: 24px;
   }
-
   .partnership-card.right-text .partnership-image {
     order: 0;
   }
-
   .partnership-image {
     height: 250px;
   }
-
   .cards-row {
     grid-template-columns: 1fr;
   }
-
   .footer-top {
     grid-template-columns: 1fr;
   }
 }
-
 .chat-box {
   max-height: 500px; 
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #5C7CFF #e0e0e0; 
 }
-
-
 .chat-box::-webkit-scrollbar {
   width: 8px;
 }
-
 .chat-box::-webkit-scrollbar-track {
   background: #e0e0e0;
   border-radius: 4px;
 }
-
 .chat-box::-webkit-scrollbar-thumb {
   background-color: #5C7CFF;
   border-radius: 4px;
 }
-
 .chat-box {
   scroll-behavior: smooth;
 }

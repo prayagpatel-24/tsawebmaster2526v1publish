@@ -30,16 +30,13 @@
         </div>
       </section>
     </main>
-
     <div class="coral-strip">
       <img src="transparentson.png" alt="Coral ocean artwork">
     </div>
-
     <footer class="footer">
       <div id="footer-placeholder"></div>
     </footer>
   </div>
-
   <script>
     const groups = {
       environmental: {
@@ -73,31 +70,25 @@
         joinUrl: "https://www.facebook.com/theplacethriftstore/"
       }
     };
-
     function renderGroup() {
       const params = new URLSearchParams(window.location.search);
       const key = params.get("group") || "environmental";
       const group = groups[key] || groups.environmental;
-
       const titleEl = document.getElementById("groupTitle");
       const descriptionEl = document.getElementById("groupDescription");
       const joinBtnEl = document.getElementById("groupJoinBtn");
       const mediaEl = document.getElementById("groupMedia");
-
       titleEl.textContent = group.title;
       descriptionEl.textContent = group.description;
       joinBtnEl.href = group.joinUrl;
-
       if (group.image) {
         mediaEl.innerHTML = `<img src="${group.image}" alt="${group.title} image">`;
       } else {
         mediaEl.innerHTML = '<div class="group-media-fallback">Image Placeholder</div>';
       }
     }
-
     renderGroup();
   </script>
-
   <script src="bubbles.js"></script>
   <script src="bubble-nav.js"></script>
   <script>
@@ -119,18 +110,15 @@
     document.addEventListener('DOMContentLoaded', function () {
       const headerPlaceholder = document.getElementById('header-placeholder');
       if (!headerPlaceholder) return;
-
       fetch('header.html')
         .then(response => response.text())
         .then(html => {
           headerPlaceholder.innerHTML = html;
-
           const links = headerPlaceholder.querySelectorAll('.nav-link');
           links.forEach(link => {
             const href = link.getAttribute('href');
             link.classList.toggle('active', href === 'communites.html');
           });
-
           const hamburger = headerPlaceholder.querySelector('.hamburger');
           const navLinks = headerPlaceholder.querySelector('.nav-links');
           if (hamburger && navLinks) {
@@ -138,13 +126,11 @@
               event.stopPropagation();
               navLinks.classList.toggle('open');
             });
-
             document.addEventListener('click', function (event) {
               if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
                 navLinks.classList.remove('open');
               }
             });
-
             const navLinkElements = headerPlaceholder.querySelectorAll('.nav-link');
             navLinkElements.forEach(link => {
               link.addEventListener('click', function () {
