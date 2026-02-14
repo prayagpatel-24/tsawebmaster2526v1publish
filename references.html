@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ripple References</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Courgette&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="references.css">
+</head>
+<body>
+  <div id="bubble-layer"></div>
+  <div id="header-placeholder"></div>
+
+  <main class="references-page">
+    <h1 class="references-title">References</h1>
+    <p class="references-subtitle">Exact citation entries extracted from the provided PDFs: Copy of AYLUS Forsyth Branch Website.pdf and Copy of AYLUS Forsyth Branch Website-2.pdf</p>
+
+    <section class="reference-group">
+      <h2>Image and Design Source Citations</h2>
+      <div class="reference-list">
+        <a class="reference-card hov" href="https://aylus.org/wp-content/uploads/2015/08/aylus_title_red_500x130.jpg" target="_blank" rel="noopener noreferrer">
+          <h3>AYLUS Logo Asset</h3>
+          <p>Exact URL embedded in the PDF citation metadata.</p>
+          <span>https://aylus.org/wp-content/uploads/2015/08/aylus_title_red_500x130.jpg</span>
+        </a>
+        <a class="reference-card hov" href="https://forsythaylus.org/images/Card_Event_1.jpg?w=400&amp;h=250&amp;fit=crop" target="_blank" rel="noopener noreferrer">
+          <h3>Card Event Image</h3>
+          <p>Exact URL embedded in the PDF citation metadata.</p>
+          <span>https://forsythaylus.org/images/Card_Event_1.jpg?w=400&amp;h=250&amp;fit=crop</span>
+        </a>
+        <a class="reference-card hov" href="https://forsythaylus.org/images/fowler-park-1.jpg?w=400&amp;h=250&amp;fit=crop" target="_blank" rel="noopener noreferrer">
+          <h3>Fowler Park Image</h3>
+          <p>Exact URL embedded in the PDF citation metadata.</p>
+          <span>https://forsythaylus.org/images/fowler-park-1.jpg?w=400&amp;h=250&amp;fit=crop</span>
+        </a>
+        <a class="reference-card hov" href="https://forsythaylus.org/images/road-1.jpg?w=400&amp;h=250&amp;fit=crop" target="_blank" rel="noopener noreferrer">
+          <h3>Road Image</h3>
+          <p>Exact URL embedded in the PDF citation metadata.</p>
+          <span>https://forsythaylus.org/images/road-1.jpg?w=400&amp;h=250&amp;fit=crop</span>
+        </a>
+        <a class="reference-card hov" href="https://images.squarespace-cdn.com/content/v1/684443495550a63d24faf185/82b4a9a9-918e-4530-ae11-534ed7c3ca79/the+place+logo+-+footer.png?format=1500w" target="_blank" rel="noopener noreferrer">
+          <h3>The Place Logo Asset</h3>
+          <p>Exact URL embedded in the PDF citation metadata.</p>
+          <span>https://images.squarespace-cdn.com/content/v1/684443495550a63d24faf185/82b4a9a9-918e-4530-ae11-534ed7c3ca79/the+place+logo+-+footer.png?format=1500w</span>
+        </a>
+        <a class="reference-card hov" href="https://static.libnet.info/images/tile/forsyth/fcplSmall.png" target="_blank" rel="noopener noreferrer">
+          <h3>Forsyth Library Logo Asset</h3>
+          <p>Exact URL embedded in the PDF citation metadata.</p>
+          <span>https://static.libnet.info/images/tile/forsyth/fcplSmall.png</span>
+        </a>
+        <a class="reference-card hov" href="https://www.canva.com" target="_blank" rel="noopener noreferrer">
+          <h3>Canva</h3>
+          <p>Exact URL embedded in the PDF citation metadata.</p>
+          <span>https://www.canva.com</span>
+        </a>
+        <a class="reference-card hov" href="https://www.facebook.com/KFCBorg/mentions/" target="_blank" rel="noopener noreferrer">
+          <h3>KFCB Facebook Mentions</h3>
+          <p>Exact URL embedded in the second PDF citation metadata.</p>
+          <span>https://www.facebook.com/KFCBorg/mentions/</span>
+        </a>
+        <a class="reference-card hov" href="https://www.facebook.com/cummingcitycenter/" target="_blank" rel="noopener noreferrer">
+          <h3>Cumming City Center Facebook</h3>
+          <p>Exact URL embedded in the second PDF citation metadata.</p>
+          <span>https://www.facebook.com/cummingcitycenter/</span>
+        </a>
+        <a class="reference-card hov" href="https://www.facebook.com/forsythspeaks/" target="_blank" rel="noopener noreferrer">
+          <h3>Forsyth Speaks Facebook</h3>
+          <p>Exact URL embedded in the second PDF citation metadata.</p>
+          <span>https://www.facebook.com/forsythspeaks/</span>
+        </a>
+        <a class="reference-card hov" href="https://www.facebook.com/theplacethriftstore/" target="_blank" rel="noopener noreferrer">
+          <h3>The Place Thrift Store Facebook</h3>
+          <p>Exact URL embedded in the second PDF citation metadata.</p>
+          <span>https://www.facebook.com/theplacethriftstore/</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div id="footer-placeholder"></div>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
+      authDomain: "webmaster-v4-0.firebaseapp.com",
+      projectId: "webmaster-v4-0",
+      storageBucket: "webmaster-v4-0.firebasestorage.app",
+      messagingSenderId: "413556961992",
+      appId: "1:413556961992:web:899600895ecb68eb9debfd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.signOutUser = function () {
+      signOut(auth).then(() => {
+        location.reload();
+      }).catch((error) => {
+        console.error('Sign out error:', error);
+      });
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      const avatar = document.querySelector('.avatar');
+      const navRight = document.querySelector('.nav-right');
+
+      if (user) {
+        const initial = (user.email || '').charAt(0).toUpperCase();
+        if (avatar) {
+          if (user.photoURL) {
+            avatar.style.backgroundImage = `url('${user.photoURL}')`;
+            avatar.style.backgroundSize = 'cover';
+            avatar.style.backgroundPosition = 'center';
+            avatar.textContent = '';
+          } else {
+            avatar.style.backgroundImage = '';
+            avatar.textContent = initial;
+          }
+          avatar.style.cursor = 'pointer';
+          avatar.onclick = () => window.location.href = 'account.html';
+        }
+
+        const signInBtn = document.querySelector('.sign-in-btn');
+        if (signInBtn) {
+          signInBtn.remove();
+        }
+      } else {
+        if (avatar) {
+          avatar.textContent = '';
+        }
+
+        const signOutBtn = document.querySelector('.sign-out-btn');
+        if (signOutBtn) {
+          signOutBtn.remove();
+        }
+
+        if (navRight && !document.querySelector('.sign-in-btn')) {
+          const signInBtn = document.createElement('button');
+          signInBtn.textContent = 'Sign In';
+          signInBtn.className = 'sign-in-btn';
+          signInBtn.style.padding = '8px 16px';
+          signInBtn.style.background = 'linear-gradient(to bottom, #4c7dff, #2e63e5)';
+          signInBtn.style.color = 'white';
+          signInBtn.style.border = 'none';
+          signInBtn.style.borderRadius = '999px';
+          signInBtn.style.cursor = 'pointer';
+          signInBtn.style.fontSize = '14px';
+          signInBtn.style.fontWeight = '600';
+          signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
+          signInBtn.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease';
+          signInBtn.onclick = () => window.location.href = 'login.html';
+          signInBtn.onmouseover = () => {
+            signInBtn.style.transform = 'translateY(-1px)';
+            signInBtn.style.boxShadow = '0 6px 16px rgba(76, 125, 255, 0.35)';
+          };
+          signInBtn.onmouseout = () => {
+            signInBtn.style.transform = 'translateY(0)';
+            signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
+          };
+          navRight.appendChild(signInBtn);
+        }
+      }
+    });
+  </script>
+  <script src="bubbles.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const footerPlaceholder = document.getElementById('footer-placeholder');
+      if (footerPlaceholder) {
+        fetch('footer.html')
+          .then(response => response.text())
+          .then(html => {
+            footerPlaceholder.innerHTML = html;
+          })
+          .catch(error => {
+            console.error('Error loading footer:', error);
+          });
+      }
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const headerPlaceholder = document.getElementById('header-placeholder');
+      if (!headerPlaceholder) return;
+
+      fetch('header.html')
+        .then(response => response.text())
+        .then(html => {
+          headerPlaceholder.innerHTML = html;
+          const path = window.location.pathname.split('/').pop();
+          const links = headerPlaceholder.querySelectorAll('.nav-link');
+          links.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href === path) {
+              link.classList.add('active');
+            } else {
+              link.classList.remove('active');
+            }
+          });
+
+          const hamburger = headerPlaceholder.querySelector('.hamburger');
+          const navLinks = headerPlaceholder.querySelector('.nav-links');
+
+          if (hamburger && navLinks) {
+            hamburger.addEventListener('click', function (event) {
+              event.stopPropagation();
+              navLinks.classList.toggle('open');
+            });
+
+            document.addEventListener('click', function (event) {
+              if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+                navLinks.classList.remove('open');
+              }
+            });
+
+            const navLinkElements = headerPlaceholder.querySelectorAll('.nav-link');
+            navLinkElements.forEach(link => {
+              link.addEventListener('click', function () {
+                navLinks.classList.remove('open');
+              });
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error loading header:', error);
+        });
+    });
+  </script>
+</body>
+</html>

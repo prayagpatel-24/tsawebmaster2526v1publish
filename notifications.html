@@ -26,7 +26,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-    import { getFirestore, collection, query, where, onSnapshot, doc, getDoc, updateDoc, addDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, addDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     const firebaseConfig = {
       apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
       authDomain: "webmaster-v4-0.firebaseapp.com",
@@ -263,23 +263,13 @@
           notifList.appendChild(card);
         });
     }
-    function attachQuery(sourceMaps, key, q, identity, user, isAdmin) {
-      const unsub = onSnapshot(q, (snapshot) => {
-        const map = new Map();
+    function attachSharedNotifications(isAdmin) {
+      const unsub = onSnapshot(collection(db, 'notifications'), (snapshot) => {
+        const list = [];
         snapshot.forEach((docSnap) => {
-          map.set(docSnap.id, { id: docSnap.id, data: docSnap.data() });
+          list.push({ id: docSnap.id, data: docSnap.data() });
         });
-        sourceMaps.set(key, map);
-        const merged = new Map();
-        sourceMaps.forEach((srcMap) => {
-          srcMap.forEach((entry, id) => merged.set(id, entry));
-        });
-        const list = Array.from(merged.values()).filter(({ data }) => {
-          if (isAdmin && isRoleRequestForModeration(data)) return true;
-          if (isAdmin && isAdminRecipientNotification(data)) return true;
-          return shouldShowPersonalNotification(data, identity, user);
-        });
-        renderNotifications(list, identity, isAdmin);
+        renderNotifications(list, { participantId: 'global' }, isAdmin);
       }, (err) => {
         console.error('Notifications listener error:', err);
         notifList.innerHTML = `<div class="notif-empty">Unable to load notifications: ${err.message}</div>`;
@@ -336,25 +326,8 @@
           navRight.appendChild(signInBtn);
         }
       }
-      const identity = await resolveParticipantIdentity(user);
       const isAdmin = isAdminRole(currentUserRole);
-      const sourceMaps = new Map();
-      const qByParticipant = query(collection(db, 'notifications'), where('participantId', '==', identity.participantId));
-      attachQuery(sourceMaps, 'participant', qByParticipant, identity, user, isAdmin);
-      const qByRecipient = query(collection(db, 'notifications'), where('recipientParticipantId', '==', identity.participantId));
-      attachQuery(sourceMaps, 'recipient', qByRecipient, identity, user, isAdmin);
-      const qByCreator = query(collection(db, 'notifications'), where('createdBy', '==', identity.createdBy));
-      attachQuery(sourceMaps, 'creator', qByCreator, identity, user, isAdmin);
-      if (user && user.email) {
-        const qByEmail = query(collection(db, 'notifications'), where('createdByEmail', '==', user.email));
-        attachQuery(sourceMaps, 'email', qByEmail, identity, user, isAdmin);
-      }
-      if (isAdmin) {
-        const qRoleRequests = query(collection(db, 'notifications'), where('type', '==', 'roleRequest'));
-        attachQuery(sourceMaps, 'roleRequests', qRoleRequests, identity, user, isAdmin);
-        const qAdminRecipients = query(collection(db, 'notifications'), where('recipientsRole', 'array-contains-any', ['admin', 'founder']));
-        attachQuery(sourceMaps, 'adminRecipients', qAdminRecipients, identity, user, isAdmin);
-      }
+      attachSharedNotifications(isAdmin);
     });
     window.signOutUser = function() {
       signOut(auth).then(() => {

@@ -145,6 +145,31 @@
       }
       return null;
     }
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+    function sanitizeDisplayText(value, maxLen = 120) {
+      if (typeof value !== 'string') return '';
+      const cleaned = value
+        .replace(/[\u0000-\u001F\u007F]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      return cleaned.slice(0, maxLen);
+    }
+    function isLikelyHumanTitle(title) {
+      const t = sanitizeDisplayText(title, 90);
+      if (!t || t.length < 4) return false;
+      const letters = (t.match(/[A-Za-z]/g) || []).length;
+      const symbols = (t.match(/[^A-Za-z0-9\s,.'!?:()-]/g) || []).length;
+      if (letters < 3) return false;
+      if (symbols > Math.max(4, Math.floor(t.length * 0.2))) return false;
+      return true;
+    }
     window.localApprovedEvents = [];
     window.localEventSignups = [];
     window.localResourceSaves = [];
@@ -158,10 +183,10 @@
         const eventItems = JSON.parse(localStorage.getItem('rippleLocalEventSignups') || '[]');
         const filteredEvents = eventItems.filter(item => !item.participantId || item.participantId === identityId);
         window.localFallbackEventSignups = filteredEvents.map(item => ({
-          summary: item.title || '(No title)',
+          summary: sanitizeDisplayText(item.title || '(No title)', 90),
           dateKey: toDateKey(item.dateKey || item.date),
-          time: item.time || 'All day',
-          location: item.location || '',
+          time: sanitizeDisplayText(item.time || 'All day', 40),
+          location: sanitizeDisplayText(item.location || '', 90),
           sourceType: 'localEventSignup',
           localId: item._localTs || `${item.title || ''}|${item.dateKey || item.date || ''}|${item.time || ''}`
         })).filter(item => !!item.dateKey);
@@ -172,7 +197,7 @@
         const resourceItems = JSON.parse(localStorage.getItem('rippleLocalResourceSaves') || '[]');
         const filteredResources = resourceItems.filter(item => !item.participantId || item.participantId === identityId);
         window.localFallbackResourceSaves = filteredResources.map(item => ({
-          summary: `Saved Resource: ${item.title || '(No title)'}`,
+          summary: `Saved Resource: ${sanitizeDisplayText(item.title || '(No title)', 90)}`,
           dateKey: toDateKey(item.dateKey || item.date),
           time: 'Saved',
           location: '',
@@ -206,9 +231,9 @@
       dayEvents.innerHTML = `<div style="margin-top:12px;"><strong>Events on ${dateKey}</strong></div>` +
         events.map(ev => `
           <div style="margin-top:8px; padding:8px; border:1px solid #ddd; border-radius:8px;">
-            <div><strong>${ev.summary || '(No title)'}</strong></div>
-            <div style="font-size:12px; color:#555;">${ev.time || 'All day'}</div>
-            <div style="font-size:12px; color:#777;">${ev.location || ''}</div>
+            <div><strong>${escapeHtml(ev.summary || '(No title)')}</strong></div>
+            <div style="font-size:12px; color:#555;">${escapeHtml(ev.time || 'All day')}</div>
+            <div style="font-size:12px; color:#777;">${escapeHtml(ev.location || '')}</div>
           </div>
         `).join('');
     }
@@ -261,13 +286,13 @@
         return;
       }
       container.innerHTML = upcoming.map(ev => {
-        const location = ev.location ? `<br><i class="fa fa-map-pin"></i> ${ev.location}` : '';
+        const location = ev.location ? `<br><i class="fa fa-map-pin"></i> ${escapeHtml(ev.location)}` : '';
         const removeBtn = ev.sourceType && ev.sourceType !== 'approvedEvent'
           ? `<button class="event-btn" type="button" data-remove-key="${encodeURIComponent(ev.sourceType + '::' + (ev.docId || ev.localId || ''))}" style="margin-top:8px;">Remove</button>`
           : '';
         return `<div class="coastal hov" style="border: 2px solid #e2e2e2; margin-top: 8px;">
-          <div class="event-title">${ev.summary}</div>
-          <p class="event-desc"><i class="fa fa-calendar"></i> ${ev.dateKey || ''}${location}</p>
+          <div class="event-title">${escapeHtml(ev.summary)}</div>
+          <p class="event-desc"><i class="fa fa-calendar"></i> ${escapeHtml(ev.dateKey || '')}${location}</p>
           ${removeBtn}
         </div>`;
       }).join('');
@@ -332,16 +357,15 @@
         const list = [];
         snapshot.forEach(docSnap => {
           const data = docSnap.data();
-          const title = (data.title || '').trim();
-          // Filter out test/spam events: single words 3 chars or less
-          if (title.length <= 3 && !title.includes(' ')) return;
+          const title = sanitizeDisplayText(data.title || '', 90);
+          if (!isLikelyHumanTitle(title)) return;
           const dateKey = toDateKey(data.dateKey || data.date || data.dateText || data.createdAt);
           if (!dateKey) return;
           list.push({
-            summary: title || '(No title)',
+            summary: title,
             dateKey,
-            time: data.time || 'All day',
-            location: data.location || ''
+            time: sanitizeDisplayText(data.time || 'All day', 40),
+            location: sanitizeDisplayText(data.location || '', 90)
           });
         });
         window.localApprovedEvents = list;
@@ -355,12 +379,14 @@
           const data = docSnap.data();
           const dateKey = toDateKey(data.dateKey || data.date || data.createdAt);
           if (!dateKey) return;
+          const title = sanitizeDisplayText(data.title || '', 90);
+          if (!isLikelyHumanTitle(title)) return;
           list.push({
             docId: docSnap.id,
-            summary: data.title || '(No title)',
+            summary: title,
             dateKey,
-            time: data.time || 'All day',
-            location: data.location || '',
+            time: sanitizeDisplayText(data.time || 'All day', 40),
+            location: sanitizeDisplayText(data.location || '', 90),
             sourceType: 'eventSignup'
           });
         });
@@ -375,9 +401,10 @@
           const data = docSnap.data();
           const dateKey = toDateKey(data.dateKey || data.createdAt);
           if (!dateKey) return;
+          const title = sanitizeDisplayText(data.title || '(No title)', 90);
           list.push({
             docId: docSnap.id,
-            summary: `Saved Resource: ${data.title || '(No title)'}`,
+            summary: `Saved Resource: ${title}`,
             dateKey,
             time: 'Saved',
             location: '',

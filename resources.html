@@ -1681,24 +1681,45 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
+  function sanitizeDisplayText(value, maxLen = 140) {
+    if (typeof value !== 'string') return '';
+    const cleaned = value
+      .replace(/[\u0000-\u001F\u007F]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return cleaned.slice(0, maxLen);
+  }
+  function isLikelyHumanTitle(title) {
+    const t = sanitizeDisplayText(title, 90);
+    if (!t || t.length < 4) return false;
+    const letters = (t.match(/[A-Za-z]/g) || []).length;
+    const symbols = (t.match(/[^A-Za-z0-9\s,.'!?:()-]/g) || []).length;
+    if (letters < 3) return false;
+    if (symbols > Math.max(4, Math.floor(t.length * 0.2))) return false;
+    return true;
+  }
 
   const eventsQuery = query(collection(db, 'events'));
   onSnapshot(eventsQuery, (snapshot) => {
     const list = [];
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
+      const title = sanitizeDisplayText(data.title || '', 90);
+      if (!isLikelyHumanTitle(title)) return;
+      const dateKey = data.dateKey || window.toDateKey(data.date || data.dateText || '');
+      if (!dateKey) return;
       list.push({
         docId: docSnap.id,
         sourceFirestore: true,
-        title: data.title,
-        date: window.formatDateForDisplay(data.dateKey || data.date || data.dateText || ''),
-        dateKey: data.dateKey || window.toDateKey(data.date || data.dateText || ''),
-        time: data.time || '',
-        location: data.location || '',
-        desc: data.desc || data.description || '',
+        title,
+        date: window.formatDateForDisplay(dateKey),
+        dateKey,
+        time: sanitizeDisplayText(data.time || '', 40),
+        location: sanitizeDisplayText(data.location || '', 90),
+        desc: sanitizeDisplayText(data.desc || data.description || '', 260),
         category: data.category || 'Community Events',
-        url: data.url || '',
-        hotline: data.hotline || ''
+        url: sanitizeDisplayText(data.url || '', 240),
+        hotline: sanitizeDisplayText(data.hotline || '', 40)
       });
     });
     if (window.renderEventsFromFirestore) {
@@ -1711,15 +1732,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const list = [];
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
+      const title = sanitizeDisplayText(data.title || '', 90);
+      if (!title) return;
       list.push({
         docId: docSnap.id,
         sourceFirestore: true,
-        title: data.title,
-        desc1: data.desc1 || data.description || '',
-        desc2: data.desc2 || '',
+        title,
+        desc1: sanitizeDisplayText(data.desc1 || data.description || '', 170),
+        desc2: sanitizeDisplayText(data.desc2 || '', 220),
         category: data.category || 'Wellness',
-        url: data.url || '',
-        hotline: data.hotline || ''
+        url: sanitizeDisplayText(data.url || '', 240),
+        hotline: sanitizeDisplayText(data.hotline || '', 40)
       });
     });
     if (window.renderResourcesFromFirestore) {
