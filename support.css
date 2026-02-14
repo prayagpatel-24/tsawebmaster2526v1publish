@@ -195,17 +195,22 @@ a:visited {
 
 .title {
   text-align: center;
-  margin-top: 55px;
-  font-size: 40px;
+  margin-top: 42px;
+  font-size: 48px;
   font-weight: 700;
-  color: #1F2328;
+  line-height: 1.25;
+  font-family: "Lora", serif;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  color: #ffffff;
 }
 
 .subtitle {
   text-align: center;
-  margin-top: 12px;
-  font-size: 17px;
-  color: #6B7178;
+  margin-top: 10px;
+  color: #97ffcd;
+  font-family: "Lora", serif;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  font-size: 25px;
 }
 
 .chat-box {
