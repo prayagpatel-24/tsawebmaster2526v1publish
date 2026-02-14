@@ -1,8 +1,8 @@
 body {
-  background: #f3f7ff;
+  background: linear-gradient(180deg, #accedf, #4aacdd, #accedf);
 }
 .page {
-  background: transparent;
+  background: linear-gradient(180deg, #accedf, #4aacdd, #accedf);
   min-height: 100vh;
 }
 
@@ -23,9 +23,9 @@ body {
 }
 .account-card h2 {
   margin-bottom: 18px;
-  font-family: "Inter", sans-serif;
+  font-family: "Lora", serif;
   font-size: 26px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-dark);
   text-align: left;
 }
