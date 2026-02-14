@@ -15,8 +15,9 @@
 }
 .account-card h2 {
   margin-bottom: 18px;
-  font-family: "Lora", serif;
+  font-family: "Inter", sans-serif;
   font-size: 26px;
+  font-weight: 600;
   color: var(--text-dark);
   text-align: left;
 }
