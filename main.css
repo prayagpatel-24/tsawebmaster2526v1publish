@@ -3,6 +3,12 @@ img {
   height: auto;
   display: block;
 }
+
+.footer-logo-text-main {
+  font-family: "Courgette", serif;
+  font-size:20px;
+}
+
 :root {
   --bg-light: #f3f7ff;
   --bg-hero: #eef6ff;

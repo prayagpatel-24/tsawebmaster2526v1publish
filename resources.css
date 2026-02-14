@@ -246,14 +246,20 @@ a:visited {
 .main-title {
   text-align: center;
   margin-top: 42px;
-  font-size: 38px;
-  font-weight: 600;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.25;
+  font-family: "Lora", serif;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  color: #ffffff;
 }
 .sub-title {
   text-align: center;
   margin-top: 10px;
-  color: #64748b;
-  font-size: 18px;
+  color: #97ffcd;
+  font-family: "Lora", serif;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  font-size: 25px;
 }
 .toggle-btns {
   display: flex;
