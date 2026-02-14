@@ -282,7 +282,6 @@ document.addEventListener('DOMContentLoaded', function() {
     return parsed.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
-  // Make functions globally available for Firebase callbacks
   window.toDateKey = toDateKey;
   window.formatDateForDisplay = formatDateForDisplay;
 
@@ -1091,7 +1090,6 @@ document.addEventListener('DOMContentLoaded', function() {
   function fallbackModeration(itemType, data) {
     const raw = JSON.stringify(data).toLowerCase();
     
-    // Check for blocked terms
     const blockedTerms = ["hate", "kill", "violence", "drug", "weapon", "scam", "fraud", "explicit"];
     const hasBlocked = blockedTerms.some(term => raw.includes(term));
     if (hasBlocked) {
@@ -1102,12 +1100,10 @@ document.addEventListener('DOMContentLoaded', function() {
       };
     }
     
-    // Detect spam/random text (too many repeated characters, gibberish, etc)
     const title = (data.title || '').toLowerCase();
     const desc = (data.desc || data.desc1 || '').toLowerCase();
     const combinedText = `${title} ${desc}`;
     
-    // Check for repeated characters (spam indicator)
     if (/(.)\1{4,}/.test(combinedText)) {
       return {
         approved: false,
@@ -1116,7 +1112,6 @@ document.addEventListener('DOMContentLoaded', function() {
       };
     }
     
-    // Check for minimum word length (too short = likely spam)
     const words = combinedText.split(/\s+/).filter(w => w.length > 0);
     if (words.length < 3) {
       return {
@@ -1126,7 +1121,6 @@ document.addEventListener('DOMContentLoaded', function() {
       };
     }
     
-    // Check for nonsensical patterns (mostly non-alphabetic characters)
     const letterCount = (combinedText.match(/[a-z]/gi) || []).length;
     const nonLetterCount = combinedText.length - letterCount;
     if (letterCount > 0 && nonLetterCount / letterCount > 0.5) {
@@ -1244,7 +1238,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }, duration);
   }
 
-  // Add CSS animations
   if (!document.getElementById('notification-animations')) {
     const style = document.createElement('style');
     style.id = 'notification-animations';
@@ -1375,7 +1368,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   window.createModeratedEvent = async function(eventData) {
-    // Only send relevant fields for moderation (not dates/times which don't affect safety)
     const moderationData = {
       title: eventData.title,
       location: eventData.location,
@@ -1385,7 +1377,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const moderation = await moderateSubmission("event", moderationData);
     const actor = await resolveParticipantIdentity();
     
-    // Show mini notification immediately
     const notifType = moderation.approved ? 'success' : 'error';
     const notifMsg = moderation.approved 
       ? `✓ Event "${eventData.title}" approved and posted!`
@@ -1506,7 +1497,6 @@ document.addEventListener('DOMContentLoaded', function() {
     return ref;
   };
   window.createModeratedResource = async function(resourceData) {
-    // Only send relevant fields for moderation (not other metadata)
     const moderationData = {
       title: resourceData.title,
       desc1: resourceData.desc1,
@@ -1516,7 +1506,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const moderation = await moderateSubmission("resource", moderationData);
     const actor = await resolveParticipantIdentity();
     
-    // Show mini notification immediately
     const notifType = moderation.approved ? 'success' : 'error';
     const notifMsg = moderation.approved 
       ? `✓ Resource "${resourceData.title}" approved and posted!`
