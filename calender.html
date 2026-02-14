@@ -30,7 +30,6 @@
           <div id="monthTitle">November 2025</div>
           <div class="nav-btn" id="nextMonth">›</div>
         </div>
-
         <div class="calendar" role="region" aria-label="Community calendar events">
           <div style="padding:16px;border:1px solid #e6e6e6;border-radius:8px;background:#fafafa;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
@@ -42,7 +41,6 @@
           </div>
         </div>
       </div>
-
       <div class="right-col">
         <div class="card hov" style="background-color: #e2eaf3; border: 2px solid #b0d9ee;">
           <div class="card-title">
@@ -50,31 +48,26 @@
             Recommended for You
           </div>
           <small>Based on your interests</small>
-
           <div class="event-box hov">
             <div class="event-title">Walk for Wellness</div>
             <p class="event-desc">5K community walk promoting physical and mental health awareness and fundraising for local health programs.</p>
             <button class="event-btn dark" onclick="reso()">View Event</button>
           </div>
         </div>
-
         <div class="card hov" style="border: 1px solid #b1b1b1;">
           <div class="card-title">Your Upcoming Events</div>
           <div id="upcomingEventsList"></div>
         </div>
       </div>
     </div>
-
     <footer class="footer" style="margin-top: 100px; width: 100%">
       <div id="footer-placeholder"></div>
     </footer>
   </div>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
     import { getFirestore, collection, query, where, onSnapshot, doc, setDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
     const firebaseConfig = {
       apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
       authDomain: "webmaster-v4-0.firebaseapp.com",
@@ -83,11 +76,9 @@
       messagingSenderId: "413556961992",
       appId: "1:413556961992:web:899600895ecb68eb9debfd"
     };
-
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-
     function getVisitorId() {
       const key = 'rippleVisitorId';
       let id = localStorage.getItem(key);
@@ -97,7 +88,6 @@
       }
       return id;
     }
-
     async function getPublicIp() {
       const cached = localStorage.getItem('ripplePublicIp');
       if (cached) return cached;
@@ -114,7 +104,6 @@
       }
       return '';
     }
-
     async function resolveParticipantIdentity(user) {
       if (user) {
         const identity = {
@@ -129,7 +118,6 @@
         }, { merge: true });
         return identity;
       }
-
       const visitorId = getVisitorId();
       const ip = await getPublicIp();
       const participantId = ip ? `ip:${ip}` : `visitor:${visitorId}`;
@@ -145,7 +133,6 @@
       }, { merge: true });
       return identity;
     }
-
     function toDateKey(raw) {
       if (!raw) return null;
       if (typeof raw === 'string') {
@@ -158,7 +145,6 @@
       }
       return null;
     }
-
     window.localApprovedEvents = [];
     window.localEventSignups = [];
     window.localResourceSaves = [];
@@ -167,7 +153,6 @@
     window.calendarCurrentDate = new Date();
     window.calendarDataUnsubs = [];
     window.calendarIdentityId = null;
-
     function loadLocalFallbackItems(identityId) {
       try {
         const eventItems = JSON.parse(localStorage.getItem('rippleLocalEventSignups') || '[]');
@@ -183,7 +168,6 @@
       } catch (_) {
         window.localFallbackEventSignups = [];
       }
-
       try {
         const resourceItems = JSON.parse(localStorage.getItem('rippleLocalResourceSaves') || '[]');
         const filteredResources = resourceItems.filter(item => !item.participantId || item.participantId === identityId);
@@ -199,7 +183,6 @@
         window.localFallbackResourceSaves = [];
       }
     }
-
     function allCalendarItems() {
       const combined = (window.localApprovedEvents || [])
         .concat(window.localEventSignups || [])
@@ -213,7 +196,6 @@
       });
       return Array.from(unique.values());
     }
-
     function renderDayEvents(dateKey) {
       const dayEvents = document.getElementById('dayEvents');
       const events = allCalendarItems().filter(ev => ev.dateKey === dateKey);
@@ -230,11 +212,9 @@
           </div>
         `).join('');
     }
-
     function renderCalendarMonth() {
       const monthTitle = document.getElementById('monthTitle');
       const calendarGrid = document.getElementById('calendarGrid');
-
       const currentDate = window.calendarCurrentDate || new Date();
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
@@ -242,10 +222,8 @@
       const lastDay = new Date(year, month + 1, 0);
       const startDay = firstDay.getDay();
       const totalDays = lastDay.getDate();
-
       const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
       monthTitle.textContent = `${monthNames[month]} ${year}`;
-
       calendarGrid.innerHTML = `
         <div style="display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; margin-bottom:6px;">
           ${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d => `<div style="font-weight:600; text-align:center;">${d}</div>`).join("")}
@@ -266,16 +244,13 @@
           }).join("")}
         </div>
       `;
-
       document.querySelectorAll('.cal-day').forEach(el => {
         el.addEventListener('click', () => renderDayEvents(el.getAttribute('data-date')));
       });
     }
-
     function renderUpcomingEvents() {
       const container = document.getElementById('upcomingEventsList');
       if (!container) return;
-
       const upcoming = allCalendarItems()
         .slice()
         .sort((a, b) => (a.dateKey || '').localeCompare(b.dateKey || ''))
@@ -285,7 +260,6 @@
         container.innerHTML = '<div class="coastal hov" style="border: 2px solid #e2e2e2;"><div class="event-title">No upcoming events yet</div><p class="event-desc">Sign up for an event or save a resource to see it here.</p></div>';
         return;
       }
-
       container.innerHTML = upcoming.map(ev => {
         const location = ev.location ? `<br><i class="fa fa-map-pin"></i> ${ev.location}` : '';
         const removeBtn = ev.sourceType && ev.sourceType !== 'approvedEvent'
@@ -313,20 +287,17 @@
         });
       });
     }
-
     function fallbackLocalId(item) {
       const baseTitle = item.title || '';
       const baseDate = item.dateKey || item.date || '';
       const baseTime = item.time || '';
       return item._localTs || `${baseTitle}|${baseDate}|${baseTime}`;
     }
-
     function removeLocalFallbackById(storageKey, localId) {
       const current = JSON.parse(localStorage.getItem(storageKey) || '[]');
       const next = current.filter(item => String(fallbackLocalId(item)) !== String(localId));
       localStorage.setItem(storageKey, JSON.stringify(next));
     }
-
     async function removeUpcomingItem(sourceType, id) {
       if (!sourceType || !id) return;
       if (sourceType === 'eventSignup') {
@@ -343,32 +314,31 @@
         refreshCalendarUI();
       }
     }
-
     function refreshCalendarUI() {
       renderCalendarMonth();
       renderUpcomingEvents();
     }
-
     function listenForCalendarData(identityId) {
       loadLocalFallbackItems(identityId);
       refreshCalendarUI();
-
       if (Array.isArray(window.calendarDataUnsubs)) {
         window.calendarDataUnsubs.forEach(unsub => {
           try { unsub(); } catch (_) {}
         });
       }
       window.calendarDataUnsubs = [];
-
       const approvedEventsQuery = query(collection(db, 'events'));
       const unsubApproved = onSnapshot(approvedEventsQuery, (snapshot) => {
         const list = [];
         snapshot.forEach(docSnap => {
           const data = docSnap.data();
+          const title = (data.title || '').trim();
+          // Filter out test/spam events: single words 3 chars or less
+          if (title.length <= 3 && !title.includes(' ')) return;
           const dateKey = toDateKey(data.dateKey || data.date || data.dateText || data.createdAt);
           if (!dateKey) return;
           list.push({
-            summary: data.title || '(No title)',
+            summary: title || '(No title)',
             dateKey,
             time: data.time || 'All day',
             location: data.location || ''
@@ -378,7 +348,6 @@
         refreshCalendarUI();
       });
       window.calendarDataUnsubs.push(unsubApproved);
-
       const signupQuery = query(collection(db, 'eventSignups'), where('participantId', '==', identityId));
       const unsubSignups = onSnapshot(signupQuery, (snapshot) => {
         const list = [];
@@ -399,7 +368,6 @@
         refreshCalendarUI();
       });
       window.calendarDataUnsubs.push(unsubSignups);
-
       const resourceQuery = query(collection(db, 'resourceSaves'), where('participantId', '==', identityId));
       const unsubResources = onSnapshot(resourceQuery, (snapshot) => {
         const list = [];
@@ -421,7 +389,6 @@
       });
       window.calendarDataUnsubs.push(unsubResources);
     }
-
     window.signOutUser = function() {
       signOut(auth).then(() => {
         location.reload();
@@ -429,29 +396,24 @@
         console.error('Sign out error:', error);
       });
     };
-
     window.reso = function() {
       window.location.href = 'resources.html?tab=events';
     };
-
     document.getElementById('prevMonth').addEventListener('click', () => {
       const current = window.calendarCurrentDate || new Date();
       current.setMonth(current.getMonth() - 1);
       window.calendarCurrentDate = current;
       renderCalendarMonth();
     });
-
     document.getElementById('nextMonth').addEventListener('click', () => {
       const current = window.calendarCurrentDate || new Date();
       current.setMonth(current.getMonth() + 1);
       window.calendarCurrentDate = current;
       renderCalendarMonth();
     });
-
     onAuthStateChanged(auth, async (user) => {
       const avatar = document.querySelector('.avatar');
       const navRight = document.querySelector('.nav-right');
-
       if (user) {
         const initial = (user.email || '').charAt(0).toUpperCase();
         if (avatar) {
@@ -475,7 +437,6 @@
         }
         const signOutBtn = document.querySelector('.sign-out-btn');
         if (signOutBtn) signOutBtn.remove();
-
         if (navRight && !document.querySelector('.sign-in-btn')) {
           const signInBtn = document.createElement('button');
           signInBtn.textContent = 'Sign In';
@@ -493,7 +454,6 @@
           navRight.appendChild(signInBtn);
         }
       }
-
       const identity = await resolveParticipantIdentity(user);
       const identityId = identity.participantId;
       window.calendarIdentityId = identityId;
@@ -506,7 +466,6 @@
 
     refreshCalendarUI();
   </script>
-
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const footerPlaceholder = document.getElementById('footer-placeholder');
@@ -522,17 +481,14 @@
       }
     });
   </script>
-
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const headerPlaceholder = document.getElementById('header-placeholder');
       if (!headerPlaceholder) return;
-
       fetch('header.html')
         .then(response => response.text())
         .then(html => {
           headerPlaceholder.innerHTML = html;
-
           const path = window.location.pathname.split('/').pop();
           const links = headerPlaceholder.querySelectorAll('.nav-link');
           links.forEach(link => {
@@ -543,22 +499,18 @@
               link.classList.remove('active');
             }
           });
-
           const hamburger = headerPlaceholder.querySelector('.hamburger');
           const navLinks = headerPlaceholder.querySelector('.nav-links');
-
           if (hamburger && navLinks) {
             hamburger.addEventListener('click', function (event) {
               event.stopPropagation();
               navLinks.classList.toggle('open');
             });
-
             document.addEventListener('click', function (event) {
               if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
                 navLinks.classList.remove('open');
               }
             });
-
             const navLinkElements = headerPlaceholder.querySelectorAll('.nav-link');
             navLinkElements.forEach(link => {
               link.addEventListener('click', function () {

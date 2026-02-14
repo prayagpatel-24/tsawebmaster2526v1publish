@@ -13,29 +13,22 @@
 <body>
   <div class="page">
     <div id="header-placeholder"></div>
-
     <main class="account-main">
       <section class="account-card">
         <div class="account-card-grid">
           <div class="account-info">
             <h2>Your Account</h2>
-
             <form id="accountForm" class="account-form">
               <label class="field-label">Full Name</label>
               <input type="text" id="fullName" placeholder="Your full name" />
-
               <label class="field-label">Email</label>
               <input type="email" id="email" placeholder="you@example.com" />
-
               <div class="form-actions">
                 <button type="submit" class="primary-btn">Save Changes</button>
                 <button type="button" id="signOutBtn" class="secondary-btn">Sign Out</button>
               </div>
-
               <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--border-subtle);">
-
               <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">All new users start as <strong>Member</strong>. Use "Request Admin Role" to ask for promotion.</p>
-
               <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
                 <div class="extra-actions">
                   <button type="button" id="sendResetEmail" class="secondary-btn">Send Password Reset Email</button>
@@ -44,11 +37,9 @@
                   <button type="button" id="requestAdminBtn" class="secondary-btn">Request Admin Role</button>
                 </div>
               </div>
-
               <div id="accountMessage" class="account-message" role="status" aria-live="polite"></div>
             </form>
           </div>
-
           <aside class="profile-side">
             <div class="photo-wrapper">
               <img id="photoPreview" src="logo.png" alt="Profile photo" />
@@ -66,8 +57,6 @@
       </section>
     </main>
   </div>
-
-  <!-- Reauthentication modal -->
   <div id="reauthModal" class="modal-backdrop" aria-hidden="true">
     <div class="modal-card">
       <h3>Verify Your Identity</h3>
@@ -80,8 +69,6 @@
       <div id="reauthMessage" class="account-message"></div>
     </div>
   </div>
-
-  <!-- Spam check popup -->
   <div id="spamPopup" class="modal-backdrop" aria-hidden="true">
     <div class="modal-card">
       <h3>✓ Email Sent</h3>
@@ -91,20 +78,15 @@
       </div>
     </div>
   </div>
-
-  <!-- Toast container -->
   <div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
-
   <footer class="footer">
     <div id="footer-placeholder"></div>
   </footer>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, updateProfile, updateEmail, reauthenticateWithCredential, EmailAuthProvider, updatePassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
-
     const firebaseConfig = {
       apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
       authDomain: "webmaster-v4-0.firebaseapp.com",
@@ -113,12 +95,10 @@
       messagingSenderId: "413556961992",
       appId: "1:413556961992:web:899600895ecb68eb9debfd"
     };
-
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     const storage = getStorage(app);
-
     const accountForm = document.getElementById('accountForm');
     const accountMessage = document.getElementById('accountMessage');
     const photoInput = document.getElementById('photoInput');
@@ -127,12 +107,10 @@
     const userUidEl = document.getElementById('userUid');
     const memberSinceEl = document.getElementById('memberSince');
     const userRoleEl = document.getElementById('userRole');
-
     let currentUser = null;
     const guestId = localStorage.getItem('rippleVisitorId') || `visitor_${Math.random().toString(36).slice(2, 10)}_${Date.now().toString(36)}`;
     const guestProfileKey = 'rippleGuestProfile';
     localStorage.setItem('rippleVisitorId', guestId);
-
     function setGuestModeUI() {
       const guestProfile = JSON.parse(localStorage.getItem(guestProfileKey) || '{}');
       currentUser = null;
@@ -148,7 +126,6 @@
       accountMessage.textContent = 'Guest mode enabled. Sign-in is optional.';
       accountMessage.style.color = '#2563eb';
     }
-
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         setGuestModeUI();
@@ -159,8 +136,6 @@
       photoInput.disabled = false;
       const signOutBtn = document.getElementById('signOutBtn');
       if (signOutBtn) signOutBtn.style.display = 'inline-flex';
-
-      // Update header avatar (same as other pages)
       const avatar = document.querySelector('.avatar');
       if (avatar && user) {
         const initial = (user.email || '').charAt(0).toUpperCase();
@@ -176,19 +151,15 @@
         avatar.style.cursor = 'pointer';
         avatar.onclick = () => window.location.href = 'account.html';
       }
-      // Prefill fields
       document.getElementById('fullName').value = user.displayName || '';
       document.getElementById('email').value = user.email || '';
       userUidEl.textContent = user.uid;
       if (user.metadata && user.metadata.creationTime) {
         memberSinceEl.textContent = new Date(user.metadata.creationTime).toLocaleDateString();
       }
-
       if (user.photoURL) {
         photoPreview.src = user.photoURL;
       }
-
-      // Try to fetch extended profile from Firestore
       try {
         const docRef = doc(db, 'users', user.uid);
         const snap = await getDoc(docRef);
@@ -205,8 +176,6 @@
         console.warn('Could not fetch user doc:', err);
       }
     });
-
-    // Utility: toast
     function showToast(message, type = 'info', timeout = 4000) {
       const container = document.getElementById('toastContainer');
       const el = document.createElement('div');
@@ -216,8 +185,6 @@
       setTimeout(() => el.classList.add('show'), 50);
       setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, timeout);
     }
-
-    // Upload photo to Firebase Storage and update profile
     uploadPhotoBtn.addEventListener('click', async () => {
       if (!currentUser) {
         showToast('Sign-in optional, but photo upload needs an account', 'info');
@@ -249,7 +216,6 @@
             }
           });
         });
-        // Update Firebase Auth profile and Firestore
         await updateProfile(currentUser, { photoURL: url });
         await setDoc(doc(db, 'users', currentUser.uid), { photoURL: url }, { merge: true });
         photoPreview.src = url;
@@ -263,8 +229,6 @@
         showToast('Photo upload failed', 'error');
       }
     });
-
-    // Save changes (display name, email, password) with inline reauth modal
     let pendingChanges = null;
     accountForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -281,19 +245,13 @@
       const newEmail = document.getElementById('email').value.trim();
 
       accountMessage.textContent = '';
-
-      // Basic client-side validation
       if (newEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
         accountMessage.textContent = 'Invalid email format.';
         accountMessage.style.color = '#ef4444';
         showToast('Invalid email format', 'error');
         return;
       }
-
-      // Determine whether reauthentication is required
       const needsReauth = (newEmail && newEmail !== currentUser.email);
-
-      // Apply non-sensitive updates first (display name)
       try {
         if (newName && newName !== currentUser.displayName) {
           await updateProfile(currentUser, { displayName: newName });
@@ -304,28 +262,22 @@
         console.error('Update failed', err);
         showToast('Failed to update profile', 'error');
       }
-
       if (!needsReauth) {
         showToast('Profile updated', 'success');
         accountMessage.textContent = 'Profile updated successfully.';
         accountMessage.style.color = '#2563eb';
         return;
       }
-
-      // Save pending sensitive changes and open modal
       pendingChanges = { newEmail };
       document.getElementById('reauthPassword').value = '';
       document.getElementById('reauthMessage').textContent = '';
       document.getElementById('reauthModal').classList.add('open');
     });
-
-    // Reauth modal handlers
     document.getElementById('reauthCancel').addEventListener('click', () => {
       document.getElementById('reauthModal').classList.remove('open');
       pendingChanges = null;
       showToast('Operation cancelled', 'info');
     });
-
     document.getElementById('reauthConfirm').addEventListener('click', async () => {
       const pw = document.getElementById('reauthPassword').value;
       const msgEl = document.getElementById('reauthMessage');
@@ -339,8 +291,6 @@
       try {
         const cred = EmailAuthProvider.credential(currentUser.email, pw);
         await reauthenticateWithCredential(currentUser, cred);
-
-        // Proceed with pending changes
         if (pendingChanges) {
           if (pendingChanges.newEmail && pendingChanges.newEmail !== currentUser.email) {
             await updateEmail(currentUser, pendingChanges.newEmail);
@@ -359,8 +309,6 @@
         showToast('Verification failed', 'error');
       }
     });
-
-    // Send password reset email
     document.getElementById('sendResetEmail').addEventListener('click', async () => {
       if (!currentUser || !currentUser.email) {
         showToast('Sign-in optional, but reset email needs an account', 'info');
@@ -370,7 +318,6 @@
         await sendPasswordResetEmail(auth, currentUser.email);
         accountMessage.textContent = 'Password reset email sent to ' + currentUser.email;
         accountMessage.style.color = '#2563eb';
-        // Show spam-check popup
         document.getElementById('spamPopup').classList.add('open');
         showToast('Reset email sent', 'success');
       } catch (err) {
@@ -380,14 +327,11 @@
         showToast('Failed to send reset email', 'error');
       }
     });
-
-    // Request admin role
     document.getElementById('requestAdminBtn').addEventListener('click', async () => {
       try {
         const typedEmail = (document.getElementById('email').value || '').trim();
         const actorId = currentUser ? currentUser.uid : guestId;
         const actorEmail = currentUser ? (currentUser.email || null) : (typedEmail || null);
-        // Create a role request doc
         const payload = {
           requestedRole: 'admin',
           status: 'pending',
@@ -397,7 +341,6 @@
           createdAt: serverTimestamp()
         };
         const reqRef = await addDoc(collection(db, 'roleRequests'), payload);
-        // Create notification for admins/founders
         await addDoc(collection(db, 'notifications'), {
           type: 'roleRequest',
           itemType: 'roleRequest',
@@ -419,12 +362,9 @@
         showToast('Failed to request admin role', 'error');
       }
     });
-
     document.getElementById('spamPopupOk').addEventListener('click', () => {
       document.getElementById('spamPopup').classList.remove('open');
     });
-
-    // Sign out
     document.getElementById('signOutBtn').addEventListener('click', async () => {
       await signOut(auth);
       window.location.href = 'main.html';
@@ -449,13 +389,10 @@
 document.addEventListener('DOMContentLoaded', function () {
   const headerPlaceholder = document.getElementById('header-placeholder');
   if (!headerPlaceholder) return;
-
   fetch('header.html')
     .then(response => response.text())
     .then(html => {
       headerPlaceholder.innerHTML = html;
-
-      // Add "Account" link if missing
       const navLinks = headerPlaceholder.querySelector('.nav-links');
       let accountLink = Array.from(navLinks.children).find(link => 
         link.textContent.includes('Account') || link.getAttribute('href') === 'account.html'
@@ -467,16 +404,12 @@ document.addEventListener('DOMContentLoaded', function () {
         accountLink.textContent = 'Account';
         navLinks.appendChild(accountLink);
       }
-
-      // Set active link
       const path = 'account.html';
       const links = headerPlaceholder.querySelectorAll('.nav-link');
       links.forEach(link => {
         link.classList.toggle('active', link.getAttribute('href') === path || 
           link.href.includes('account.html'));
       });
-
-      // Hamburger wiring (same as other pages)
       const hamburger = headerPlaceholder.querySelector('.hamburger');
       const navLinksContainer = headerPlaceholder.querySelector('.nav-links');
       if (hamburger && navLinksContainer) {

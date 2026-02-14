@@ -12,7 +12,6 @@
 </head>
 <body>
 <div id="bubble-layer"></div>
-
 <div class="page">
 
 <div id="header-placeholder"></div>
@@ -39,14 +38,12 @@
       celebrate community through local events.
     </p>
   </section>
-
   <section class="highlights-section">
     <div class="highlights-wrapper">
       <div class="highlights-header">
         <h3 class="highlights-title">Featured Events</h3>
         <button class="view-all-btn" onclick="window.location.href='resources.html?tab=events'">View All</button>
       </div>
-
       <div class="cards-row">
         <article class="event-card hov clickable-card" onclick="window.location.href='resources.html?tab=events'">
           <div class="event-title">Coastal Cleanup</div>
@@ -61,7 +58,6 @@
           <button class="learn-bar dark" type="button" onclick="event.stopPropagation(); window.location.href='resources.html?tab=events'">Learn More</button>
           <div class="cursor-arrow"></div>
         </article>
-
         <article class="event-card blue hov clickable-card" onclick="window.location.href='resources.html?tab=events'">
           <div class="event-title">Walk for Wellness</div>
           <div class="meta">
@@ -74,7 +70,6 @@
           </div>
           <button class="learn-bar dark" type="button" onclick="event.stopPropagation(); window.location.href='resources.html?tab=events'">Learn More</button>
         </article>
-
         <article class="event-card peach hov clickable-card" onclick="window.location.href='resources.html?tab=events'">
           <div class="event-title">Blood Donation Day</div>
           <div class="meta">
@@ -90,7 +85,6 @@
       </div>
     </div>
   </section>
-
   <section class="community-highlights-section">
     <div class="community-highlights-wrapper">
       <div class="highlights-header">
@@ -122,7 +116,6 @@
       </div>
     </div>
   </section>
-
   <section class="partnerships-section">
     <h2 class="partnerships-title">Partnerships</h2>
     <div class="partnerships-stack">
@@ -135,7 +128,6 @@
           <img src="img/The_Place.png" alt="Partnership placeholder" class="partnership-img">
         </div>
       </article>
-
       <article class="partnership-card right-text">
         <div class="partnership-image" style="background-color: #f0e8f8;">
           <img src="img/Forsyth_Libraries.png" alt="Partnership placeholder" class="partnership-img">
@@ -145,7 +137,6 @@
           <p class="partnership-description">Partnering with the local public library system to host book donation drives and bring awareness to other programs the library offers.</p>
         </div>
       </article>
-
       <article class="partnership-card left-text">
         <div class="partnership-text-content">
           <h3 class="partnership-card-title">Aylus Forsyth</h3>
@@ -158,17 +149,13 @@
     </div>
   </section>
   <center><img src="transparentson.png" alt="Ocean floor" style="width: 100%; height: auto; display: block; margin: 0; padding: 0;"></center>
-
   <footer class="footer">
     <div id="footer-placeholder"></div>
   </footer>
 </div>
-
-<!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-
   const firebaseConfig = {
     apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
     authDomain: "webmaster-v4-0.firebaseapp.com",
@@ -177,10 +164,8 @@
     messagingSenderId: "413556961992",
     appId: "1:413556961992:web:899600895ecb68eb9debfd"
   };
-
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-
   window.signOutUser = function() {
     signOut(auth).then(() => {
       location.reload();
@@ -188,12 +173,10 @@
       console.error('Sign out error:', error);
     });
   };
-
   onAuthStateChanged(auth, (user) => {
     const avatar = document.querySelector('.avatar');
     const navRight = document.querySelector('.nav-right');
     if (user) {
-      // User is signed in
       const initial = (user.email || '').charAt(0).toUpperCase();
       if (avatar) {
         if (user.photoURL) {
@@ -208,22 +191,18 @@
         avatar.style.cursor = 'pointer';
         avatar.onclick = () => window.location.href = 'account.html';
       }
-      // Remove sign in button if exists
       const signInBtn = document.querySelector('.sign-in-btn');
       if (signInBtn) {
         signInBtn.remove();
       }
     } else {
-      // User is signed out
       if (avatar) {
-        avatar.textContent = ''; // or default
+        avatar.textContent = '';
       }
-      // Remove sign out button if exists
       const signOutBtn = document.querySelector('.sign-out-btn');
       if (signOutBtn) {
         signOutBtn.remove();
       }
-      // Add sign in button
       if (navRight && !document.querySelector('.sign-in-btn')) {
         const signInBtn = document.createElement('button');
         signInBtn.textContent = 'Sign In';
@@ -272,14 +251,11 @@
   document.addEventListener('DOMContentLoaded', function () {
     const headerPlaceholder = document.getElementById('header-placeholder');
     if (!headerPlaceholder) return;
-
     fetch('header.html')
       .then(response => response.text())
       .then(html => {
         headerPlaceholder.innerHTML = html;
-
-        // 1) Set active link for this page automatically
-        const path = window.location.pathname.split('/').pop(); // gets "main.html"
+        const path = window.location.pathname.split('/').pop();
         const links = headerPlaceholder.querySelectorAll('.nav-link');
         links.forEach(link => {
           const href = link.getAttribute('href');
@@ -289,8 +265,6 @@
             link.classList.remove('active');
           }
         });
-
-        // 2) Wire up hamburger menu
         const hamburger = headerPlaceholder.querySelector('.hamburger');
         const navLinks = headerPlaceholder.querySelector('.nav-links');
 

@@ -4,7 +4,7 @@ body {
   font-family: 'Inter', sans-serif;
   background: linear-gradient(180deg, #accedf, #4aacdd, #accedf) !important;
 }
-/* Bubble background layer */
+
 #bubble-layer {
   position: fixed;
   top: 0;
@@ -14,11 +14,8 @@ body {
   pointer-events: none;
   overflow: visible;
 
-  z-index: 9999; /* TEMP: force on top */
+  z-index: 9999; 
 }
-
-
-/* Individual bubble */
 .bubble {
   position: absolute;
   bottom: -120px;
@@ -33,8 +30,6 @@ body {
   animation-name: bubble-rise;
   animation-timing-function: linear;
 }
-
-/* Float upward + slight horizontal drift */
 @keyframes bubble-rise {
   from {
     transform: translateY(0) translateX(0) scale(1);
@@ -45,13 +40,10 @@ body {
     opacity: 0;
   }
 }
-
-/* Ensure site content stays above bubbles */
 .page {
   position: relative;
   z-index: 1;
 }
-/* NAVBAR */
 .nav {
   display: flex;
   align-items: center;
@@ -68,7 +60,6 @@ body {
   top: 0;
   z-index: 1000;
 }
-
 .nav-left {
   display: flex;
   align-items: center;
@@ -88,7 +79,6 @@ body {
   font-size: 18px;
   position: relative;
 }
-
 .logo-circle::before,
 .logo-circle::after {
   content: "";
@@ -106,7 +96,6 @@ body {
   width: 18px;
   height: 18px;
 }
-
 .logo-text {
   margin-left: 0 !important;
   padding-left: 0 !important;
@@ -114,7 +103,6 @@ body {
   font-size: 24px;
   font-family: "Courgette";
 }
-
 .nav-links {
   display: flex;
   gap: 68px;
@@ -138,7 +126,6 @@ body {
   cursor: pointer;
   padding: 0;
 }
-
 .hamburger-line {
   width: 30px;
   height: 3px;
@@ -150,16 +137,13 @@ body {
 a {
   color: inherit;
 }
-
 a:visited {
   color: inherit;
 }
-
 .nav-link {
   position: relative;
   padding-bottom: 4px;
 }
-
 .nav-link.active {
   font-weight: 600;
   color: var(--text-dark);
@@ -177,13 +161,11 @@ a:visited {
   right: 0;
   bottom: -4px;
 }
-
 .nav-right {
   display: flex;
   align-items: center;
   gap: 18px;
 }
-
 .notif-icon {
   width: 28px;
   height: 28px;
@@ -222,7 +204,6 @@ a:visited {
   text-align: center;
   margin-top: 50px;
 }
-
 .title-section h1 {
   text-align: center;
   margin-top: 42px;
@@ -233,7 +214,6 @@ a:visited {
   text-shadow: 0 2px 6px rgba(0,0,0,0.35);
   color: #ffffff;
 }
-
 .title-section p {
   text-align: center;
   margin-top: 10px;
@@ -260,34 +240,27 @@ a:visited {
   grid-template-columns: repeat(2, 1fr);
   gap: 30px;
 }
-
 .group-card {
   background: white;
   padding: 25px;
   border-radius: 12px;
   border: 1px solid #d4dce3;
 }
-
 .hov {
   transition: transform 0.25s ease;
 }
-
 .hov:hover {
   transform: scale(1.03);
 }
-
 .dark {
   transition: background-color 0.25s ease;
 }
-
 .dark:hover {
   background-color: rgb(237, 237, 237);
 }
-
 .db {
   transition: background-color 0.25s ease;
 }
-
 .db:hover {
   background-color: #2b719f !important;
 }
@@ -296,14 +269,12 @@ a:visited {
   margin-top: 0;
   margin-bottom: 8px;
 }
-
 .group-card p {
   margin-top: 0;
   color: #666;
   font-size: 15px;
   margin-bottom: 10px;
 }
-
 .members {
   display: flex;
   align-items: center;
@@ -311,12 +282,10 @@ a:visited {
   margin-bottom: 15px;
   font-size: 14px;
 }
-
 .members::before {
   content: '\1F465';
   margin-right: 6px;
 }
-
 .join-btn {
   padding: 10px 16px;
   border-radius: 8px;
@@ -343,7 +312,6 @@ a:visited {
   gap: 40px;
   margin-bottom: 24px;
 }
-
 .footer-logo-row {
   display: flex;
   align-items: center;
@@ -364,7 +332,6 @@ a:visited {
   font-size: 16px;
   position: relative;
 }
-
 .footer-logo-circle::before,
 .footer-logo-circle::after {
   content: "";
@@ -392,18 +359,15 @@ a:visited {
   margin-bottom: 9px;
   color: #111827;
 }
-
 .footer-list {
   list-style: none;
   line-height: 1.7;
 }
-
 .footer-line {
   height: 1px;
   background: #e5e7eb;
   margin-bottom: 12px;
 }
-
 .footer-bottom {
   text-align: center;
   font-size: 11px;
@@ -437,18 +401,15 @@ a:visited {
     transition: all 0.3s ease;
     z-index: 1000;
   }
-
   .nav-links.open {
     transform: translateY(0);
     opacity: 1;
     visibility: visible;
   }
-
   .nav-link {
     padding: 12px 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   }
-
   .nav-link:last-child {
     border-bottom: none;
   }
@@ -467,11 +428,9 @@ a:visited {
     gap: 24px;
     padding: 24px;
   }
-
   .partnership-card.right-text .partnership-image {
     order: 0;
   }
-
   .partnership-image {
     height: 250px;
   }
