@@ -1,8 +1,5 @@
 body {
-<<<<<<< HEAD
-=======
   background: #f3f7ff;
->>>>>>> f49daaa32e8e7a458a437391fb2109017fd1cbcf
   font-family: "Inter", sans-serif;
   min-height: 100vh;
   margin: 0;
@@ -12,7 +9,7 @@ body {
     #5fa9cc 50%,
     #b7deef 100%
   );
-  background-attachment: fixed;
+
 }
 .hamburger {
   display: none;
