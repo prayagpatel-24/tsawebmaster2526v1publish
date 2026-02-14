@@ -6,6 +6,7 @@
 <title>Ripple Resources</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Courgette&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="main.css">
 <link rel="stylesheet" href="resources.css">
 </head>
@@ -24,8 +25,6 @@
 <input type="text" placeholder="Search health resources..." />
 <button id="addResourceBtn" class="db">+ Add Resource</button>
 </div>
-
-<!-- Resource Modal -->
 <div id="resourceModal" style="display:none;" class="modal-overlay" aria-hidden="true">
   <div class="modal-content" id="resourceModalContent">
     <div class="modal-header">
@@ -64,8 +63,6 @@
     </form>
   </div>
 </div>
-
-<!-- Resource Detail Modal -->
 <div id="resourceDetailModal" style="display:none;" class="modal-overlay" aria-hidden="true">
   <div class="modal-content" id="resourceDetailModalContent">
     <div class="modal-header">
@@ -83,7 +80,6 @@
     </div>
   </div>
 </div>
-
 <div class="filters">
 <button class="active db">All</button>
 <button class="dark">Mental Health</button>
@@ -107,15 +103,12 @@
 <div class="card cardDon hov" data-url="https://www.forsythpl.org/"><h3>Forsyth County Public Library Programs</h3><p>Community classes, support events, and educational workshops.</p><p>Track local meetups and public wellness sessions.</p><div class="tag red">Support Groups</div></div>
 </div>
 </div>
-
 <div id="events-section" style="display:none;">
 <div class="search-area">
 <input type="text" placeholder="Search events..." />
 <input type="date" />
 <button id="addEventBtn" class="db">+ Add Event</button>
 </div>
-
-<!-- Event Modal -->
 <div id="eventModal" style="display:none;" class="modal-overlay" aria-hidden="true">
   <div class="modal-content" id="eventModalContent">
     <div class="modal-header">
@@ -156,8 +149,6 @@
     </form>
   </div>
 </div>
-
-<!-- Event Detail Modal -->
 <div id="eventDetailModal" style="display:none;" class="modal-overlay" aria-hidden="true">
   <div class="modal-content" id="eventDetailModalContent">
     <div class="modal-header">
@@ -175,7 +166,6 @@
     </div>
   </div>
 </div>
-
 <div class="filters">
 <button class="active db">All</button>
 <button class="dark">Mental Health</button>
@@ -209,9 +199,7 @@
 <footer class="footer" style="margin-top: 100px; width: 100%">
   <div id="footer-placeholder"></div>
 </footer>
-
 <script>
-// Modal and event creation (inline JS)
 document.addEventListener('DOMContentLoaded', function() {
   const modal = document.getElementById('eventModal');
   const eventModalTitle = document.getElementById('eventModalTitle');
@@ -219,7 +207,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const closeBtn = document.getElementById('closeModalBtn');
   const form = document.getElementById('eventForm');
   const cards = document.querySelector('#events-section .cards');
-
   const eventDetailModal = document.getElementById('eventDetailModal');
   const eventDetailModalContent = document.getElementById('eventDetailModalContent');
   const closeEventDetailBtn = document.getElementById('closeEventDetailBtn');
@@ -229,8 +216,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const eventDetailSignupBtn = document.getElementById('eventDetailSignupBtn');
   const eventDetailRemoveBtn = document.getElementById('eventDetailRemoveBtn');
   const eventDetailActionBtn = document.getElementById('eventDetailActionBtn');
-
-  // Resource modal
   const resourceModal = document.getElementById('resourceModal');
   const addResourceBtn = document.getElementById('addResourceBtn');
   const closeResourceBtn = document.getElementById('closeResourceModalBtn');
@@ -245,26 +230,20 @@ document.addEventListener('DOMContentLoaded', function() {
   const resourceDetailSaveBtn = document.getElementById('resourceDetailSaveBtn');
   const resourceDetailRemoveBtn = document.getElementById('resourceDetailRemoveBtn');
   const resourceDetailActionBtn = document.getElementById('resourceDetailActionBtn');
-
-  // Toggle functionality
   const toggleBtns = document.querySelectorAll('.toggle-btns button');
   const healthSection = document.getElementById('health-section');
   const eventsSection = document.getElementById('events-section');
 
   let editingEventCard = null;
   let isEditingEvent = false;
-
-  // Check if we should show events on page load
   const urlParams = new URLSearchParams(window.location.search);
   const showEvents = urlParams.get('tab') === 'events';
-
   if (showEvents) {
     toggleBtns.forEach(b => b.classList.remove('active'));
     toggleBtns[1].classList.add('active');
     healthSection.style.display = 'none';
     eventsSection.style.display = 'block';
   }
-
   toggleBtns.forEach(btn => {
     btn.addEventListener('click', function() {
       toggleBtns.forEach(b => b.classList.remove('active'));
@@ -278,11 +257,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
-
   function normalizeText(value) {
     return (value || '').toLowerCase();
   }
-
   function logFirebaseError(context, err, extra = {}) {
     console.error(`[Firebase:${context}]`, {
       code: err && err.code ? err.code : 'unknown',
@@ -291,7 +268,6 @@ document.addEventListener('DOMContentLoaded', function() {
       raw: err
     });
   }
-
   function toDateKey(value) {
     if (!value) return '';
     if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
@@ -299,7 +275,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (isNaN(parsed)) return '';
     return parsed.toISOString().slice(0, 10);
   }
-
   function formatDateForDisplay(value) {
     if (!value) return '';
     const parsed = new Date(value);
@@ -317,11 +292,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (/^https?:\/\//i.test(v)) return v;
     return `https://${v}`;
   }
-
   function hasActionTarget(url, hotline) {
     return !!((url || '').trim() || (hotline || '').trim());
   }
-
   function setEventCardData(card, data) {
     card.dataset.title = data.title || '';
     card.dataset.date = data.date || '';
@@ -339,7 +312,6 @@ document.addEventListener('DOMContentLoaded', function() {
       [data.title, data.date, data.time, data.location, data.desc, data.category, data.url, data.hotline].join(' ')
     );
   }
-
   function setResourceCardData(card, data) {
     card.dataset.title = data.title || '';
     card.dataset.desc1 = data.desc1 || '';
@@ -354,37 +326,30 @@ document.addEventListener('DOMContentLoaded', function() {
       [data.title, data.desc1, data.desc2, data.category, data.url, data.hotline].join(' ')
     );
   }
-
   async function removeEventCard(card) {
     if (!card) return;
     const title = card.dataset.title || '';
     const docId = card.dataset.docId || '';
     const isFirestoreItem = card.dataset.sourceFirestore === '1';
-
     if (isFirestoreItem && docId && window.deleteEventByDocId) {
       await window.deleteEventByDocId(docId);
     }
-
     removePendingLocalByTitle('pendingEvents', title);
     card.remove();
     applyEventFilters();
   }
-
   async function removeResourceCard(card) {
     if (!card) return;
     const title = card.dataset.title || '';
     const docId = card.dataset.docId || '';
     const isFirestoreItem = card.dataset.sourceFirestore === '1';
-
     if (isFirestoreItem && docId && window.deleteResourceByDocId) {
       await window.deleteResourceByDocId(docId, title);
     }
-
     removePendingLocalByTitle('pendingResources', title);
     card.remove();
     applyResourceFilters();
   }
-
   function loadPendingLocal(key) {
     try {
       const raw = localStorage.getItem(key);
@@ -393,32 +358,27 @@ document.addEventListener('DOMContentLoaded', function() {
       return [];
     }
   }
-
   function savePendingLocal(key, list) {
     try {
       localStorage.setItem(key, JSON.stringify(list));
     } catch (e) {}
   }
-
   function addPendingLocal(key, item) {
     const list = loadPendingLocal(key);
     list.unshift({ ...item, _ts: Date.now() });
     savePendingLocal(key, list);
   }
-
   function removePendingLocalByTitle(key, title) {
     const list = loadPendingLocal(key);
     const next = list.filter(it => (it.title || '').trim().toLowerCase() !== (title || '').trim().toLowerCase());
     savePendingLocal(key, next);
   }
-
   function cleanupPendingLocal(key, maxAgeMs) {
     const list = loadPendingLocal(key);
     const now = Date.now();
     const next = list.filter(it => !it._ts || (now - it._ts) <= maxAgeMs);
     savePendingLocal(key, next);
   }
-
   function applyResourceFilters() {
     const resourceFilterBtn = document.querySelector('#health-section .filters button.active');
     const activeFilter = resourceFilterBtn ? resourceFilterBtn.textContent.trim() : 'All';
@@ -432,7 +392,6 @@ document.addEventListener('DOMContentLoaded', function() {
       card.style.display = matchesSearch && matchesFilter ? 'block' : 'none';
     });
   }
-
   function applyEventFilters() {
     const eventFilterBtn = document.querySelector('#events-section .filters button.active');
     const activeFilter = eventFilterBtn ? eventFilterBtn.textContent.trim() : 'All';
@@ -446,13 +405,11 @@ document.addEventListener('DOMContentLoaded', function() {
       card.style.display = matchesSearch && matchesFilter ? 'block' : 'none';
     });
   }
-
   function openModal() {
     modal.style.display = 'flex';
     modal.setAttribute('aria-hidden', 'false');
     updateEventModalStyle();
   }
-
   function closeModal() {
     modal.style.display = 'none';
     modal.setAttribute('aria-hidden', 'true');
@@ -461,19 +418,16 @@ document.addEventListener('DOMContentLoaded', function() {
     editingEventCard = null;
     if (eventModalTitle) eventModalTitle.textContent = 'Add New Event';
   }
-
   function openResourceModal() {
     resourceModal.style.display = 'flex';
     resourceModal.setAttribute('aria-hidden', 'false');
     updateResourceModalStyle();
   }
-
   function closeResourceModal() {
     resourceModal.style.display = 'none';
     resourceModal.setAttribute('aria-hidden', 'true');
     resourceForm.reset();
   }
-
   function openEventDetail(card) {
     if (!card) return;
     const title = card.dataset.title || card.querySelector('h3')?.textContent || 'Event';
@@ -485,7 +439,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const category = card.dataset.category || (card.querySelector('.tag')?.textContent || '');
     const url = card.dataset.url || '';
     const hotline = card.dataset.hotline || '';
-
     eventDetailTitle.textContent = title;
     eventDetailMeta.textContent = [date, time, location].filter(Boolean).join(' | ');
     const actionLine = hotline ? ` Hotline: ${hotline}` : '';
@@ -493,7 +446,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (card.dataset.status === 'pending') {
       eventDetailDesc.textContent = `${eventDetailDesc.textContent} (Pending approval)`;
     }
-
     const categoryMap = {
       'Environmental': 'category-environmental',
       'Mental Health': 'category-mental-health',
@@ -505,7 +457,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (categoryMap[category]) {
       eventDetailModalContent.classList.add(categoryMap[category]);
     }
-
     if (eventDetailActionBtn) {
       if (url) {
         eventDetailActionBtn.style.display = 'inline-flex';
@@ -523,7 +474,6 @@ document.addEventListener('DOMContentLoaded', function() {
         eventDetailActionBtn.href = '#';
       }
     }
-
     eventDetailSignupBtn.onclick = function() {
       if (window.createEventSignup) {
         window.createEventSignup({
@@ -557,7 +507,6 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('Signup is not available right now.');
       }
     };
-
     eventDetailRemoveBtn.onclick = async function() {
       if (!confirm(`Remove event "${title}"?`)) return;
       try {
@@ -568,11 +517,9 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('Failed to remove this event.');
       }
     };
-
     eventDetailModal.style.display = 'flex';
     eventDetailModal.setAttribute('aria-hidden', 'false');
   }
-
   function openResourceDetail(card) {
     if (!card) return;
     const title = card.dataset.title || card.querySelector('h3')?.textContent || 'Resource';
@@ -582,7 +529,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const resourceDocId = card.dataset.docId || '';
     const url = card.dataset.url || '';
     const hotline = card.dataset.hotline || '';
-
     resourceDetailTitle.textContent = title;
     resourceDetailMeta.textContent = category || 'Resource';
     const detailParts = [desc1, desc2].filter(Boolean);
@@ -591,7 +537,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (card.dataset.status === 'pending') {
       resourceDetailDesc.textContent = `${resourceDetailDesc.textContent} (Pending approval)`;
     }
-
     const categoryMap = {
       'Mental Health': 'category-mental-health',
       'Physical Health': 'category-physical-health',
@@ -603,7 +548,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (categoryMap[category]) {
       resourceDetailModalContent.classList.add(categoryMap[category]);
     }
-
     if (resourceDetailActionBtn) {
       if (url) {
         resourceDetailActionBtn.style.display = 'inline-flex';
@@ -621,7 +565,6 @@ document.addEventListener('DOMContentLoaded', function() {
         resourceDetailActionBtn.href = '#';
       }
     }
-
     resourceDetailSaveBtn.onclick = function() {
       if (window.createResourceSave) {
         window.createResourceSave({
@@ -654,7 +597,6 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('Save is not available right now.');
       }
     };
-
     resourceDetailRemoveBtn.onclick = async function() {
       if (!confirm(`Remove resource "${title}"?`)) return;
       try {
@@ -665,21 +607,17 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('Failed to remove this resource.');
       }
     };
-
     resourceDetailModal.style.display = 'flex';
     resourceDetailModal.setAttribute('aria-hidden', 'false');
   }
-
   function closeResourceDetailModal() {
     resourceDetailModal.style.display = 'none';
     resourceDetailModal.setAttribute('aria-hidden', 'true');
   }
-
   function closeEventDetailModal() {
     eventDetailModal.style.display = 'none';
     eventDetailModal.setAttribute('aria-hidden', 'true');
   }
-
   function openEditFromCard(card) {
     if (!card) return;
     isEditingEvent = true;
@@ -698,7 +636,6 @@ document.addEventListener('DOMContentLoaded', function() {
     openModal();
     closeEventDetailModal();
   }
-
   function updateEventModalStyle() {
     const eventModalContent = document.getElementById('eventModalContent');
     const category = document.getElementById('eventCategory').value;
@@ -709,13 +646,11 @@ document.addEventListener('DOMContentLoaded', function() {
       'Donation Drives': 'category-donation-drives',
       'Community Events': 'category-community-events'
     };
-
     eventModalContent.className = 'modal-content';
     if (categoryMap[category]) {
       eventModalContent.classList.add(categoryMap[category]);
     }
   }
-
   function updateResourceModalStyle() {
     const resourceModalContent = document.getElementById('resourceModalContent');
     const category = document.getElementById('resourceCategory').value;
@@ -726,27 +661,22 @@ document.addEventListener('DOMContentLoaded', function() {
       'Wellness': 'category-wellness',
       'Support Groups': 'category-support-groups'
     };
-
     resourceModalContent.className = 'modal-content';
     if (categoryMap[category]) {
       resourceModalContent.classList.add(categoryMap[category]);
     }
   }
-
   function setupEventCard(card) {
     if (!card) return;
     card.addEventListener('click', function() {
       openEventDetail(card);
     });
   }
-
   function buildEventCardFromData(data) {
     const card = document.createElement('div');
     card.className = 'card hov';
-
     const tagDiv = document.createElement('div');
     tagDiv.className = 'tag';
-
     switch(data.category){
       case 'Environmental': card.classList.add('cardEnv'); tagDiv.classList.add('green'); break;
       case 'Mental Health': card.classList.add('cardMen'); tagDiv.classList.add('blue'); break;
@@ -755,7 +685,6 @@ document.addEventListener('DOMContentLoaded', function() {
       case 'Community Events': card.classList.add('cardCom'); tagDiv.classList.add('purple'); break;
       default: tagDiv.classList.add('blue');
     }
-
     const h3 = document.createElement('h3'); h3.textContent = data.title || 'Untitled Event';
     const p1 = document.createElement('p');
     const dateKey = data.dateKey || toDateKey(data.date) || '';
@@ -763,15 +692,12 @@ document.addEventListener('DOMContentLoaded', function() {
     p1.textContent = (dateText ? dateText : '') + (data.time ? ' | ' + data.time : '');
     p1.appendChild(document.createElement('br'));
     p1.appendChild(document.createTextNode(data.location || ''));
-
     const p2 = document.createElement('p'); p2.textContent = data.desc || '';
     tagDiv.textContent = data.category || 'Community Events';
-
     card.appendChild(h3);
     card.appendChild(p1);
     card.appendChild(p2);
     card.appendChild(tagDiv);
-
     setEventCardData(card, {
       title: data.title,
       date: dateText,
@@ -793,10 +719,8 @@ document.addEventListener('DOMContentLoaded', function() {
   function buildResourceCardFromData(data) {
     const card = document.createElement('div');
     card.className = 'card hov';
-
     const tagDiv = document.createElement('div');
     tagDiv.className = 'tag';
-
     switch(data.category){
       case 'Mental Health': card.classList.add('cardMen'); tagDiv.classList.add('blue'); break;
       case 'Physical Health': card.classList.add('cardEnv'); tagDiv.classList.add('green'); break;
@@ -810,12 +734,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const p1 = document.createElement('p'); p1.textContent = data.desc1 || '';
     const p2 = document.createElement('p'); p2.textContent = data.desc2 || '';
     tagDiv.textContent = data.category || 'Wellness';
-
     card.appendChild(h3);
     card.appendChild(p1);
     card.appendChild(p2);
     card.appendChild(tagDiv);
-
     setResourceCardData(card, {
       title: data.title,
       desc1: data.desc1,
@@ -832,10 +754,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     return card;
   }
-
   window.renderEventsFromFirestore = function(list) {
     if (!cards) return;
-    // Replace Firestore-backed cards from scratch so removals stay in sync.
     Array.from(cards.querySelectorAll('.card'))
       .filter(card => card.dataset.sourceFirestore === '1')
       .forEach(card => card.remove());
@@ -867,14 +787,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     applyEventFilters();
   };
-
   window.renderResourcesFromFirestore = function(list) {
     if (!resourceCards) return;
-    // Replace Firestore-backed cards from scratch so removals stay in sync.
     Array.from(resourceCards.querySelectorAll('.card'))
       .filter(card => card.dataset.sourceFirestore === '1')
       .forEach(card => card.remove());
-
     list.forEach(item => {
       const match = Array.from(resourceCards.querySelectorAll('.card')).find(card => {
         const title = (card.dataset.title || card.querySelector('h3')?.textContent || '').trim().toLowerCase();
@@ -909,12 +826,9 @@ document.addEventListener('DOMContentLoaded', function() {
   eventDetailModal && eventDetailModal.addEventListener('click', function(e){ if(e.target === eventDetailModal) closeEventDetailModal(); });
   closeResourceDetailBtn && closeResourceDetailBtn.addEventListener('click', closeResourceDetailModal);
   resourceDetailModal && resourceDetailModal.addEventListener('click', function(e){ if(e.target === resourceDetailModal) closeResourceDetailModal(); });
-
   addResourceBtn && addResourceBtn.addEventListener('click', openResourceModal);
   closeResourceBtn && closeResourceBtn.addEventListener('click', closeResourceModal);
   resourceModal && resourceModal.addEventListener('click', function(e){ if(e.target === resourceModal) closeResourceModal(); });
-
-  // Update modal style when category changes
   document.getElementById('eventCategory').addEventListener('change', updateEventModalStyle);
   document.getElementById('resourceCategory').addEventListener('change', updateResourceModalStyle);
 
@@ -955,13 +869,10 @@ document.addEventListener('DOMContentLoaded', function() {
       closeModal();
       return;
     }
-
     const card = document.createElement('div');
     card.className = 'card hov';
-
     const tagDiv = document.createElement('div');
     tagDiv.className = 'tag';
-
     switch(category){
       case 'Environmental': card.classList.add('cardEnv'); tagDiv.classList.add('green'); break;
       case 'Mental Health': card.classList.add('cardMen'); tagDiv.classList.add('blue'); break;
@@ -970,22 +881,18 @@ document.addEventListener('DOMContentLoaded', function() {
       case 'Community Events': card.classList.add('cardCom'); tagDiv.classList.add('purple'); break;
       default: tagDiv.classList.add('blue');
     }
-
     const h3 = document.createElement('h3'); h3.textContent = title;
     const p1 = document.createElement('p');
     const dateText = formatDateForDisplay(dateKey || date);
     p1.textContent = (dateText ? dateText : '') + (time ? ' | ' + time : '');
     p1.appendChild(document.createElement('br'));
     p1.appendChild(document.createTextNode(location));
-
     const p2 = document.createElement('p'); p2.textContent = desc;
     tagDiv.textContent = category;
-
     card.appendChild(h3);
     card.appendChild(p1);
     card.appendChild(p2);
     card.appendChild(tagDiv);
-
     if (window.createModeratedEvent) {
       window.createModeratedEvent({ title, date: dateKey || date, dateKey: dateKey || '', time, location, desc, category, url, hotline })
         .then((result) => {
@@ -1025,13 +932,10 @@ document.addEventListener('DOMContentLoaded', function() {
       alert('Add either a resource URL or hotline number.');
       return;
     }
-
     const card = document.createElement('div');
     card.className = 'card hov';
-
     const tagDiv = document.createElement('div');
     tagDiv.className = 'tag';
-
     switch(category){
       case 'Mental Health': card.classList.add('cardMen'); tagDiv.classList.add('blue'); break;
       case 'Physical Health': card.classList.add('cardEnv'); tagDiv.classList.add('green'); break;
@@ -1040,17 +944,14 @@ document.addEventListener('DOMContentLoaded', function() {
       case 'Support Groups': card.classList.add('cardDon'); tagDiv.classList.add('red'); break;
       default: tagDiv.classList.add('blue');
     }
-
     const h3 = document.createElement('h3'); h3.textContent = title;
     const p1 = document.createElement('p'); p1.textContent = desc1;
     const p2 = document.createElement('p'); p2.textContent = desc2;
     tagDiv.textContent = category;
-
     card.appendChild(h3);
     card.appendChild(p1);
     card.appendChild(p2);
     card.appendChild(tagDiv);
-
     if (window.createModeratedResource) {
       window.createModeratedResource({ title, desc1, desc2, category, url, hotline })
         .then((result) => {
@@ -1074,15 +975,11 @@ document.addEventListener('DOMContentLoaded', function() {
       closeResourceModal();
     }
   });
-
-  // Filter functionality for Resources
   const resourceFilterBtns = document.querySelectorAll('#health-section .filters button');
   const resourceSearchInput = document.querySelector('#health-section .search-area input[type="text"]');
-
   if (resourceSearchInput) {
     resourceSearchInput.addEventListener('input', applyResourceFilters);
   }
-
   resourceFilterBtns.forEach(btn => {
     btn.addEventListener('click', function() {
       resourceFilterBtns.forEach(b => b.classList.remove('active'));
@@ -1090,15 +987,11 @@ document.addEventListener('DOMContentLoaded', function() {
       applyResourceFilters();
     });
   });
-
-  // Filter functionality for Events
   const eventFilterBtns = document.querySelectorAll('#events-section .filters button');
   const eventSearchInput = document.querySelector('#events-section .search-area input[type="text"]');
-
   if (eventSearchInput) {
     eventSearchInput.addEventListener('input', applyEventFilters);
   }
-
   eventFilterBtns.forEach(btn => {
     btn.addEventListener('click', function() {
       eventFilterBtns.forEach(b => b.classList.remove('active'));
@@ -1106,7 +999,6 @@ document.addEventListener('DOMContentLoaded', function() {
       applyEventFilters();
     });
   });
-
   document.querySelectorAll('#events-section .card').forEach(card => {
     const title = card.dataset.title || card.querySelector('h3')?.textContent || '';
     const date = card.dataset.date || '';
@@ -1119,7 +1011,6 @@ document.addEventListener('DOMContentLoaded', function() {
     setEventCardData(card, { title, date, time, location, desc, category, url, hotline, status: card.dataset.status || '' });
     setupEventCard(card);
   });
-
   document.querySelectorAll('#health-section .card').forEach(card => {
     const title = card.querySelector('h3')?.textContent || '';
     const desc1 = card.querySelectorAll('p')[0]?.textContent || '';
@@ -1132,8 +1023,6 @@ document.addEventListener('DOMContentLoaded', function() {
       openResourceDetail(card);
     });
   });
-
-  // Rehydrate pending items from localStorage
   cleanupPendingLocal('pendingEvents', 1000 * 60 * 60 * 24 * 14);
   cleanupPendingLocal('pendingResources', 1000 * 60 * 60 * 24 * 14);
   const pendingEvents = loadPendingLocal('pendingEvents');
@@ -1149,7 +1038,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   applyEventFilters();
-
   const pendingResources = loadPendingLocal('pendingResources');
   pendingResources.forEach(item => {
     const existing = Array.from(resourceCards.querySelectorAll('.card')).some(card => {
@@ -1165,13 +1053,10 @@ document.addEventListener('DOMContentLoaded', function() {
   applyResourceFilters();
 });
 </script>
-
-<!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
   import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, getDocs, onSnapshot, query, where, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
   const firebaseConfig = {
     apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
     authDomain: "webmaster-v4-0.firebaseapp.com",
@@ -1184,13 +1069,10 @@ document.addEventListener('DOMContentLoaded', function() {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-
   window.currentUserRole = 'member';
-
   const MODERATION_API_KEY = "rmSK69XXXz8uoZyNU5kx4m6VrSAoZekS";
   const MODERATION_API_URL = "https://api.mistral.ai/v1/chat/completions";
   const MODERATION_MODEL = "mistral-small-latest";
-
   function parseModerationResult(text) {
     if (!text) return null;
     const match = text.match(/\{[\s\S]*\}/);
@@ -1206,7 +1088,6 @@ document.addEventListener('DOMContentLoaded', function() {
       return null;
     }
   }
-
   function fallbackModeration(itemType, data) {
     const raw = JSON.stringify(data).toLowerCase();
     
@@ -1262,7 +1143,6 @@ document.addEventListener('DOMContentLoaded', function() {
       risk: "low"
     };
   }
-
   async function moderateWithAI(itemType, data) {
     const prompt = [
       "You are a strict safety moderator for community submissions.",
@@ -1271,7 +1151,6 @@ document.addEventListener('DOMContentLoaded', function() {
       "Reject content that includes hate, violence, self-harm instructions, sexual explicitness, scams, illegal activity, or dangerous misinformation.",
       "Return JSON only with keys: approved (boolean), reason (string), risk (low|medium|high)."
     ].join(" ");
-
     const body = {
       model: MODERATION_MODEL,
       temperature: 0,
@@ -1281,7 +1160,6 @@ document.addEventListener('DOMContentLoaded', function() {
       ],
       response_format: { type: "json_object" }
     };
-
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
     let response;
@@ -1298,18 +1176,15 @@ document.addEventListener('DOMContentLoaded', function() {
     } finally {
       clearTimeout(timeout);
     }
-
     if (!response.ok) {
       throw new Error(`Moderation API failed (${response.status})`);
     }
-
     const payload = await response.json();
     const text = payload.choices?.[0]?.message?.content || "";
     const result = parseModerationResult(text);
     if (!result) throw new Error("Moderation response parse failed");
     return result;
   }
-
   async function moderateSubmission(itemType, data) {
     try {
       const result = await moderateWithAI(itemType, data);
@@ -1326,7 +1201,6 @@ document.addEventListener('DOMContentLoaded', function() {
       return fallbackModeration(itemType, data);
     }
   }
-
   function oneSentenceReason(reason, fallback) {
     const src = (reason || fallback || '').toString().trim();
     if (!src) return fallback || 'Reviewed by moderation.';
@@ -1425,7 +1299,6 @@ document.addEventListener('DOMContentLoaded', function() {
       console.warn(`⚠ Failed to save notification to Firestore, but submission was processed`);
     }
   }
-
   function getVisitorId() {
     const key = "rippleVisitorId";
     let id = localStorage.getItem(key);
@@ -1435,7 +1308,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     return id;
   }
-
   async function getPublicIp() {
     const cached = localStorage.getItem('ripplePublicIp');
     if (cached) return cached;
@@ -1452,7 +1324,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     return '';
   }
-
   async function resolveParticipantIdentity() {
     if (auth.currentUser) {
       const identity = {
@@ -1473,7 +1344,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       return identity;
     }
-
     const visitorId = getVisitorId();
     const ip = await getPublicIp();
     const participantId = ip ? `ip:${ip}` : `visitor:${visitorId}`;
@@ -1495,7 +1365,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     return identity;
   }
-
   function saveLocalSignup(key, payload) {
     try {
       const current = JSON.parse(localStorage.getItem(key) || '[]');
@@ -1505,7 +1374,6 @@ document.addEventListener('DOMContentLoaded', function() {
       console.warn('Local signup fallback storage failed:', err.message);
     }
   }
-
   window.createModeratedEvent = async function(eventData) {
     // Only send relevant fields for moderation (not dates/times which don't affect safety)
     const moderationData = {
@@ -1549,8 +1417,6 @@ document.addEventListener('DOMContentLoaded', function() {
       throw err;
     }
   };
-
-  // Helper: create an event signup and notify the user
   window.createEventSignup = async function(eventData) {
     const actor = await resolveParticipantIdentity();
     const dateKey = toDateKey(eventData.dateKey || eventData.date);
@@ -1596,8 +1462,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     return ref;
   };
-
-  // Helper: save a resource for the current user
   window.createResourceSave = async function(resourceData) {
     const actor = await resolveParticipantIdentity();
     const payload = {
@@ -1641,7 +1505,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     return ref;
   };
-
   window.createModeratedResource = async function(resourceData) {
     // Only send relevant fields for moderation (not other metadata)
     const moderationData = {
@@ -1682,7 +1545,6 @@ document.addEventListener('DOMContentLoaded', function() {
       throw err;
     }
   };
-
   async function notifyResourceRemovedForParticipant(saveData, resourceDocId, resourceTitle) {
     const participantId = saveData.participantId || null;
     const createdBy = saveData.createdBy || null;
@@ -1704,7 +1566,6 @@ document.addEventListener('DOMContentLoaded', function() {
       createdAt: serverTimestamp()
     });
   }
-
   async function removeResourceSavesAndNotify(resourceDocId, resourceTitle) {
     const candidates = new Map();
 
@@ -1767,7 +1628,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }).catch(() => {
         window.currentUserRole = 'member';
       });
-      // User is signed in
       const initial = (user.email || '').charAt(0).toUpperCase();
       if (avatar) {
         if (user.photoURL) {
@@ -1782,22 +1642,18 @@ document.addEventListener('DOMContentLoaded', function() {
         avatar.style.cursor = 'pointer';
         avatar.onclick = () => window.location.href = 'account.html';
       }
-      // Remove sign in button if exists
       const signInBtn = document.querySelector('.sign-in-btn');
       if (signInBtn) {
         signInBtn.remove();
       }
     } else {
-      // User is signed out
       if (avatar) {
-        avatar.textContent = ''; // or default
+        avatar.textContent = '';
       }
-      // Remove sign out button if exists
       const signOutBtn = document.querySelector('.sign-out-btn');
       if (signOutBtn) {
         signOutBtn.remove();
       }
-      // Add sign in button
       if (navRight && !document.querySelector('.sign-in-btn')) {
         const signInBtn = document.createElement('button');
         signInBtn.textContent = 'Sign In';
@@ -1826,7 +1682,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Load approved events/resources from Firestore if available
   const eventsQuery = query(collection(db, 'events'));
   onSnapshot(eventsQuery, (snapshot) => {
     const list = [];
@@ -1873,7 +1728,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }, () => {});
 </script>
 <script src="bubbles.js"></script>
-<script src="bubble-nav.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const footerPlaceholder = document.getElementById('footer-placeholder');
@@ -1898,9 +1752,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(response => response.text())
       .then(html => {
         headerPlaceholder.innerHTML = html;
-
-        // 1) Set active link for this page automatically
-        const path = window.location.pathname.split('/').pop(); // gets "main.html"
+        const path = window.location.pathname.split('/').pop();
         const links = headerPlaceholder.querySelectorAll('.nav-link');
         links.forEach(link => {
           const href = link.getAttribute('href');
@@ -1910,8 +1762,6 @@ document.addEventListener('DOMContentLoaded', function() {
             link.classList.remove('active');
           }
         });
-
-        // 2) Wire up hamburger menu
         const hamburger = headerPlaceholder.querySelector('.hamburger');
         const navLinks = headerPlaceholder.querySelector('.nav-links');
 

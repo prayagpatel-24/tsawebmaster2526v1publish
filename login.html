@@ -18,7 +18,6 @@
             justify-content: center;
             min-height: 100vh;
         }
-
         .auth-container {
             width: 100%;
             height: 100vh;
@@ -26,7 +25,6 @@
             align-items: center;
             justify-content: center;
         }
-
         .auth-modal-content {
             background: white;
             border-radius: 16px;
@@ -35,7 +33,6 @@
             max-width: 400px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         }
-
         .auth-form {
             display: none;
         }
@@ -51,13 +48,11 @@
             margin-bottom: 24px;
             text-align: center;
         }
-
         .auth-form form {
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
-
         .auth-form input {
             padding: 12px 16px;
             border: 1px solid #DFE3E8;
@@ -67,11 +62,9 @@
             outline: none;
             transition: border-color 0.3s ease;
         }
-
         .auth-form input:focus {
             border-color: #5C7CFF;
         }
-
         .auth-submit-btn {
             padding: 12px 16px;
             background: #5C7CFF;
@@ -84,11 +77,9 @@
             transition: background 0.3s ease;
             margin-top: 8px;
         }
-
         .auth-submit-btn:hover {
             background: #4563d9;
         }
-
         .auth-secondary-btn {
             padding: 10px 16px;
             background: #eef2ff;
@@ -105,25 +96,21 @@
             background: #e0e7ff;
             border-color: #a5b4fc;
         }
-
         .auth-switch-text {
             text-align: center;
             margin-top: 16px;
             font-size: 14px;
             color: #6B7178;
         }
-
         .auth-switch-text a {
             color: #5C7CFF;
             text-decoration: none;
             font-weight: 600;
             cursor: pointer;
         }
-
         .auth-switch-text a:hover {
             text-decoration: underline;
         }
-
         .error-message {
             color: #d32f2f;
             font-size: 14px;
@@ -140,7 +127,6 @@
 <body>
     <div class="auth-container">
         <div class="auth-modal-content">
-            <!-- Sign In Form -->
             <div id="signInForm" class="auth-form active">
                 <h2>Sign In</h2>
                 <form id="signInFormElement">
@@ -151,8 +137,6 @@
                 <p class="auth-switch-text">Don't have an account? <a href="#" id="switchToSignUp">Sign Up</a></p>
                 <div class="error-message" id="signInError"></div>
             </div>
-
-            <!-- Sign Up Form -->
             <div id="signUpForm" class="auth-form">
                 <h2>Create Account</h2>
                 <form id="signUpFormElement">
@@ -166,15 +150,10 @@
             </div>
         </div>
     </div>
-
-    <!-- Firebase SDK -->
     <script type="module">
-        // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         import { getFirestore, setDoc, doc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
             authDomain: "webmaster-v4-0.firebaseapp.com",
@@ -183,24 +162,17 @@
             messagingSenderId: "413556961992",
             appId: "1:413556961992:web:899600895ecb68eb9debfd"
         };
-
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
         const normalizeUsername = (value) => value.trim().toLowerCase();
         const isValidUsername = (value) => /^[a-zA-Z0-9._-]{3,30}$/.test(value);
         const usernameToEmail = (username) => `${normalizeUsername(username)}@ripple.local`;
-
-        // Check if user is logged in
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 window.location.href = 'main.html';
             }
         });
-
-        // DOM Elements
         const signInForm = document.getElementById('signInForm');
         const signUpForm = document.getElementById('signUpForm');
         const switchToSignUp = document.getElementById('switchToSignUp');
@@ -209,39 +181,31 @@
         const signUpFormElement = document.getElementById('signUpFormElement');
         const signInError = document.getElementById('signInError');
         const signUpError = document.getElementById('signUpError');
-        // Switch to Sign Up
         switchToSignUp.addEventListener('click', function(e) {
             e.preventDefault();
             signInForm.classList.remove('active');
             signUpForm.classList.add('active');
             signInError.classList.remove('show');
         });
-
-        // Switch to Sign In
         switchToSignIn.addEventListener('click', function(e) {
             e.preventDefault();
             signUpForm.classList.remove('active');
             signInForm.classList.add('active');
             signUpError.classList.remove('show');
         });
-
-        // Handle Sign In
         signInFormElement.addEventListener('submit', function(e) {
             e.preventDefault();
             const username = document.getElementById('signInUsername').value;
             const password = document.getElementById('signInPassword').value;
             const normalizedUsername = normalizeUsername(username);
-
             if (!isValidUsername(normalizedUsername)) {
                 signInError.textContent = 'Enter a valid username (3-30 letters, numbers, ., _, -).';
                 signInError.classList.add('show');
                 return;
             }
-
             signInWithEmailAndPassword(auth, usernameToEmail(normalizedUsername), password)
                 .then((userCredential) => {
                     const user = userCredential.user;
-                    // Notify admins/founders of login
                     addDoc(collection(db, 'notifications'), {
                         type: 'auth',
                         itemType: 'login',
@@ -267,8 +231,6 @@
                     signInError.classList.add('show');
                 });
         });
-
-        // Handle Sign Up
         signUpFormElement.addEventListener('submit', function(e) {
             e.preventDefault();
             const username = document.getElementById('signUpUsername').value;
@@ -281,28 +243,20 @@
                 signUpError.classList.add('show');
                 return;
             }
-
-            // Validate passwords match
             if (password !== confirmPassword) {
                 signUpError.textContent = 'Passwords do not match!';
                 signUpError.classList.add('show');
                 return;
             }
-
-            // Create user with Firebase
             createUserWithEmailAndPassword(auth, usernameToEmail(normalizedUsername), password)
                 .then((userCredential) => {
                     const user = userCredential.user;
-                    
-                    // Store user info in Firestore
                     setDoc(doc(db, "users", user.uid), {
                         username: normalizedUsername,
                         name: normalizedUsername,
                         email: usernameToEmail(normalizedUsername),
                         createdAt: new Date()
                     });
-
-                    // Notify admins/founders of signup
                     addDoc(collection(db, 'notifications'), {
                         type: 'auth',
                         itemType: 'signup',

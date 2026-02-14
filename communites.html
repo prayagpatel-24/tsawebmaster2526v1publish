@@ -8,14 +8,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="main.css">
 <link rel="stylesheet" href="communites.css">
 </head>
 <body>
   <div id="bubble-layer"></div>
   <div id="header-placeholder"></div>
-
 <div class="title-section">
     <h1>Community Groups</h1>
     <p>Connect with others through Facebook group chats</p>
@@ -30,28 +28,24 @@
         <div class="members">238 members</div>
         <a class="join-btn dark" href="community-group.html?group=environmental">&#x2197; Join Group</a>
     </div>
-
     <div class="group-card hov">
         <h3>Forsyth Speaks</h3>
         <p>A local mental health association providing free counseling and support to help the community thrive.</p>
         <div class="members">602 members</div>
         <a class="join-btn dark" href="community-group.html?group=mental">Join Group</a>
     </div>
-
     <div class="group-card hov">
         <h3>Forsyth AYLUS</h3>
         <p>Youth-led volunteer organization hosting monthly service events including cleanups, drives, and local support.</p>
         <div class="members">842 members</div>
         <a class="join-btn dark" href="community-group.html?group=volunteer">Join Group</a>
     </div>
-
     <div class="group-card hov">
         <h3>Cumming City Center</h3>
         <p>Community events year-round to connect with neighbors, build friendships, and stay in tune with local activities.</p>
         <div class="members">312 members</div>
         <a class="join-btn dark" href="community-group.html?group=events">Join Group</a>
     </div>
-
     <div class="group-card hov">
         <h3>The Place</h3>
         <p>A local thrift and donation mission where reused items support families in need and strengthen the community.</p>
@@ -65,8 +59,6 @@
 </footer>
 
 <script>
-
-  // Search functionality for communities
   const searchBar = document.querySelector('.search-bar');
   if (searchBar) {
     searchBar.addEventListener('input', function() {
@@ -86,8 +78,6 @@
     });
   }
 </script>
-
-<!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
@@ -116,7 +106,6 @@
     const avatar = document.querySelector('.avatar');
     const navRight = document.querySelector('.nav-right');
     if (user) {
-      // User is signed in
       const initial = (user.email || '').charAt(0).toUpperCase();
       if (avatar) {
         if (user.photoURL) {
@@ -131,22 +120,18 @@
         avatar.style.cursor = 'pointer';
         avatar.onclick = () => window.location.href = 'account.html';
       }
-      // Remove sign in button if exists
       const signInBtn = document.querySelector('.sign-in-btn');
       if (signInBtn) {
         signInBtn.remove();
       }
     } else {
-      // User is signed out
       if (avatar) {
-        avatar.textContent = ''; // or default
+        avatar.textContent = '';
       }
-      // Remove sign out button if exists
       const signOutBtn = document.querySelector('.sign-out-btn');
       if (signOutBtn) {
         signOutBtn.remove();
       }
-      // Add sign in button
       if (navRight && !document.querySelector('.sign-in-btn')) {
         const signInBtn = document.createElement('button');
         signInBtn.textContent = 'Sign In';
@@ -176,7 +161,6 @@
   });
 </script>
 <script src="bubbles.js"></script>
-<script src="bubble-nav.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const footerPlaceholder = document.getElementById('footer-placeholder');
@@ -201,9 +185,7 @@
       .then(response => response.text())
       .then(html => {
         headerPlaceholder.innerHTML = html;
-
-        // 1) Set active link for this page automatically
-        const path = window.location.pathname.split('/').pop(); // gets "main.html"
+        const path = window.location.pathname.split('/').pop();
         const links = headerPlaceholder.querySelectorAll('.nav-link');
         links.forEach(link => {
           const href = link.getAttribute('href');
@@ -213,8 +195,6 @@
             link.classList.remove('active');
           }
         });
-
-        // 2) Wire up hamburger menu
         const hamburger = headerPlaceholder.querySelector('.hamburger');
         const navLinks = headerPlaceholder.querySelector('.nav-links');
 
@@ -229,7 +209,6 @@
               navLinks.classList.remove('open');
             }
           });
-
           const navLinkElements = headerPlaceholder.querySelectorAll('.nav-link');
           navLinkElements.forEach(link => {
             link.addEventListener('click', function () {
