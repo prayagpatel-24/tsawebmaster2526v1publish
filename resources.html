@@ -59,7 +59,6 @@
         <input id="resourceHotline" type="text" placeholder="Hotline number (optional if URL provided)" />
       </div>
       <div class="modal-form-actions">
-        <button type="button" id="cancelResourceBtn" class="cancel-btn">Cancel</button>
         <button type="submit" class="submit-btn">Save Resource</button>
       </div>
     </form>
@@ -152,7 +151,6 @@
         </select>
       </div>
       <div class="modal-form-actions">
-        <button type="button" id="cancelBtn" class="cancel-btn">Cancel</button>
         <button type="submit" class="submit-btn">Save Event</button>
       </div>
     </form>
@@ -171,7 +169,6 @@
       <div class="event-detail-desc" id="eventDetailDesc"></div>
     </div>
     <div class="modal-form-actions">
-      <button type="button" id="eventDetailEditBtn" class="cancel-btn" style="display:none;">Edit Event</button>
       <button type="button" id="eventDetailRemoveBtn" class="cancel-btn">Remove Event</button>
       <a id="eventDetailActionBtn" class="submit-btn" href="#" target="_blank" rel="noopener noreferrer" style="display:none; text-decoration:none; align-items:center; justify-content:center;">Open Event Link</a>
       <button type="button" id="eventDetailSignupBtn" class="submit-btn">Sign Up</button>
@@ -220,7 +217,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const eventModalTitle = document.getElementById('eventModalTitle');
   const addBtn = document.getElementById('addEventBtn');
   const closeBtn = document.getElementById('closeModalBtn');
-  const cancelBtn = document.getElementById('cancelBtn');
   const form = document.getElementById('eventForm');
   const cards = document.querySelector('#events-section .cards');
 
@@ -231,7 +227,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const eventDetailMeta = document.getElementById('eventDetailMeta');
   const eventDetailDesc = document.getElementById('eventDetailDesc');
   const eventDetailSignupBtn = document.getElementById('eventDetailSignupBtn');
-  const eventDetailEditBtn = document.getElementById('eventDetailEditBtn');
   const eventDetailRemoveBtn = document.getElementById('eventDetailRemoveBtn');
   const eventDetailActionBtn = document.getElementById('eventDetailActionBtn');
 
@@ -239,7 +234,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const resourceModal = document.getElementById('resourceModal');
   const addResourceBtn = document.getElementById('addResourceBtn');
   const closeResourceBtn = document.getElementById('closeResourceModalBtn');
-  const cancelResourceBtn = document.getElementById('cancelResourceBtn');
   const resourceForm = document.getElementById('resourceForm');
   const resourceCards = document.querySelector('#health-section .cards');
   const resourceDetailModal = document.getElementById('resourceDetailModal');
@@ -312,6 +306,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (isNaN(parsed)) return value;
     return parsed.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
+
+  // Make functions globally available for Firebase callbacks
+  window.toDateKey = toDateKey;
+  window.formatDateForDisplay = formatDateForDisplay;
 
   function normalizeUrl(value) {
     const v = (value || '').trim();
@@ -421,16 +419,6 @@ document.addEventListener('DOMContentLoaded', function() {
     savePendingLocal(key, next);
   }
 
-  function saveLocalActionFallback(key, payload) {
-    try {
-      const current = JSON.parse(localStorage.getItem(key) || '[]');
-      current.unshift({ ...payload, _localTs: Date.now() });
-      localStorage.setItem(key, JSON.stringify(current.slice(0, 200)));
-    } catch (err) {
-      console.warn('Local action fallback save failed:', err.message);
-    }
-  }
-
   function applyResourceFilters() {
     const resourceFilterBtn = document.querySelector('#health-section .filters button.active');
     const activeFilter = resourceFilterBtn ? resourceFilterBtn.textContent.trim() : 'All';
@@ -518,16 +506,6 @@ document.addEventListener('DOMContentLoaded', function() {
       eventDetailModalContent.classList.add(categoryMap[category]);
     }
 
-    const role = (window.currentUserRole || 'member').toLowerCase();
-    if (role === 'admin' || role === 'founder') {
-      eventDetailEditBtn.style.display = 'inline-flex';
-      eventDetailEditBtn.onclick = function() {
-        openEditFromCard(card);
-      };
-    } else {
-      eventDetailEditBtn.style.display = 'none';
-    }
-
     if (eventDetailActionBtn) {
       if (url) {
         eventDetailActionBtn.style.display = 'inline-flex';
@@ -563,10 +541,10 @@ document.addEventListener('DOMContentLoaded', function() {
           closeEventDetailModal();
         }).catch(err => {
           logFirebaseError('eventSignup.ui', err, { title, dateKey });
-          saveLocalActionFallback('rippleLocalEventSignups', {
+          saveLocalSignup('rippleLocalEventSignups', {
             title,
             date: dateKey || date,
-            dateKey: dateKey || toDateKey(date),
+            dateKey: dateKey || window.toDateKey(date),
             time,
             location,
             desc,
@@ -659,7 +637,7 @@ document.addEventListener('DOMContentLoaded', function() {
           closeResourceDetailModal();
         }).catch(err => {
           logFirebaseError('resourceSave.ui', err, { title, resourceDocId });
-          saveLocalActionFallback('rippleLocalResourceSaves', {
+          saveLocalSignup('rippleLocalResourceSaves', {
             title,
             desc1,
             desc2,
@@ -925,7 +903,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   addBtn && addBtn.addEventListener('click', openModal);
   closeBtn && closeBtn.addEventListener('click', closeModal);
-  cancelBtn && cancelBtn.addEventListener('click', closeModal);
   modal && modal.addEventListener('click', function(e){ if(e.target === modal) closeModal(); });
 
   closeEventDetailBtn && closeEventDetailBtn.addEventListener('click', closeEventDetailModal);
@@ -935,7 +912,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   addResourceBtn && addResourceBtn.addEventListener('click', openResourceModal);
   closeResourceBtn && closeResourceBtn.addEventListener('click', closeResourceModal);
-  cancelResourceBtn && cancelResourceBtn.addEventListener('click', closeResourceModal);
   resourceModal && resourceModal.addEventListener('click', function(e){ if(e.target === resourceModal) closeResourceModal(); });
 
   // Update modal style when category changes
@@ -1233,18 +1209,56 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function fallbackModeration(itemType, data) {
     const raw = JSON.stringify(data).toLowerCase();
+    
+    // Check for blocked terms
     const blockedTerms = ["hate", "kill", "violence", "drug", "weapon", "scam", "fraud", "explicit"];
     const hasBlocked = blockedTerms.some(term => raw.includes(term));
     if (hasBlocked) {
       return {
         approved: false,
-        reason: `Rejected by fallback moderation for potentially unsafe ${itemType} content.`,
+        reason: `Rejected: Content contains unsafe language.`,
         risk: "high"
       };
     }
+    
+    // Detect spam/random text (too many repeated characters, gibberish, etc)
+    const title = (data.title || '').toLowerCase();
+    const desc = (data.desc || data.desc1 || '').toLowerCase();
+    const combinedText = `${title} ${desc}`;
+    
+    // Check for repeated characters (spam indicator)
+    if (/(.)\1{4,}/.test(combinedText)) {
+      return {
+        approved: false,
+        reason: `Rejected: Content appears to be spam or random text.`,
+        risk: "high"
+      };
+    }
+    
+    // Check for minimum word length (too short = likely spam)
+    const words = combinedText.split(/\s+/).filter(w => w.length > 0);
+    if (words.length < 3) {
+      return {
+        approved: false,
+        reason: `Rejected: Content is too brief or lacks meaningful text.`,
+        risk: "medium"
+      };
+    }
+    
+    // Check for nonsensical patterns (mostly non-alphabetic characters)
+    const letterCount = (combinedText.match(/[a-z]/gi) || []).length;
+    const nonLetterCount = combinedText.length - letterCount;
+    if (letterCount > 0 && nonLetterCount / letterCount > 0.5) {
+      return {
+        approved: false,
+        reason: `Rejected: Content appears to contain excessive gibberish.`,
+        risk: "high"
+      };
+    }
+    
     return {
       approved: true,
-      reason: `Approved by fallback moderation for ${itemType}.`,
+      reason: `Approved: Content passed moderation checks.`,
       risk: "low"
     };
   }
@@ -1322,23 +1336,94 @@ document.addEventListener('DOMContentLoaded', function() {
     return first.endsWith('.') || first.endsWith('!') || first.endsWith('?') ? first : `${first}.`;
   }
 
+  function showMiniNotification(message, type = 'info', duration = 5000) {
+    const container = document.getElementById('mini-notification-container');
+    if (!container) {
+      const newContainer = document.createElement('div');
+      newContainer.id = 'mini-notification-container';
+      newContainer.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px;';
+      document.body.appendChild(newContainer);
+    }
+
+    const notification = document.createElement('div');
+    const bgColor = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6';
+    notification.style.cssText = `
+      background-color: ${bgColor};
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      font-size: 14px;
+      font-weight: 500;
+      max-width: 350px;
+      word-wrap: break-word;
+      animation: slideIn 0.3s ease-out;
+    `;
+    notification.textContent = message;
+
+    const container2 = document.getElementById('mini-notification-container');
+    container2.appendChild(notification);
+
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease-out';
+      setTimeout(() => notification.remove(), 300);
+    }, duration);
+  }
+
+  // Add CSS animations
+  if (!document.getElementById('notification-animations')) {
+    const style = document.createElement('style');
+    style.id = 'notification-animations';
+    style.textContent = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(400px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      @keyframes slideOut {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(400px);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   async function createModerationNotification(actor, itemType, title, approved, reason) {
     const shortReason = oneSentenceReason(
       reason,
       approved ? 'Accepted because content appears community-safe.' : 'Denied because content did not meet safety rules.'
     );
-    await addDoc(collection(db, 'notifications'), {
-      type: 'moderationResult',
-      itemType,
-      title: approved ? `${itemType === 'event' ? 'Event' : 'Resource'} Accepted` : `${itemType === 'event' ? 'Event' : 'Resource'} Denied`,
-      message: `${approved ? 'Accepted' : 'Denied'}: ${shortReason}`,
-      status: 'unread',
-      createdBy: actor.createdBy,
-      createdByEmail: actor.createdByEmail,
-      participantId: actor.participantId,
-      participantType: actor.participantType,
-      createdAt: serverTimestamp()
-    });
+    try {
+      const notifRef = await addDoc(collection(db, 'notifications'), {
+        type: 'moderationResult',
+        itemType,
+        title: approved ? `${itemType === 'event' ? 'Event' : 'Resource'} Accepted` : `${itemType === 'event' ? 'Event' : 'Resource'} Denied`,
+        message: `${approved ? 'Accepted' : 'Denied'}: ${shortReason}`,
+        status: 'unread',
+        createdBy: actor.createdBy,
+        createdByEmail: actor.createdByEmail,
+        participantId: actor.participantId,
+        participantType: actor.participantType,
+        contentTitle: title,
+        createdAt: serverTimestamp()
+      });
+      console.log(`✓ Moderation notification saved to Firestore (${itemType}):`, notifRef.id);
+      return notifRef;
+    } catch (err) {
+      logFirebaseError('createModerationNotification', err, { itemType, title, participantId: actor.participantId });
+      console.warn(`⚠ Failed to save notification to Firestore, but submission was processed`);
+    }
   }
 
   function getVisitorId() {
@@ -1422,9 +1507,24 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   window.createModeratedEvent = async function(eventData) {
-    const moderation = await moderateSubmission("event", eventData);
+    // Only send relevant fields for moderation (not dates/times which don't affect safety)
+    const moderationData = {
+      title: eventData.title,
+      location: eventData.location,
+      desc: eventData.desc,
+      category: eventData.category
+    };
+    const moderation = await moderateSubmission("event", moderationData);
     const actor = await resolveParticipantIdentity();
-    const dateKey = toDateKey(eventData.dateKey || eventData.date);
+    
+    // Show mini notification immediately
+    const notifType = moderation.approved ? 'success' : 'error';
+    const notifMsg = moderation.approved 
+      ? `✓ Event "${eventData.title}" approved and posted!`
+      : `✗ Event submission rejected: ${moderation.reason}`;
+    showMiniNotification(notifMsg, notifType, 6000);
+    
+    const dateKey = window.toDateKey(eventData.dateKey || eventData.date);
     const status = moderation.approved ? "approved" : "rejected";
     const targetCollection = moderation.approved ? "events" : "rejectedEvents";
     const payload = {
@@ -1439,9 +1539,15 @@ document.addEventListener('DOMContentLoaded', function() {
       createdAt: serverTimestamp(),
       moderatedAt: serverTimestamp()
     };
-    const ref = await addDoc(collection(db, targetCollection), payload);
-    await createModerationNotification(actor, 'event', eventData.title, moderation.approved, moderation.reason);
-    return { approved: moderation.approved, reason: moderation.reason, id: ref.id };
+    try {
+      const ref = await addDoc(collection(db, targetCollection), payload);
+      await createModerationNotification(actor, 'event', eventData.title, moderation.approved, moderation.reason);
+      console.log(`✓ Event "${eventData.title}" saved to ${targetCollection}:`, ref.id);
+      return { approved: moderation.approved, reason: moderation.reason, id: ref.id };
+    } catch (err) {
+      logFirebaseError('createModeratedEvent.save', err, { title: eventData.title, status });
+      throw err;
+    }
   };
 
   // Helper: create an event signup and notify the user
@@ -1537,8 +1643,23 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   window.createModeratedResource = async function(resourceData) {
-    const moderation = await moderateSubmission("resource", resourceData);
+    // Only send relevant fields for moderation (not other metadata)
+    const moderationData = {
+      title: resourceData.title,
+      desc1: resourceData.desc1,
+      desc2: resourceData.desc2,
+      category: resourceData.category
+    };
+    const moderation = await moderateSubmission("resource", moderationData);
     const actor = await resolveParticipantIdentity();
+    
+    // Show mini notification immediately
+    const notifType = moderation.approved ? 'success' : 'error';
+    const notifMsg = moderation.approved 
+      ? `✓ Resource "${resourceData.title}" approved and posted!`
+      : `✗ Resource submission rejected: ${moderation.reason}`;
+    showMiniNotification(notifMsg, notifType, 6000);
+    
     const status = moderation.approved ? "approved" : "rejected";
     const targetCollection = moderation.approved ? "resources" : "rejectedResources";
     const payload = {
@@ -1551,9 +1672,15 @@ document.addEventListener('DOMContentLoaded', function() {
       createdAt: serverTimestamp(),
       moderatedAt: serverTimestamp()
     };
-    const ref = await addDoc(collection(db, targetCollection), payload);
-    await createModerationNotification(actor, 'resource', resourceData.title, moderation.approved, moderation.reason);
-    return { approved: moderation.approved, reason: moderation.reason, id: ref.id };
+    try {
+      const ref = await addDoc(collection(db, targetCollection), payload);
+      await createModerationNotification(actor, 'resource', resourceData.title, moderation.approved, moderation.reason);
+      console.log(`✓ Resource "${resourceData.title}" saved to ${targetCollection}:`, ref.id);
+      return { approved: moderation.approved, reason: moderation.reason, id: ref.id };
+    } catch (err) {
+      logFirebaseError('createModeratedResource.save', err, { title: resourceData.title, status });
+      throw err;
+    }
   };
 
   async function notifyResourceRemovedForParticipant(saveData, resourceDocId, resourceTitle) {
@@ -1709,8 +1836,8 @@ document.addEventListener('DOMContentLoaded', function() {
         docId: docSnap.id,
         sourceFirestore: true,
         title: data.title,
-        date: formatDateForDisplay(data.dateKey || data.date || data.dateText || ''),
-        dateKey: data.dateKey || toDateKey(data.date || data.dateText || ''),
+        date: window.formatDateForDisplay(data.dateKey || data.date || data.dateText || ''),
+        dateKey: data.dateKey || window.toDateKey(data.date || data.dateText || ''),
         time: data.time || '',
         location: data.location || '',
         desc: data.desc || data.description || '',

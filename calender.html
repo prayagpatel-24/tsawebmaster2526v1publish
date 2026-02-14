@@ -365,10 +365,13 @@
         const list = [];
         snapshot.forEach(docSnap => {
           const data = docSnap.data();
+          const title = (data.title || '').trim();
+          // Filter out test/spam events: single words 3 chars or less
+          if (title.length <= 3 && !title.includes(' ')) return;
           const dateKey = toDateKey(data.dateKey || data.date || data.dateText || data.createdAt);
           if (!dateKey) return;
           list.push({
-            summary: data.title || '(No title)',
+            summary: title || '(No title)',
             dateKey,
             time: data.time || 'All day',
             location: data.location || ''

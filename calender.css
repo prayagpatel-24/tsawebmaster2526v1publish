@@ -4,10 +4,18 @@ body {
   overflow-x: hidden;
 }
 
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
 .main {
   margin: 40px auto 0;
   text-align: center;
   max-width: 1300px;
+  width: 100%;
 }
 
 .main h1 {
