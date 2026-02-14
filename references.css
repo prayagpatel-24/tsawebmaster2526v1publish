@@ -1,0 +1,85 @@
+.references-page {
+  width: min(1100px, 92%);
+  margin: 42px auto 72px;
+  color: #1f2937;
+}
+
+.references-title {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-family: 'Lora', serif;
+  color: #194b8f;
+}
+
+.references-subtitle {
+  margin: 10px 0 28px;
+  font-size: 1.02rem;
+  color: #4b5563;
+  line-height: 1.55;
+}
+
+.reference-group {
+  margin: 0 0 26px;
+  padding: 18px 20px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(25, 75, 143, 0.12);
+  box-shadow: 0 10px 30px rgba(25, 75, 143, 0.08);
+}
+
+.reference-group h2 {
+  margin: 0 0 14px;
+  font-size: 1.3rem;
+  font-family: 'Lora', serif;
+  color: #0f3b75;
+}
+
+.reference-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.reference-card {
+  display: block;
+  text-decoration: none;
+  border-radius: 14px;
+  border: 1px solid rgba(59, 130, 246, 0.22);
+  padding: 14px 15px;
+  background: linear-gradient(180deg, #ffffff 0%, #f3f8ff 100%);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.reference-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.12);
+  border-color: rgba(37, 99, 235, 0.45);
+}
+
+.reference-card h3 {
+  margin: 0 0 8px;
+  color: #123a6d;
+  font-size: 1.03rem;
+}
+
+.reference-card p {
+  margin: 0 0 8px;
+  color: #374151;
+  line-height: 1.45;
+}
+
+.reference-card span {
+  color: #2563eb;
+  font-size: 0.85rem;
+  word-break: break-word;
+}
+
+@media (max-width: 680px) {
+  .references-page {
+    margin-top: 28px;
+  }
+
+  .reference-group {
+    padding: 14px;
+  }
+}

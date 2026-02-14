@@ -680,7 +680,8 @@ a:visited {
   padding-top: 28px;
   border-top: 2px solid #f3f4f6;
 }
-.modal-form-actions button {
+.modal-form-actions button,
+.modal-form-actions a.submit-btn {
   padding: 12px 24px;
   border-radius: 12px;
   font-weight: 600;
@@ -688,6 +689,10 @@ a:visited {
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
 .modal-form-actions button.cancel-btn {
   background: #f3f4f6;
