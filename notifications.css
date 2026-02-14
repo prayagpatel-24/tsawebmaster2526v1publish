@@ -1,6 +1,14 @@
 body {
-  background: linear-gradient(180deg, #accedf, #4aacdd, #accedf);
   font-family: "Inter", sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(
+    180deg,
+    #b7deef 0%,
+    #5fa9cc 50%,
+    #b7deef 100%
+  );
+  background-attachment: fixed;
 }
 .hamburger {
   display: none;
@@ -17,6 +25,11 @@ body {
   border-radius: 2px;
   transition: all 0.3s ease;
 }
+.page {
+  background: transparent;
+}
+
+
 @media (max-width: 720px) {
   .hamburger { display: flex; }
   .nav-links { display: none !important; }
