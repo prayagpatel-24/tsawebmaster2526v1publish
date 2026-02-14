@@ -482,47 +482,50 @@
     });
   </script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const headerPlaceholder = document.getElementById('header-placeholder');
-      if (!headerPlaceholder) return;
-      fetch('header.html')
-        .then(response => response.text())
-        .then(html => {
-          headerPlaceholder.innerHTML = html;
-          const path = window.location.pathname.split('/').pop();
-          const links = headerPlaceholder.querySelectorAll('.nav-link');
-          links.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href === path) {
-              link.classList.add('active');
-            } else {
-              link.classList.remove('active');
+  document.addEventListener('DOMContentLoaded', function () {
+    const headerPlaceholder = document.getElementById('header-placeholder');
+    if (!headerPlaceholder) return;
+    fetch('header.html')
+      .then(response => response.text())
+      .then(html => {
+        headerPlaceholder.innerHTML = html;
+        const path = window.location.pathname.split('/').pop();
+        const links = headerPlaceholder.querySelectorAll('.nav-link');
+        links.forEach(link => {
+          const href = link.getAttribute('href');
+          if (href === path) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+        const hamburger = headerPlaceholder.querySelector('.hamburger');
+        const navLinks = headerPlaceholder.querySelector('.nav-links');
+
+        if (hamburger && navLinks) {
+          hamburger.addEventListener('click', function (event) {
+            event.stopPropagation();
+            navLinks.classList.toggle('open');
+          });
+
+          document.addEventListener('click', function (event) {
+            if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+              navLinks.classList.remove('open');
             }
           });
-          const hamburger = headerPlaceholder.querySelector('.hamburger');
-          const navLinks = headerPlaceholder.querySelector('.nav-links');
-          if (hamburger && navLinks) {
-            hamburger.addEventListener('click', function (event) {
-              event.stopPropagation();
-              navLinks.classList.toggle('open');
+
+          const navLinkElements = headerPlaceholder.querySelectorAll('.nav-link');
+          navLinkElements.forEach(link => {
+            link.addEventListener('click', function () {
+              navLinks.classList.remove('open');
             });
-            document.addEventListener('click', function (event) {
-              if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
-                navLinks.classList.remove('open');
-              }
-            });
-            const navLinkElements = headerPlaceholder.querySelectorAll('.nav-link');
-            navLinkElements.forEach(link => {
-              link.addEventListener('click', function () {
-                navLinks.classList.remove('open');
-              });
-            });
-          }
-        })
-        .catch(error => {
-          console.error('Error loading header:', error);
-        });
-    });
-  </script>
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Error loading header:', error);
+      });
+  });
+</script>
 </body>
 </html>
