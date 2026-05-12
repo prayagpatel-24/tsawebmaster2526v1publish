@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event Map - Ripple</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Courgette&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- MarkerCluster -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+  <!-- Site styles (after Leaflet so overrides take effect) -->
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="map.css">
+</head>
+<body>
+  <div class="page">
+    <div id="header-placeholder"></div>
+
+    <div class="map-page-heading">
+      <h1 class="map-heading-title">Event Map</h1>
+      <p class="map-heading-subtitle">Explore volunteer events and activities near you. Zoom in to see individual events.</p>
+    </div>
+
+    <div id="map" class="map-container"></div>
+
+    <footer class="footer">
+      <div id="footer-placeholder"></div>
+    </footer>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+  <!-- Map initialization -->
+  <script>
+    const mapEvents = [
+      { title: "Big Creek Greenway Cleanup", date: "Mar 8, 2026", location: "Big Creek Greenway Trailhead", lat: 34.1517, lng: -84.1921, description: "Join neighbors for a Forsyth County trail cleanup and litter audit." },
+      { title: "Lake Lanier Wellness Walk", date: "Mar 15, 2026", location: "Lanier Park Trail", lat: 34.2098, lng: -84.1401, description: "Community walk supporting mental health awareness and local resources." },
+      { title: "Forsyth Blood Drive", date: "Mar 22, 2026", location: "Cumming City Center", lat: 34.2080, lng: -84.1396, description: "Partner with local hospitals for a community blood drive to save lives." },
+      { title: "Sharon Forks Book Drive", date: "Mar 29, 2026", location: "Sharon Forks Library", lat: 34.1166, lng: -84.2004, description: "Collect and sort books for local classrooms and family literacy." },
+      { title: "Forsyth Cultural Expo", date: "Apr 5, 2026", location: "Forsyth Central Park", lat: 34.2377, lng: -84.1301, description: "Celebrate community traditions with performances, food, and art." },
+      { title: "Fowler Park Reforestation", date: "Apr 12, 2026", location: "Fowler Park", lat: 34.1329, lng: -84.1999, description: "Plant native trees to strengthen Forsyth County green spaces." },
+      { title: "Summer Kickoff Community Fair", date: "Jun 6, 2026", location: "Cumming Fairgrounds", lat: 34.2176, lng: -84.1382, description: "Kick off summer with booths, youth clubs, and family activities." },
+      { title: "Lanier Shoreline Cleanup", date: "Jun 13, 2026", location: "Lake Lanier North Dock", lat: 34.2441, lng: -84.0758, description: "Collect shoreline litter and protect wildlife habitats around Lanier." },
+      { title: "Youth Volunteer Orientation Day", date: "Jun 20, 2026", location: "Forsyth Service Center", lat: 34.2010, lng: -84.1435, description: "Get matched with summer volunteer projects for teens and families." },
+      { title: "Mindful Summer Reset Workshop", date: "Jun 27, 2026", location: "Sharon Forks Community Hall", lat: 34.1183, lng: -84.1989, description: "Guided stress-management and mindfulness tools for summer routines." },
+      { title: "Backpack Essentials Drive", date: "Jul 4, 2026", location: "Midway Park Pavilion", lat: 34.1024, lng: -84.2346, description: "Donate school essentials to prepare students for the fall semester." },
+      { title: "Neighborhood Picnic and Games", date: "Jul 11, 2026", location: "Sawnee Mountain Preserve Lawn", lat: 34.2590, lng: -84.1448, description: "Community picnic with music, games, and local nonprofit booths." },
+      { title: "Trail Water Station Volunteer Day", date: "Jul 18, 2026", location: "Big Creek Greenway Mile 3", lat: 34.1642, lng: -84.1850, description: "Support runners and walkers while promoting hydration and safety." },
+      { title: "Community Wellness Check-In", date: "Jul 25, 2026", location: "Forsyth Central Library", lat: 34.2031, lng: -84.1388, description: "Open discussion circle on burnout, boundaries, and community care." },
+      { title: "Senior Center Support Shift", date: "Aug 1, 2026", location: "Cumming Senior Center", lat: 34.2076, lng: -84.1338, description: "Help with meal prep, games, and activity support for seniors." },
+      { title: "Community Hygiene Kit Drive", date: "Aug 8, 2026", location: "Vickery Village Plaza", lat: 34.1810, lng: -84.2204, description: "Assemble hygiene kits for families and individuals in need." },
+      { title: "Local Arts and Culture Night", date: "Aug 15, 2026", location: "Cumming City Center Stage", lat: 34.2088, lng: -84.1402, description: "Celebrate local artists, student performers, and neighborhood stories." },
+      { title: "End-of-Summer Park Cleanup", date: "Aug 22, 2026", location: "Fowler Park East Entrance", lat: 34.1322, lng: -84.1963, description: "Close out summer with park cleanup and recycling education stations." },
+      { title: "Back-to-School Resilience Session", date: "Aug 29, 2026", location: "South Forsyth High Commons", lat: 34.1045, lng: -84.1787, description: "Practical tools for managing stress and routines before school starts." },
+      { title: "Meals for Neighbors Pack Night", date: "Sep 5, 2026", location: "The Place Forsyth Warehouse", lat: 34.2188, lng: -84.1297, description: "Pack pantry boxes and ready-to-go meal kits for families across the county." },
+      { title: "Creek Health Testing Day", date: "Sep 12, 2026", location: "Haw Creek Park", lat: 34.1916, lng: -84.0996, description: "Learn simple water testing steps and record creek health data for a community dashboard." },
+      { title: "Community Resource Pop-Up", date: "Sep 19, 2026", location: "Forsyth Conference Center", lat: 34.2289, lng: -84.1324, description: "Browse local clubs, services, volunteer groups, and student-led community projects." },
+      { title: "Fall Coat and Blanket Drive", date: "Sep 26, 2026", location: "Coal Mountain Park", lat: 34.2862, lng: -84.1018, description: "Collect coats, blankets, and cold-weather supplies before the fall season." },
+      { title: "Teen Mental Health First Aid Demo", date: "Oct 3, 2026", location: "Lambert High School Media Center", lat: 34.1078, lng: -84.1608, description: "A proof-of-concept workshop introducing peer support, listening skills, and referral resources." },
+      { title: "Community Garden Build Day", date: "Oct 10, 2026", location: "Sawnee Elementary Garden Lot", lat: 34.2320, lng: -84.1598, description: "Build raised beds, set up compost stations, and prepare a school garden for volunteers." }
+    ];
+    const MAP_EVENT_STORAGE_KEY = 'rippleMapEvents';
+    function normalizeEventKey(value) {
+      return (value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    }
+    function makeEventMapId(ev) {
+      return normalizeEventKey([ev.title, ev.dateKey || ev.date, ev.location].filter(Boolean).join('-')).slice(0, 80);
+    }
+    function loadSavedMapEvents() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(MAP_EVENT_STORAGE_KEY) || '[]');
+        if (!Array.isArray(saved)) return [];
+        return saved
+          .map(function(ev) {
+            return {
+              mapId: ev.mapId || makeEventMapId(ev),
+              title: ev.title || 'Event',
+              date: ev.date || ev.dateKey || '',
+              location: ev.location || '',
+              lat: Number(ev.lat),
+              lng: Number(ev.lng),
+              description: ev.description || ev.desc || ''
+            };
+          })
+          .filter(function(ev) {
+            return Number.isFinite(ev.lat) && Number.isFinite(ev.lng);
+          });
+      } catch (err) {
+        return [];
+      }
+    }
+    function mergeMapEvents(baseEvents, savedEvents) {
+      const byId = new Map();
+      baseEvents.concat(savedEvents).forEach(function(ev) {
+        const mapId = ev.mapId || makeEventMapId(ev);
+        byId.set(mapId, { ...ev, mapId });
+      });
+      return Array.from(byId.values());
+    }
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    var map = L.map('map').setView([34.2098, -84.1401], 10);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
+      maxZoom: 19
+    }).addTo(map);
+
+    var clusterGroup = L.markerClusterGroup({
+      maxClusterRadius: 60,
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true
+    });
+
+    const allMapEvents = mergeMapEvents(mapEvents, loadSavedMapEvents());
+    const markersById = new Map();
+    const markersByTitle = new Map();
+
+    allMapEvents.forEach(function(ev) {
+      var popupHtml =
+        '<div class="map-popup">' +
+          '<div class="map-popup-title">' + escapeHtml(ev.title) + '</div>' +
+          '<div class="map-popup-meta">&#128197; ' + escapeHtml(ev.date) + '</div>' +
+          '<div class="map-popup-meta">&#128205; ' + escapeHtml(ev.location) + '</div>' +
+          '<div class="map-popup-desc">' + escapeHtml(ev.description) + '</div>' +
+        '</div>';
+      var marker = L.marker([ev.lat, ev.lng]).bindPopup(popupHtml, { maxWidth: 280, minWidth: 200 });
+      marker.addTo(clusterGroup);
+      markersById.set(ev.mapId || makeEventMapId(ev), marker);
+      markersByTitle.set(normalizeEventKey(ev.title), marker);
+    });
+
+    map.addLayer(clusterGroup);
+
+    const params = new URLSearchParams(window.location.search);
+    const requestedEvent = params.get('event') || '';
+    const requestedTitle = params.get('title') || '';
+    const requestedMarker = markersById.get(requestedEvent) || markersByTitle.get(normalizeEventKey(requestedTitle));
+    if (requestedMarker) {
+      const point = requestedMarker.getLatLng();
+      map.setView(point, 15);
+      setTimeout(function() {
+        clusterGroup.zoomToShowLayer(requestedMarker, function() {
+          requestedMarker.openPopup();
+        });
+      }, 250);
+    }
+  </script>
+
+  <!-- Firebase auth (identical block used across all pages) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    const firebaseConfig = {
+      apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
+      authDomain: "webmaster-v4-0.firebaseapp.com",
+      projectId: "webmaster-v4-0",
+      storageBucket: "webmaster-v4-0.firebasestorage.app",
+      messagingSenderId: "413556961992",
+      appId: "1:413556961992:web:899600895ecb68eb9debfd"
+    };
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    window.signOutUser = function () {
+      signOut(auth).then(() => { location.reload(); }).catch(err => { console.error('Sign out error:', err); });
+    };
+    onAuthStateChanged(auth, (user) => {
+      const avatar   = document.querySelector('.avatar');
+      const navRight = document.querySelector('.nav-right');
+      if (user) {
+        const initial = (user.email || '').charAt(0).toUpperCase();
+        if (avatar) {
+          if (user.photoURL) {
+            avatar.style.backgroundImage    = `url('${user.photoURL}')`;
+            avatar.style.backgroundSize     = 'cover';
+            avatar.style.backgroundPosition = 'center';
+            avatar.textContent = '';
+          } else {
+            avatar.style.backgroundImage = '';
+            avatar.textContent = initial;
+          }
+          avatar.style.cursor = 'pointer';
+          avatar.onclick = () => window.location.href = 'account.html';
+        }
+        const signInBtn = document.querySelector('.sign-in-btn');
+        if (signInBtn) signInBtn.remove();
+      } else {
+        if (avatar) avatar.textContent = '';
+        const signOutBtn = document.querySelector('.sign-out-btn');
+        if (signOutBtn) signOutBtn.remove();
+        if (navRight && !document.querySelector('.sign-in-btn')) {
+          const btn = document.createElement('button');
+          btn.textContent  = 'Sign In';
+          btn.className    = 'sign-in-btn';
+          btn.style.padding      = '8px 16px';
+          btn.style.background   = 'linear-gradient(to bottom, #4c7dff, #2e63e5)';
+          btn.style.color        = 'white';
+          btn.style.border       = 'none';
+          btn.style.borderRadius = '999px';
+          btn.style.cursor       = 'pointer';
+          btn.style.fontSize     = '14px';
+          btn.style.fontWeight   = '600';
+          btn.style.boxShadow    = '0 4px 12px rgba(76, 125, 255, 0.25)';
+          btn.style.transition   = 'transform 0.1s ease, box-shadow 0.1s ease';
+          btn.onclick      = () => window.location.href = 'login.html';
+          btn.onmouseover  = () => { btn.style.transform = 'translateY(-1px)'; btn.style.boxShadow = '0 6px 16px rgba(76, 125, 255, 0.35)'; };
+          btn.onmouseout   = () => { btn.style.transform = 'translateY(0)';    btn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)'; };
+          navRight.appendChild(btn);
+        }
+      }
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const fp = document.getElementById('footer-placeholder');
+      if (fp) {
+        fetch('footer.html')
+          .then(r => r.text())
+          .then(html => { fp.innerHTML = html; })
+          .catch(err => { console.error('Error loading footer:', err); });
+      }
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const hp = document.getElementById('header-placeholder');
+      if (!hp) return;
+      fetch('header.html')
+        .then(r => r.text())
+        .then(html => {
+          hp.innerHTML = html;
+          const path  = window.location.pathname.split('/').pop();
+          const links = hp.querySelectorAll('.nav-link');
+          links.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === path);
+          });
+          const hamburger = hp.querySelector('.hamburger');
+          const navLinks  = hp.querySelector('.nav-links');
+          if (hamburger && navLinks) {
+            hamburger.addEventListener('click', function (e) {
+              e.stopPropagation();
+              navLinks.classList.toggle('open');
+            });
+            document.addEventListener('click', function (e) {
+              if (!navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+                navLinks.classList.remove('open');
+              }
+            });
+            hp.querySelectorAll('.nav-link').forEach(link => {
+              link.addEventListener('click', () => navLinks.classList.remove('open'));
+            });
+          }
+          // Fix map size after header renders (header was 0px tall during init)
+          map.invalidateSize();
+        })
+        .catch(err => { console.error('Error loading header:', err); });
+    });
+  </script>
+</body>
+</html>

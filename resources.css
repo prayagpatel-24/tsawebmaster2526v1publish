@@ -268,6 +268,7 @@ a:visited {
   border-radius: 14px;
   background: white;
   width: 360px;
+  max-width: calc(100% - 32px);
   border: 1px solid #d1d5db;
 }
 .toggle-btns button {
@@ -292,6 +293,7 @@ a:visited {
   gap: 14px;
   margin: 18px auto;
   width: 900px;
+  max-width: calc(100% - 32px);
 }
 .search-area input {
   padding: 13px 16px;
@@ -335,12 +337,13 @@ a:visited {
 }
 .cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 28px;
-  width: 1200px;
+  width: min(1200px, calc(100% - 48px));
   margin: 35px auto;
 }
 .card {
+  min-width: 0;
   padding: 26px;
   border-radius: 14px;
   background: white;
@@ -371,13 +374,15 @@ a:visited {
   color: #475569;
   font-size: 14px;
   line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 .tag {
   margin-top: 14px;
   padding: 6px 14px;
   font-size: 13px;
   border-radius: 12px;
-  width: max-content;
+  width: fit-content;
+  max-width: 100%;
   color: white;
   font-weight: 500;
 }
@@ -481,6 +486,7 @@ a:visited {
   backdrop-filter: blur(4px);
   z-index: 1000;
   padding: 20px;
+  overflow-y: auto;
   animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 @keyframes fadeIn {
@@ -500,11 +506,13 @@ a:visited {
   background: white;
   border-radius: 24px;
   width: 720px;
-  max-width: 100%;
+  max-width: min(100%, 720px);
+  max-height: calc(100vh - 40px);
   padding: 48px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.1);
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 3px solid #4c7dff;
 }
@@ -663,17 +671,82 @@ a:visited {
 }
 .modal-form-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-bottom: 24px;
 }
 @media (max-width: 600px) {
+  .modal-overlay {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .modal-content {
+    width: 100%;
+    max-height: calc(100vh - 24px);
+    padding: 24px 18px 18px;
+    border-radius: 16px;
+  }
+
+  .modal-header {
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+  }
+
+  .modal-header > div:first-child {
+    font-size: 22px;
+    line-height: 1.2;
+  }
+
+  .modal-header button {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    flex: 0 0 auto;
+  }
+
+  .modal-form-group {
+    margin-bottom: 14px;
+  }
+
   .modal-form-row {
     grid-template-columns: 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .modal-content input[type="text"],
+  .modal-content input[type="date"],
+  .modal-content input[type="time"],
+  .modal-content textarea,
+  .modal-content select {
+    padding: 11px 12px;
+    font-size: 14px;
+  }
+
+  .modal-content textarea {
+    min-height: 88px;
+  }
+
+  .modal-form-actions {
+    position: sticky;
+    bottom: -18px;
+    margin: 18px -18px -18px;
+    padding: 14px 18px 18px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), #ffffff 28%);
+    justify-content: stretch;
+  }
+
+  .modal-form-actions button,
+  .modal-form-actions a.submit-btn {
+    flex: 1 1 100%;
+    padding: 11px 14px;
   }
 }
 .modal-form-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   justify-content: flex-end;
   margin-top: 36px;
@@ -768,7 +841,7 @@ a:visited {
   border-radius: 999px;
   border: 1px solid rgba(15, 23, 42, 0.12);
 }
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   .nav {
     padding-inline: 20px;
   }
@@ -780,8 +853,9 @@ a:visited {
     top: 100%;
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     flex-direction: column;
     gap: 0;
     margin-left: 0;
@@ -790,7 +864,7 @@ a:visited {
     transform: translateY(-100%);
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
     z-index: 1000;
   }
   .nav-links.open {
@@ -805,6 +879,45 @@ a:visited {
   .nav-link:last-child {
     border-bottom: none;
   }
+
+  .main-title {
+    font-size: 38px;
+    padding-inline: 16px;
+  }
+
+  .sub-title {
+    font-size: 20px;
+    padding-inline: 18px;
+  }
+
+  .search-area {
+    flex-direction: column;
+    align-items: stretch;
+    width: calc(100% - 32px);
+  }
+
+  .search-area input,
+  .search-area button {
+    width: 100%;
+  }
+
+  .filters {
+    justify-content: flex-start;
+    width: calc(100% - 32px);
+    margin-inline: auto;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+    width: calc(100% - 32px);
+    gap: 18px;
+    margin: 24px auto;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
   .hero,
   .section,
   .cta-section,
@@ -829,6 +942,46 @@ a:visited {
     grid-template-columns: 1fr;
   }
   .footer-top {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    gap: 24px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1180px) {
+  .search-area {
+    width: calc(100% - 48px);
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  .toggle-btns {
+    width: calc(100% - 24px);
+  }
+
+  .toggle-btns button {
+    font-size: 14px;
+    padding-block: 11px;
+  }
+
+  .main-title {
+    font-size: 32px;
+  }
+
+  .sub-title {
+    font-size: 17px;
+  }
+
+  .search-area,
+  .filters,
+  .cards {
+    width: calc(100% - 24px);
+  }
+
+  .card {
+    padding: 16px;
   }
 }

@@ -5,6 +5,7 @@
    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Courgette&display=swap" rel="stylesheet">
    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <meta charset="UTF-8" />
+<link rel="icon" type="image/png" href="logo.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Ripple AI Assistant</title>
 <link rel="stylesheet" href="main.css">
@@ -168,7 +169,8 @@ input.addEventListener('keypress', function(e) {
     sendMessage();
   }
 });
-onAuthStateChanged(auth, (user) => {
+window.currentSupportUser = undefined;
+window.renderSupportAuthNav = function(user) {
   const avatar = document.querySelector('.avatar');
   const navRight = document.querySelector('.nav-right');
   if (user) {
@@ -184,11 +186,22 @@ onAuthStateChanged(auth, (user) => {
         avatar.textContent = initial;
       }
       avatar.style.cursor = 'pointer';
+      avatar.setAttribute('role', 'button');
+      avatar.setAttribute('tabindex', '0');
       avatar.onclick = () => window.location.href = 'account.html';
+      avatar.onkeydown = (event) => {
+        if (event.key === 'Enter' || event.key === ' ') window.location.href = 'account.html';
+      };
+    }
+    const signInBtn = document.querySelector('.sign-in-btn');
+    if (signInBtn) {
+      signInBtn.remove();
     }
   } else {
     if (avatar) {
       avatar.textContent = '';
+      avatar.style.backgroundImage = '';
+      avatar.onclick = () => window.location.href = 'login.html';
     }
     const signOutBtn = document.querySelector('.sign-out-btn');
     if (signOutBtn) {
@@ -220,6 +233,10 @@ onAuthStateChanged(auth, (user) => {
       navRight.appendChild(signInBtn);
     }
   }
+};
+onAuthStateChanged(auth, (user) => {
+  window.currentSupportUser = user || null;
+  window.renderSupportAuthNav(user);
 });
 </script>
 <script>
@@ -277,6 +294,9 @@ document.addEventListener('DOMContentLoaded', function() {
             link.classList.remove('active');
           }
         });
+        if (window.renderSupportAuthNav && window.currentSupportUser !== undefined) {
+          window.renderSupportAuthNav(window.currentSupportUser);
+        }
         const hamburger = headerPlaceholder.querySelector('.hamburger');
         const navLinks = headerPlaceholder.querySelector('.nav-links');
 

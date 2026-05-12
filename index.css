@@ -81,3 +81,13 @@ button:hover {
   margin-top: 16px;
   font-size: 14px;
 }
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 28px 20px;
+    border-radius: 12px;
+  }
+  h2 {
+    font-size: 22px;
+  }
+}

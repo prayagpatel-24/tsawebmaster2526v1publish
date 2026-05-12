@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="logo.png">
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Account - Ripple</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Courgette&display=swap" rel="stylesheet">
@@ -57,6 +58,46 @@
         </div>
       </section>
     </main>
+
+    <!-- ── Volunteer Dashboard ──────────────────────────────────── -->
+    <section class="volunteer-dashboard">
+      <div class="volunteer-dashboard-inner">
+
+        <!-- Left: hours + request form -->
+        <div class="vol-hours-panel">
+          <h2 class="vol-panel-title">Volunteer Hours</h2>
+          <div class="vol-hours-display">
+            <span class="vol-hours-number" id="volHoursNumber">0</span>
+            <span class="vol-hours-label">hours contributed</span>
+          </div>
+          <div class="vol-progress-wrap">
+            <div class="vol-progress-bar">
+              <div class="vol-progress-fill" id="volProgressFill" style="width:0%"></div>
+            </div>
+            <div class="vol-progress-label" id="volProgressLabel">0 / 1 hrs to "First Ripple"</div>
+          </div>
+          <button class="secondary-btn vol-request-btn" id="volRequestBtn" type="button">+ Request Hours</button>
+          <div class="vol-request-form" id="volRequestForm">
+            <input type="text"   id="volEventName" placeholder="Event name" />
+            <input type="date"   id="volEventDate" />
+            <input type="number" id="volHoursReq"  placeholder="Hours (1–12)" min="1" max="12" />
+            <button type="button" class="primary-btn" id="volSubmitReq">Submit Request</button>
+            <div class="vol-request-msg" id="volRequestMsg"></div>
+          </div>
+          <div id="volGuestNote" class="vol-guest-note">
+            <a href="login.html" style="color:#4c7dff;font-weight:600;">Sign in</a> to track and save your volunteer hours.
+          </div>
+        </div>
+
+        <!-- Right: badges -->
+        <div class="vol-badges-panel">
+          <h2 class="vol-panel-title">Your Badges</h2>
+          <div class="vol-badges-grid" id="volBadgesGrid"></div>
+        </div>
+
+      </div>
+    </section>
+
   </div>
   <div id="reauthModal" class="modal-backdrop" aria-hidden="true">
     <div class="modal-card">
@@ -109,6 +150,52 @@
     const memberSinceEl = document.getElementById('memberSince');
     const userRoleEl = document.getElementById('userRole');
     let currentUser = null;
+
+    const badges = [
+      { id: 'first_ripple',     name: 'First Ripple',     icon: '💧', desc: 'Complete your first volunteer event', hoursRequired: 1  },
+      { id: 'wave_maker',       name: 'Wave Maker',        icon: '🌊', desc: 'Reach 5 volunteer hours',            hoursRequired: 5  },
+      { id: 'tide_turner',      name: 'Tide Turner',       icon: '🌀', desc: 'Reach 10 volunteer hours',           hoursRequired: 10 },
+      { id: 'community_anchor', name: 'Community Anchor',  icon: '⚓', desc: 'Reach 25 volunteer hours',           hoursRequired: 25 },
+      { id: 'ripple_legend',    name: 'Ripple Legend',     icon: '🏆', desc: 'Reach 50 volunteer hours',           hoursRequired: 50 }
+    ];
+
+    function renderVolunteerDashboard(hours, isGuest) {
+      const hoursNumEl   = document.getElementById('volHoursNumber');
+      const progressFill = document.getElementById('volProgressFill');
+      const progressLbl  = document.getElementById('volProgressLabel');
+      const badgesGrid   = document.getElementById('volBadgesGrid');
+      const requestBtn   = document.getElementById('volRequestBtn');
+      const guestNote    = document.getElementById('volGuestNote');
+      if (!hoursNumEl) return;
+      hoursNumEl.textContent = hours;
+      const nextBadge = badges.find(b => b.hoursRequired > hours);
+      if (nextBadge) {
+        const idx  = badges.indexOf(nextBadge);
+        const prev = idx > 0 ? badges[idx - 1].hoursRequired : 0;
+        const pct  = Math.min(100, ((hours - prev) / (nextBadge.hoursRequired - prev)) * 100);
+        progressFill.style.width = pct + '%';
+        progressLbl.textContent  = `${hours} / ${nextBadge.hoursRequired} hrs to "${nextBadge.name}"`;
+      } else {
+        progressFill.style.width = '100%';
+        progressLbl.textContent  = 'All badges unlocked!';
+      }
+      badgesGrid.innerHTML = badges.map(badge => {
+        const unlocked = hours >= badge.hoursRequired;
+        return `<div class="badge-card${unlocked ? '' : ' locked'}">
+          <div class="badge-icon">${badge.icon}</div>
+          <div class="badge-name">${badge.name}</div>
+          <div class="badge-desc">${badge.desc}</div>
+        </div>`;
+      }).join('');
+      if (isGuest) {
+        if (requestBtn) requestBtn.style.display  = 'none';
+        if (guestNote)  guestNote.style.display   = 'block';
+      } else {
+        if (requestBtn) requestBtn.style.display  = '';
+        if (guestNote)  guestNote.style.display   = 'none';
+      }
+    }
+
     const guestId = localStorage.getItem('rippleVisitorId') || `visitor_${Math.random().toString(36).slice(2, 10)}_${Date.now().toString(36)}`;
     const guestProfileKey = 'rippleGuestProfile';
     localStorage.setItem('rippleVisitorId', guestId);
@@ -126,6 +213,7 @@
       photoInput.disabled = true;
       accountMessage.textContent = 'Guest mode enabled. Sign-in is optional.';
       accountMessage.style.color = '#2563eb';
+      renderVolunteerDashboard(0, true);
     }
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
@@ -166,15 +254,25 @@
         const snap = await getDoc(docRef);
         if (snap.exists()) {
           const data = snap.data();
+          if (!document.getElementById('fullName').value && data.name) {
+            document.getElementById('fullName').value = data.name;
+          }
+          if (!document.getElementById('email').value && data.email) {
+            document.getElementById('email').value = data.email;
+          }
           if (userRoleEl) {
             userRoleEl.textContent = data.role ? data.role : 'Member';
           }
           if (data.photoURL && !user.photoURL) {
             photoPreview.src = data.photoURL;
           }
+          renderVolunteerDashboard(data.volunteerHours || 0, false);
+        } else {
+          renderVolunteerDashboard(0, false);
         }
       } catch (err) {
         console.warn('Could not fetch user doc:', err);
+        renderVolunteerDashboard(0, false);
       }
     });
     function showToast(message, type = 'info', timeout = 4000) {
@@ -369,6 +467,53 @@
     document.getElementById('signOutBtn').addEventListener('click', async () => {
       await signOut(auth);
       window.location.href = 'main.html';
+    });
+
+    document.getElementById('volRequestBtn').addEventListener('click', () => {
+      const form = document.getElementById('volRequestForm');
+      const isOpen = form.classList.toggle('open');
+      document.getElementById('volRequestMsg').textContent = '';
+    });
+
+    document.getElementById('volSubmitReq').addEventListener('click', async () => {
+      const eventName = document.getElementById('volEventName').value.trim();
+      const date      = document.getElementById('volEventDate').value;
+      const hrs       = parseInt(document.getElementById('volHoursReq').value, 10);
+      const msgEl     = document.getElementById('volRequestMsg');
+      if (!eventName || !date || !hrs || hrs < 1 || hrs > 12) {
+        msgEl.textContent = 'Please fill all fields. Hours must be 1–12.';
+        msgEl.style.color = '#ef4444';
+        return;
+      }
+      if (!currentUser) {
+        msgEl.textContent = 'Sign in to submit a hours request.';
+        msgEl.style.color = '#ef4444';
+        return;
+      }
+      try {
+        await setDoc(doc(db, 'hourRequests', `${currentUser.uid}_${Date.now()}`), {
+          uid:            currentUser.uid,
+          email:          currentUser.email || '',
+          eventName,
+          date,
+          hoursRequested: hrs,
+          status:         'pending',
+          createdAt:      serverTimestamp()
+        });
+        msgEl.textContent = 'Request submitted! An admin will review it.';
+        msgEl.style.color = '#2563eb';
+        document.getElementById('volEventName').value = '';
+        document.getElementById('volEventDate').value = '';
+        document.getElementById('volHoursReq').value  = '';
+        setTimeout(() => {
+          document.getElementById('volRequestForm').classList.remove('open');
+          msgEl.textContent = '';
+        }, 3000);
+      } catch (err) {
+        console.error('Hours request failed:', err);
+        msgEl.textContent = 'Failed to submit. Try again.';
+        msgEl.style.color = '#ef4444';
+      }
     });
   </script>
   <script>

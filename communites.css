@@ -374,7 +374,17 @@ a:visited {
   color: #9ca3af;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+  .nav-links {
+    position: static;
+    transform: none;
+    margin-left: auto;
+    gap: 32px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
   .nav {
     padding-inline: 20px;
   }
@@ -388,8 +398,9 @@ a:visited {
     top: 100%;
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     flex-direction: column;
     gap: 0;
     margin-left: 0;
@@ -398,7 +409,7 @@ a:visited {
     transform: translateY(-100%);
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
     z-index: 1000;
   }
   .nav-links.open {
@@ -440,6 +451,7 @@ a:visited {
   }
 
   .footer-top {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    gap: 24px;
   }
 }

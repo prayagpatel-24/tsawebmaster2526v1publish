@@ -1,23 +1,202 @@
+<style>
+  .nav {
+    gap: 18px;
+    min-height: 58px;
+  }
+
+  .nav-left {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .nav-left > a {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nav-logo {
+    width: 40px !important;
+    height: 40px !important;
+    flex: 0 0 40px;
+  }
+
+  .logo-text {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .nav-links {
+    align-items: center;
+    gap: clamp(14px, 2.25vw, 40px);
+    min-width: 0;
+    margin-left: clamp(12px, 2vw, 28px);
+    position: static;
+    transform: none;
+    white-space: nowrap;
+  }
+
+  .nav-right {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .notif-icon,
+  .avatar,
+  .sign-in-btn {
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 1180px) {
+    .nav {
+      padding-inline: 20px;
+    }
+
+    .nav-left {
+      gap: 12px;
+    }
+
+    .hamburger {
+      display: flex;
+      flex: 0 0 30px;
+      margin-left: 4px;
+    }
+
+    .nav-links {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      margin-left: 0;
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+      transform: translateY(-8px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
+      z-index: 1001;
+    }
+
+    .nav-links.open {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+    }
+
+    .nav-link:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .nav {
+      gap: 10px;
+      padding-inline: 12px;
+    }
+
+    .nav-left {
+      gap: 8px;
+    }
+
+    .nav-logo {
+      width: 34px !important;
+      height: 34px !important;
+      flex-basis: 34px;
+      margin-right: 4px !important;
+    }
+
+    .logo-text {
+      font-size: 21px;
+    }
+
+    .nav-right {
+      gap: 10px;
+    }
+
+    .nav-right:has(.sign-in-btn) .avatar {
+      display: none;
+    }
+
+    .sign-in-btn {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 11px !important;
+      font-size: 13px !important;
+      line-height: 1 !important;
+    }
+
+    .notif-icon {
+      width: 30px;
+      height: 30px;
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .nav-right:has(.sign-in-btn) .avatar {
+      display: none;
+    }
+
+    .sign-in-btn {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+  }
+
+  @media (max-width: 340px) {
+    .logo-text {
+      font-size: 19px;
+    }
+
+    .nav-right {
+      gap: 8px;
+    }
+  }
+</style>
 <header class="nav">
-    <div class="nav-left">
-      <div><img src="logo.png" width="75px"></div>
-      <div class="logo-text">Ripple</div>
-      <button class="hamburger" aria-label="Toggle navigation menu">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-      </button>
-      <nav class="nav-links">
-        <a class="nav-link" href="main.html">Home</a>
-        <a class="nav-link" href="resources.html">Resources</a>
-        <a class="nav-link" href="communites.html">Communities</a>
-        <a class="nav-link" href="support.html">Support</a>
-        <a class="nav-link" href="calender.html">Calendar</a>
-        <a class="nav-link" href="references.html">References</a>
-      </nav>
-    </div>
-    <div class="nav-right">
-      <a class="notif-icon" href="notifications.html" title="Notifications">🔔</a>
-      <div class="avatar"></div>
-    </div>
-  </header>
+  <div class="nav-left">
+    <a href="index.html"><img src="logo.png" class="nav-logo" style="height:40px;width:auto;margin-right:8px;display:block;"></a>
+    <div class="logo-text">Ripple</div>
+    <button class="hamburger" aria-label="Toggle navigation menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+    <nav class="nav-links">
+      <a class="nav-link" href="main.html">Home</a>
+      <a class="nav-link" href="resources.html">Resources</a>
+      <a class="nav-link" href="communites.html">Communities</a>
+      <a class="nav-link" href="support.html">Support</a>
+      <a class="nav-link" href="calender.html">Calendar</a>
+      <a class="nav-link" href="references.html">References</a>
+      <a class="nav-link" href="map.html">Map</a>
+      <a class="nav-link" href="team.html">Team</a>
+    </nav>
+  </div>
+  <div class="nav-right">
+    <a class="notif-icon" href="notifications.html" title="Notifications">&#128276;</a>
+    <div class="avatar"></div>
+  </div>
+</header>

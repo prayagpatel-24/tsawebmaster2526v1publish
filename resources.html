@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<link rel="icon" type="image/png" href="logo.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Ripple Resources</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Courgette&display=swap" rel="stylesheet">
@@ -122,7 +123,9 @@
       <div class="modal-form-row">
         <input id="eventDate" type="date" required />
         <input id="eventTime" type="time" />
-        <input id="eventLocation" type="text" placeholder="Location" />
+      </div>
+      <div class="modal-form-group">
+        <input id="eventLocation" type="text" placeholder="Street address or full place address" required />
       </div>
       <div class="modal-form-group">
         <textarea id="eventDesc" placeholder="Event description" rows="4"></textarea>
@@ -161,6 +164,7 @@
     </div>
     <div class="modal-form-actions">
       <button type="button" id="eventDetailRemoveBtn" class="cancel-btn">Remove Event</button>
+      <a id="eventDetailMapBtn" class="submit-btn" href="map.html" style="text-decoration:none; align-items:center; justify-content:center;">View on Map</a>
       <a id="eventDetailActionBtn" class="submit-btn" href="#" target="_blank" rel="noopener noreferrer" style="display:none; text-decoration:none; align-items:center; justify-content:center;">Open Event Link</a>
       <button type="button" id="eventDetailSignupBtn" class="submit-btn">Sign Up</button>
     </div>
@@ -194,6 +198,12 @@
 <div class="card cardCom hov" data-title="Local Arts and Culture Night" data-date="Aug 15, 2026" data-time="5:30 PM - 8:30 PM" data-location="Cumming City Center Stage" data-desc="Celebrate local artists, student performers, and neighborhood stories." data-category="Community Events"><h3>Local Arts and Culture Night</h3><p>Aug 15, 2026 | 5:30 PM – 8:30 PM<br>Cumming City Center Stage</p><p>Celebrate local artists, student performers, and neighborhood stories.</p><div class="tag purple">Community Events</div></div>
 <div class="card cardEnv hov" data-title="End-of-Summer Park Cleanup" data-date="Aug 22, 2026" data-time="8:30 AM - 12:00 PM" data-location="Fowler Park East Entrance" data-desc="Close out summer with park cleanup and recycling education stations." data-category="Environmental"><h3>End-of-Summer Park Cleanup</h3><p>Aug 22, 2026 | 8:30 AM – 12:00 PM<br>Fowler Park East Entrance</p><p>Close out summer with park cleanup and recycling education stations.</p><div class="tag green">Environmental</div></div>
 <div class="card cardMen hov" data-title="Back-to-School Resilience Session" data-date="Aug 29, 2026" data-time="10:30 AM - 12:00 PM" data-location="South Forsyth High Commons" data-desc="Practical tools for managing stress and routines before school starts." data-category="Mental Health"><h3>Back-to-School Resilience Session</h3><p>Aug 29, 2026 | 10:30 AM – 12:00 PM<br>South Forsyth High Commons</p><p>Practical tools for managing stress and routines before school starts.</p><div class="tag blue">Mental Health</div></div>
+<div class="card cardVol hov" data-title="Meals for Neighbors Pack Night" data-date="Sep 5, 2026" data-time="5:00 PM - 7:30 PM" data-location="The Place Forsyth Warehouse" data-desc="Pack pantry boxes and ready-to-go meal kits for families across the county." data-category="Volunteering"><h3>Meals for Neighbors Pack Night</h3><p>Sep 5, 2026 | 5:00 PM - 7:30 PM<br>The Place Forsyth Warehouse</p><p>Pack pantry boxes and ready-to-go meal kits for families across the county.</p><div class="tag orange">Volunteering</div></div>
+<div class="card cardEnv hov" data-title="Creek Health Testing Day" data-date="Sep 12, 2026" data-time="9:00 AM - 11:30 AM" data-location="Haw Creek Park" data-desc="Learn simple water testing steps and record creek health data for a community dashboard." data-category="Environmental"><h3>Creek Health Testing Day</h3><p>Sep 12, 2026 | 9:00 AM - 11:30 AM<br>Haw Creek Park</p><p>Learn simple water testing steps and record creek health data for a community dashboard.</p><div class="tag green">Environmental</div></div>
+<div class="card cardCom hov" data-title="Community Resource Pop-Up" data-date="Sep 19, 2026" data-time="10:00 AM - 2:00 PM" data-location="Forsyth Conference Center" data-desc="Browse local clubs, services, volunteer groups, and student-led community projects." data-category="Community Events"><h3>Community Resource Pop-Up</h3><p>Sep 19, 2026 | 10:00 AM - 2:00 PM<br>Forsyth Conference Center</p><p>Browse local clubs, services, volunteer groups, and student-led community projects.</p><div class="tag purple">Community Events</div></div>
+<div class="card cardDon hov" data-title="Fall Coat and Blanket Drive" data-date="Sep 26, 2026" data-time="11:00 AM - 3:00 PM" data-location="Coal Mountain Park" data-desc="Collect coats, blankets, and cold-weather supplies before the fall season." data-category="Donation Drives"><h3>Fall Coat and Blanket Drive</h3><p>Sep 26, 2026 | 11:00 AM - 3:00 PM<br>Coal Mountain Park</p><p>Collect coats, blankets, and cold-weather supplies before the fall season.</p><div class="tag red">Donation Drives</div></div>
+<div class="card cardMen hov" data-title="Teen Mental Health First Aid Demo" data-date="Oct 3, 2026" data-time="1:00 PM - 3:00 PM" data-location="Lambert High School Media Center" data-desc="A proof-of-concept workshop introducing peer support, listening skills, and referral resources." data-category="Mental Health"><h3>Teen Mental Health First Aid Demo</h3><p>Oct 3, 2026 | 1:00 PM - 3:00 PM<br>Lambert High School Media Center</p><p>A proof-of-concept workshop introducing peer support, listening skills, and referral resources.</p><div class="tag blue">Mental Health</div></div>
+<div class="card cardVol hov" data-title="Community Garden Build Day" data-date="Oct 10, 2026" data-time="8:30 AM - 12:30 PM" data-location="Sawnee Elementary Garden Lot" data-desc="Build raised beds, set up compost stations, and prepare a school garden for volunteers." data-category="Volunteering"><h3>Community Garden Build Day</h3><p>Oct 10, 2026 | 8:30 AM - 12:30 PM<br>Sawnee Elementary Garden Lot</p><p>Build raised beds, set up compost stations, and prepare a school garden for volunteers.</p><div class="tag orange">Volunteering</div></div>
 </div>
 </div>
 <footer class="footer">
@@ -215,6 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const eventDetailDesc = document.getElementById('eventDetailDesc');
   const eventDetailSignupBtn = document.getElementById('eventDetailSignupBtn');
   const eventDetailRemoveBtn = document.getElementById('eventDetailRemoveBtn');
+  const eventDetailMapBtn = document.getElementById('eventDetailMapBtn');
   const eventDetailActionBtn = document.getElementById('eventDetailActionBtn');
   const resourceModal = document.getElementById('resourceModal');
   const addResourceBtn = document.getElementById('addResourceBtn');
@@ -294,6 +305,59 @@ document.addEventListener('DOMContentLoaded', function() {
   function hasActionTarget(url, hotline) {
     return !!((url || '').trim() || (hotline || '').trim());
   }
+  const MAP_EVENT_STORAGE_KEY = 'rippleMapEvents';
+  function makeEventMapId(title, dateKey, location) {
+    return normalizeText([title, dateKey, location].filter(Boolean).join('-'))
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80) || `event-${Date.now()}`;
+  }
+  function loadMapEvents() {
+    try {
+      const events = JSON.parse(localStorage.getItem(MAP_EVENT_STORAGE_KEY) || '[]');
+      return Array.isArray(events) ? events : [];
+    } catch (err) {
+      return [];
+    }
+  }
+  function saveEventForMap(eventData) {
+    const lat = Number(eventData.lat);
+    const lng = Number(eventData.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return '';
+    const mapId = eventData.mapId || makeEventMapId(eventData.title, eventData.dateKey || eventData.date, eventData.location);
+    const mapEvent = {
+      mapId,
+      title: eventData.title || 'Event',
+      date: eventData.date || '',
+      dateKey: eventData.dateKey || '',
+      time: eventData.time || '',
+      location: eventData.location || '',
+      description: eventData.desc || eventData.description || '',
+      category: eventData.category || 'Community Events',
+      lat,
+      lng
+    };
+    const events = loadMapEvents().filter(item => item.mapId !== mapId);
+    events.unshift(mapEvent);
+    localStorage.setItem(MAP_EVENT_STORAGE_KEY, JSON.stringify(events.slice(0, 100)));
+    return mapId;
+  }
+  async function geocodeEventLocation(location) {
+    const cleaned = (location || '').trim();
+    if (!cleaned) return null;
+    const hasRegion = /\b(ga|georgia|usa|united states)\b/i.test(cleaned);
+    const query = hasRegion ? cleaned : `${cleaned}, Forsyth County, Georgia, USA`;
+    const endpoint = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`;
+    const response = await fetch(endpoint, { headers: { 'Accept': 'application/json' } });
+    if (!response.ok) return null;
+    const results = await response.json();
+    const first = Array.isArray(results) ? results[0] : null;
+    if (!first) return null;
+    const lat = Number(first.lat);
+    const lng = Number(first.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    return { lat, lng };
+  }
   function setEventCardData(card, data) {
     card.dataset.title = data.title || '';
     card.dataset.date = data.date || '';
@@ -307,6 +371,9 @@ document.addEventListener('DOMContentLoaded', function() {
     card.dataset.status = data.status || '';
     card.dataset.docId = data.docId || '';
     card.dataset.sourceFirestore = data.sourceFirestore ? '1' : '';
+    card.dataset.mapId = data.mapId || card.dataset.mapId || makeEventMapId(data.title, data.dateKey || data.date, data.location);
+    card.dataset.lat = data.lat || card.dataset.lat || '';
+    card.dataset.lng = data.lng || card.dataset.lng || '';
     card.dataset.search = normalizeText(
       [data.title, data.date, data.time, data.location, data.desc, data.category, data.url, data.hotline].join(' ')
     );
@@ -438,6 +505,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const category = card.dataset.category || (card.querySelector('.tag')?.textContent || '');
     const url = card.dataset.url || '';
     const hotline = card.dataset.hotline || '';
+    const mapId = card.dataset.mapId || makeEventMapId(title, dateKey || date, location);
     eventDetailTitle.textContent = title;
     eventDetailMeta.textContent = [date, time, location].filter(Boolean).join(' | ');
     const actionLine = hotline ? ` Hotline: ${hotline}` : '';
@@ -472,6 +540,10 @@ document.addEventListener('DOMContentLoaded', function() {
         eventDetailActionBtn.style.display = 'none';
         eventDetailActionBtn.href = '#';
       }
+    }
+    if (eventDetailMapBtn) {
+      eventDetailMapBtn.href = `map.html?event=${encodeURIComponent(mapId)}&title=${encodeURIComponent(title)}`;
+      eventDetailMapBtn.style.display = 'inline-flex';
     }
     eventDetailSignupBtn.onclick = function() {
       if (window.createEventSignup) {
@@ -709,7 +781,10 @@ document.addEventListener('DOMContentLoaded', function() {
       hotline: data.hotline || '',
       status: data.status || '',
       docId: data.docId || '',
-      sourceFirestore: !!data.sourceFirestore
+      sourceFirestore: !!data.sourceFirestore,
+      mapId: data.mapId || '',
+      lat: data.lat || '',
+      lng: data.lng || ''
     });
     setupEventCard(card);
     return card;
@@ -776,7 +851,10 @@ document.addEventListener('DOMContentLoaded', function() {
           hotline: item.hotline || '',
           status: '',
           docId: item.docId || '',
-          sourceFirestore: true
+          sourceFirestore: true,
+          mapId: item.mapId || '',
+          lat: item.lat || '',
+          lng: item.lng || ''
         });
       } else {
         const card = buildEventCardFromData(item);
@@ -831,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('eventCategory').addEventListener('change', updateEventModalStyle);
   document.getElementById('resourceCategory').addEventListener('change', updateResourceModalStyle);
 
-  form && form.addEventListener('submit', function(e){
+  form && form.addEventListener('submit', async function(e){
     e.preventDefault();
     const title = document.getElementById('eventTitle').value.trim();
     const date = document.getElementById('eventDate').value;
@@ -844,8 +922,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const category = document.getElementById('eventCategory').value;
 
     if(!title) return;
+    if(!location) {
+      alert('Add a street address or full place address so this event can appear on the map.');
+      return;
+    }
     if (!hasActionTarget(url, hotline)) {
       alert('Add either an event URL or hotline number.');
+      return;
+    }
+
+    let coords = null;
+    try {
+      coords = await geocodeEventLocation(location);
+    } catch (err) {
+      console.warn('Event location geocoding failed:', err);
+    }
+    if (!coords) {
+      alert('That location could not be found on the map. Please use a more specific address or place name.');
       return;
     }
 
@@ -863,7 +956,8 @@ document.addEventListener('DOMContentLoaded', function() {
       p2.textContent = desc;
       tag.textContent = category;
 
-      setEventCardData(editingEventCard, { title, date: dateText || date, dateKey: dateKey || '', time, location, desc, category, url, hotline, status: editingEventCard.dataset.status || '' });
+      const mapId = saveEventForMap({ title, date: dateText || date, dateKey: dateKey || '', time, location, desc, category, lat: coords.lat, lng: coords.lng, mapId: editingEventCard.dataset.mapId || '' });
+      setEventCardData(editingEventCard, { title, date: dateText || date, dateKey: dateKey || '', time, location, desc, category, url, hotline, status: editingEventCard.dataset.status || '', mapId, lat: coords.lat, lng: coords.lng });
       applyEventFilters();
       closeModal();
       return;
@@ -892,14 +986,16 @@ document.addEventListener('DOMContentLoaded', function() {
     card.appendChild(p1);
     card.appendChild(p2);
     card.appendChild(tagDiv);
+    const mapId = makeEventMapId(title, dateKey || date, location);
     if (window.createModeratedEvent) {
-      window.createModeratedEvent({ title, date: dateKey || date, dateKey: dateKey || '', time, location, desc, category, url, hotline })
+      window.createModeratedEvent({ title, date: dateKey || date, dateKey: dateKey || '', time, location, desc, category, url, hotline, mapId, lat: coords.lat, lng: coords.lng })
         .then((result) => {
           if (!result.approved) {
             alert(`Event was rejected by AI moderation: ${result.reason}`);
             return;
           }
-          setEventCardData(card, { title, date: dateText || date, dateKey: dateKey || '', time, location, desc, category, url, hotline, status: '' });
+          const savedMapId = saveEventForMap({ title, date: dateText || date, dateKey: dateKey || '', time, location, desc, category, mapId, lat: coords.lat, lng: coords.lng });
+          setEventCardData(card, { title, date: dateText || date, dateKey: dateKey || '', time, location, desc, category, url, hotline, status: '', mapId: savedMapId, lat: coords.lat, lng: coords.lng });
           setupEventCard(card);
           if (cards) cards.insertBefore(card, cards.firstChild);
           applyEventFilters();
@@ -1708,7 +1804,10 @@ document.addEventListener('DOMContentLoaded', function() {
         desc: sanitizeDisplayText(data.desc || data.description || '', 260),
         category: data.category || 'Community Events',
         url: sanitizeDisplayText(data.url || '', 240),
-        hotline: sanitizeDisplayText(data.hotline || '', 40)
+        hotline: sanitizeDisplayText(data.hotline || '', 40),
+        mapId: sanitizeDisplayText(data.mapId || '', 120),
+        lat: data.lat || '',
+        lng: data.lng || ''
       });
     });
     if (window.renderEventsFromFirestore) {

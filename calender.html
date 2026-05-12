@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="logo.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ripple Calendar</title>
 
@@ -25,20 +26,18 @@
 
     <div class="page-wrapper">
       <div class="calendar-box">
-        <div class="calendar-header">
-          <div class="nav-btn" id="prevMonth">‹</div>
-          <div id="monthTitle">November 2025</div>
-          <div class="nav-btn" id="nextMonth">›</div>
+        <div class="cal-header">
+          <button class="cal-nav-btn" id="prevMonth">&#8249;</button>
+          <span class="cal-month-title" id="monthTitle"></span>
+          <button class="cal-nav-btn" id="nextMonth">&#8250;</button>
         </div>
-        <div class="calendar" role="region" aria-label="Community calendar events">
-          <div style="padding:16px;border:1px solid #e6e6e6;border-radius:8px;background:#fafafa;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-              <strong>Community Calendar</strong>
-              <small style="color:#666;font-size:13px">Click a day to view events</small>
-            </div>
-            <div id="calendarGrid"></div>
-            <div id="dayEvents" style="margin-top:12px;"></div>
-          </div>
+        <div class="cal-weekdays">
+          <span>Sun</span><span>Mon</span><span>Tue</span>
+          <span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+        </div>
+        <div class="cal-grid" id="calendarGrid"></div>
+        <div class="cal-popup" id="calPopup" hidden>
+          <div id="calPopupInner"></div>
         </div>
       </div>
       <div class="right-col">
@@ -60,14 +59,220 @@
         </div>
       </div>
     </div>
-    <footer class="footer" style="margin-top: 100px; width: 100%">
+
+    <footer class="footer" style="margin-top: 24px; width: 100%">
       <div id="footer-placeholder"></div>
     </footer>
   </div>
+
+  <!-- Calendar rendering — runs synchronously, no Firebase dependency -->
+  <script>
+    var CAL_STATIC_EVENTS = [
+      { date: "2026-05-15", title: "Park Cleanup",       location: "Fowler Park"          },
+      { date: "2026-05-23", title: "Blood Donation Day", location: "Emory Hospital Center" },
+      { date: "2026-06-07", title: "Library Book Drive", location: "Forsyth Libraries"     },
+      { date: "2026-06-21", title: "Walk for Wellness",  location: "Lanier Trail"          }
+    ];
+
+    var CAL_MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+    // Shared state — Firebase script may update these
+    window.localApprovedEvents       = [];
+    window.localEventSignups         = [];
+    window.localResourceSaves        = [];
+    window.localFallbackEventSignups  = [];
+    window.localFallbackResourceSaves = [];
+    window.calendarCurrentDate       = new Date();
+    window.calendarIdentityId        = null;
+
+    function calEscapeHtml(v) {
+      return String(v || '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function calAllItems() {
+      var staticItems = CAL_STATIC_EVENTS.map(function(ev) {
+        return { summary: ev.title, dateKey: ev.date, time: 'All day', location: ev.location, sourceType: 'static' };
+      });
+      var combined = staticItems
+        .concat(window.localApprovedEvents       || [])
+        .concat(window.localEventSignups         || [])
+        .concat(window.localResourceSaves        || [])
+        .concat(window.localFallbackEventSignups  || [])
+        .concat(window.localFallbackResourceSaves || []);
+      var unique = new Map();
+      combined.forEach(function(item) {
+        var key = [item.summary||'', item.dateKey||'', item.time||'', item.location||''].join('|');
+        if (!unique.has(key)) unique.set(key, item);
+      });
+      return Array.from(unique.values());
+    }
+
+    function calTodayKey() {
+      var t = new Date();
+      return t.getFullYear() + '-' +
+        String(t.getMonth()+1).padStart(2,'0') + '-' +
+        String(t.getDate()).padStart(2,'0');
+    }
+
+    function calClosePopup() {
+      var popup = document.getElementById('calPopup');
+      if (popup) { popup.hidden = true; popup.dataset.openDate = ''; }
+    }
+
+    function calShowPopup(cell, dateKey, dayEvents) {
+      var popup = document.getElementById('calPopup');
+      if (!popup) return;
+      if (!popup.hidden && popup.dataset.openDate === dateKey) {
+        calClosePopup();
+        return;
+      }
+      var box      = document.querySelector('.calendar-box');
+      var cellRect = cell.getBoundingClientRect();
+      var boxRect  = box.getBoundingClientRect();
+      var top  = cellRect.bottom - boxRect.top + 8;
+      var left = Math.max(0, Math.min(cellRect.left - boxRect.left, boxRect.width - 260));
+      popup.style.top  = top  + 'px';
+      popup.style.left = left + 'px';
+
+      var parts = dateKey.split('-');
+      var label = CAL_MONTHS[parseInt(parts[1])-1] + ' ' + parseInt(parts[2]) + ', ' + parts[0];
+      var inner = document.getElementById('calPopupInner');
+      if (inner) {
+        inner.innerHTML = '<div class="cal-popup-date">' + label + '</div>' +
+          dayEvents.map(function(ev) {
+            return '<div class="cal-popup-event">' +
+              '<div class="cal-popup-title">' + calEscapeHtml(ev.summary || '') + '</div>' +
+              (ev.location ? '<div class="cal-popup-meta">📍 ' + calEscapeHtml(ev.location) + '</div>' : '') +
+              (ev.time && ev.time !== 'All day' && ev.time !== 'Saved'
+                ? '<div class="cal-popup-meta">🕐 ' + calEscapeHtml(ev.time) + '</div>' : '') +
+              '</div>';
+          }).join('');
+      }
+      popup.dataset.openDate = dateKey;
+      popup.hidden = false;
+    }
+
+    function calRenderMonth() {
+      var grid  = document.getElementById('calendarGrid');
+      var title = document.getElementById('monthTitle');
+      if (!grid || !title) return;
+
+      var current     = window.calendarCurrentDate || new Date();
+      var year        = current.getFullYear();
+      var month       = current.getMonth();
+      var today       = calTodayKey();
+      var firstDay    = new Date(year, month, 1).getDay();
+      var daysInMonth = new Date(year, month + 1, 0).getDate();
+      var items       = calAllItems();
+
+      title.textContent = CAL_MONTHS[month] + ' ' + year;
+
+      var html = '';
+      for (var i = 0; i < firstDay; i++) html += '<div class="cal-day-empty"></div>';
+      for (var day = 1; day <= daysInMonth; day++) {
+        var key      = year + '-' + String(month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+        var isToday  = key === today;
+        var hasEvent = items.some(function(ev) { return ev.dateKey === key; });
+        var cls      = 'cal-day' + (isToday ? ' today' : '') + (hasEvent ? ' has-event' : '');
+        html += '<div class="' + cls + '" data-date="' + key + '">' +
+          '<span class="cal-day-num">' + day + '</span>' +
+          (hasEvent ? '<span class="cal-dot"></span>' : '') +
+          '</div>';
+      }
+      grid.innerHTML = html;
+
+      grid.querySelectorAll('.cal-day.has-event').forEach(function(el) {
+        el.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var date     = el.getAttribute('data-date');
+          var dayItems = calAllItems().filter(function(ev) { return ev.dateKey === date; });
+          calShowPopup(el, date, dayItems);
+        });
+      });
+    }
+
+    function calRenderUpcoming() {
+      var container = document.getElementById('upcomingEventsList');
+      if (!container) return;
+      var upcoming = calAllItems()
+        .slice().sort(function(a, b) { return (a.dateKey||'').localeCompare(b.dateKey||''); })
+        .slice(0, 6);
+      if (!upcoming.length) {
+        container.innerHTML = '<div class="coastal hov" style="border:2px solid #e2e2e2;">' +
+          '<div class="event-title">No upcoming events yet</div>' +
+          '<p class="event-desc">Sign up for an event or save a resource to see it here.</p></div>';
+        return;
+      }
+      container.innerHTML = upcoming.map(function(ev) {
+        var loc    = ev.location ? '<br><i class="fa fa-map-pin"></i> ' + calEscapeHtml(ev.location) : '';
+        var canRm  = ev.sourceType && ev.sourceType !== 'approvedEvent' && ev.sourceType !== 'static';
+        var rmBtn  = canRm
+          ? '<button class="event-btn" type="button" data-remove-key="' +
+              encodeURIComponent(ev.sourceType + '::' + (ev.docId||ev.localId||'')) +
+              '" style="margin-top:8px;">Remove</button>'
+          : '';
+        return '<div class="coastal hov" style="border:2px solid #e2e2e2;margin-top:8px;">' +
+          '<div class="event-title">' + calEscapeHtml(ev.summary) + '</div>' +
+          '<p class="event-desc"><i class="fa fa-calendar"></i> ' + calEscapeHtml(ev.dateKey||'') + loc + '</p>' +
+          rmBtn + '</div>';
+      }).join('');
+
+      container.querySelectorAll('button[data-remove-key]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          var raw  = decodeURIComponent(btn.getAttribute('data-remove-key') || '');
+          var sep  = raw.indexOf('::');
+          var src  = raw.slice(0, sep);
+          var id   = raw.slice(sep + 2);
+          if (window.calRemoveUpcomingItem) {
+            window.calRemoveUpcomingItem(src, id).catch(function(err) {
+              console.error('Failed to remove:', err);
+              alert('Failed to remove this item.');
+            });
+          }
+        });
+      });
+    }
+
+    window.refreshCalendarUI = function() {
+      calRenderMonth();
+      calRenderUpcoming();
+    };
+
+    window.reso = function() { window.location.href = 'resources.html?tab=events'; };
+
+    // Nav buttons
+    document.getElementById('prevMonth').addEventListener('click', function() {
+      var c = window.calendarCurrentDate || new Date();
+      c.setMonth(c.getMonth() - 1);
+      window.calendarCurrentDate = c;
+      calClosePopup();
+      calRenderMonth();
+    });
+    document.getElementById('nextMonth').addEventListener('click', function() {
+      var c = window.calendarCurrentDate || new Date();
+      c.setMonth(c.getMonth() + 1);
+      window.calendarCurrentDate = c;
+      calClosePopup();
+      calRenderMonth();
+    });
+    document.addEventListener('click', function(e) {
+      var popup = document.getElementById('calPopup');
+      if (popup && !popup.hidden && !popup.contains(e.target)) calClosePopup();
+    });
+
+    // Render immediately — DOM elements are all above this script tag
+    window.refreshCalendarUI();
+  </script>
+
+  <!-- Firebase integration — loads async, updates calendar when data arrives -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
     import { getFirestore, collection, query, where, onSnapshot, doc, setDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
       authDomain: "webmaster-v4-0.firebaseapp.com",
@@ -76,18 +281,46 @@
       messagingSenderId: "413556961992",
       appId: "1:413556961992:web:899600895ecb68eb9debfd"
     };
-    const app = initializeApp(firebaseConfig);
+
+    const app  = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
+    const db   = getFirestore(app);
+
+    function toDateKey(raw) {
+      if (!raw) return null;
+      if (typeof raw === 'string') {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+        const p = new Date(raw);
+        return isNaN(p) ? null : p.toISOString().slice(0, 10);
+      }
+      if (raw && typeof raw.toDate === 'function') return raw.toDate().toISOString().slice(0, 10);
+      return null;
+    }
+
+    function sanitizeText(value, maxLen = 120) {
+      if (typeof value !== 'string') return '';
+      const cleaned = value.replace(/[\u0000-\u001F\u007F]/g, ' ').replace(/\s+/g, ' ').trim();
+      return cleaned.slice(0, maxLen);
+    }
+
+    function isHumanTitle(title) {
+      const t = sanitizeText(title, 90);
+      if (!t || t.length < 4) return false;
+      const letters  = (t.match(/[A-Za-z]/g) || []).length;
+      const symbols  = (t.match(/[^A-Za-z0-9\s,.'!?:()-]/g) || []).length;
+      return letters >= 3 && symbols <= Math.max(4, Math.floor(t.length * 0.2));
+    }
+
     function getVisitorId() {
       const key = 'rippleVisitorId';
       let id = localStorage.getItem(key);
       if (!id) {
-        id = `visitor_${Math.random().toString(36).slice(2, 10)}_${Date.now().toString(36)}`;
+        id = `visitor_${Math.random().toString(36).slice(2,10)}_${Date.now().toString(36)}`;
         localStorage.setItem(key, id);
       }
       return id;
     }
+
     async function getPublicIp() {
       const cached = localStorage.getItem('ripplePublicIp');
       if (cached) return cached;
@@ -95,464 +328,227 @@
         const resp = await fetch('https://api.ipify.org?format=json', { cache: 'no-store' });
         const data = await resp.json();
         const ip = data && data.ip ? data.ip : '';
-        if (ip) {
-          localStorage.setItem('ripplePublicIp', ip);
-          return ip;
-        }
-      } catch (err) {
-        console.warn('IP fetch failed:', err.message);
-      }
+        if (ip) { localStorage.setItem('ripplePublicIp', ip); return ip; }
+      } catch (err) { console.warn('IP fetch failed:', err.message); }
       return '';
     }
-    async function resolveParticipantIdentity(user) {
+
+    async function resolveIdentity(user) {
       if (user) {
-        const identity = {
-          participantId: `uid:${user.uid}`,
-          participantType: 'account',
-          uid: user.uid,
-          ip: null
-        };
-        await setDoc(doc(db, 'participantIdentities', identity.participantId), {
-          ...identity,
-          updatedAt: serverTimestamp()
-        }, { merge: true });
+        const identity = { participantId: `uid:${user.uid}`, participantType: 'account', uid: user.uid, ip: null };
+        await setDoc(doc(db, 'participantIdentities', identity.participantId), { ...identity, updatedAt: serverTimestamp() }, { merge: true });
         return identity;
       }
-      const visitorId = getVisitorId();
-      const ip = await getPublicIp();
+      const visitorId    = getVisitorId();
+      const ip           = await getPublicIp();
       const participantId = ip ? `ip:${ip}` : `visitor:${visitorId}`;
-      const identity = {
-        participantId,
-        participantType: ip ? 'ip' : 'visitor',
-        uid: null,
-        ip: ip || null
-      };
-      await setDoc(doc(db, 'participantIdentities', identity.participantId), {
-        ...identity,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
+      const identity     = { participantId, participantType: ip ? 'ip' : 'visitor', uid: null, ip: ip || null };
+      await setDoc(doc(db, 'participantIdentities', identity.participantId), { ...identity, updatedAt: serverTimestamp() }, { merge: true });
       return identity;
     }
-    function toDateKey(raw) {
-      if (!raw) return null;
-      if (typeof raw === 'string') {
-        if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
-        const parsed = new Date(raw);
-        return isNaN(parsed) ? null : parsed.toISOString().slice(0, 10);
-      }
-      if (raw && typeof raw.toDate === 'function') {
-        return raw.toDate().toISOString().slice(0, 10);
-      }
-      return null;
-    }
-    function escapeHtml(value) {
-      return String(value || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-    function sanitizeDisplayText(value, maxLen = 120) {
-      if (typeof value !== 'string') return '';
-      const cleaned = value
-        .replace(/[\u0000-\u001F\u007F]/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-      return cleaned.slice(0, maxLen);
-    }
-    function isLikelyHumanTitle(title) {
-      const t = sanitizeDisplayText(title, 90);
-      if (!t || t.length < 4) return false;
-      const letters = (t.match(/[A-Za-z]/g) || []).length;
-      const symbols = (t.match(/[^A-Za-z0-9\s,.'!?:()-]/g) || []).length;
-      if (letters < 3) return false;
-      if (symbols > Math.max(4, Math.floor(t.length * 0.2))) return false;
-      return true;
-    }
-    window.localApprovedEvents = [];
-    window.localEventSignups = [];
-    window.localResourceSaves = [];
-    window.localFallbackEventSignups = [];
-    window.localFallbackResourceSaves = [];
-    window.calendarCurrentDate = new Date();
-    window.calendarDataUnsubs = [];
-    window.calendarIdentityId = null;
-    function loadLocalFallbackItems(identityId) {
-      try {
-        const eventItems = JSON.parse(localStorage.getItem('rippleLocalEventSignups') || '[]');
-        const filteredEvents = eventItems.filter(item => !item.participantId || item.participantId === identityId);
-        window.localFallbackEventSignups = filteredEvents.map(item => ({
-          summary: sanitizeDisplayText(item.title || '(No title)', 90),
-          dateKey: toDateKey(item.dateKey || item.date),
-          time: sanitizeDisplayText(item.time || 'All day', 40),
-          location: sanitizeDisplayText(item.location || '', 90),
-          sourceType: 'localEventSignup',
-          localId: item._localTs || `${item.title || ''}|${item.dateKey || item.date || ''}|${item.time || ''}`
-        })).filter(item => !!item.dateKey);
-      } catch (_) {
-        window.localFallbackEventSignups = [];
-      }
-      try {
-        const resourceItems = JSON.parse(localStorage.getItem('rippleLocalResourceSaves') || '[]');
-        const filteredResources = resourceItems.filter(item => !item.participantId || item.participantId === identityId);
-        window.localFallbackResourceSaves = filteredResources.map(item => ({
-          summary: `Saved Resource: ${sanitizeDisplayText(item.title || '(No title)', 90)}`,
-          dateKey: toDateKey(item.dateKey || item.date),
-          time: 'Saved',
-          location: '',
-          sourceType: 'localResourceSave',
-          localId: item._localTs || `${item.title || ''}|${item.dateKey || item.date || ''}`
-        })).filter(item => !!item.dateKey);
-      } catch (_) {
-        window.localFallbackResourceSaves = [];
-      }
-    }
-    function allCalendarItems() {
-      const combined = (window.localApprovedEvents || [])
-        .concat(window.localEventSignups || [])
-        .concat(window.localResourceSaves || [])
-        .concat(window.localFallbackEventSignups || [])
-        .concat(window.localFallbackResourceSaves || []);
-      const unique = new Map();
-      combined.forEach((item) => {
-        const key = [item.summary || '', item.dateKey || '', item.time || '', item.location || ''].join('|');
-        if (!unique.has(key)) unique.set(key, item);
-      });
-      return Array.from(unique.values());
-    }
-    function renderDayEvents(dateKey) {
-      const dayEvents = document.getElementById('dayEvents');
-      const events = allCalendarItems().filter(ev => ev.dateKey === dateKey);
-      if (!events.length) {
-        dayEvents.innerHTML = `<div style="margin-top:12px;"><strong>No events on ${dateKey}</strong></div>`;
-        return;
-      }
-      dayEvents.innerHTML = `<div style="margin-top:12px;"><strong>Events on ${dateKey}</strong></div>` +
-        events.map(ev => `
-          <div style="margin-top:8px; padding:8px; border:1px solid #ddd; border-radius:8px;">
-            <div><strong>${escapeHtml(ev.summary || '(No title)')}</strong></div>
-            <div style="font-size:12px; color:#555;">${escapeHtml(ev.time || 'All day')}</div>
-            <div style="font-size:12px; color:#777;">${escapeHtml(ev.location || '')}</div>
-          </div>
-        `).join('');
-    }
-    function renderCalendarMonth() {
-      const monthTitle = document.getElementById('monthTitle');
-      const calendarGrid = document.getElementById('calendarGrid');
-      const currentDate = window.calendarCurrentDate || new Date();
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
-      const firstDay = new Date(year, month, 1);
-      const lastDay = new Date(year, month + 1, 0);
-      const startDay = firstDay.getDay();
-      const totalDays = lastDay.getDate();
-      const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-      monthTitle.textContent = `${monthNames[month]} ${year}`;
-      calendarGrid.innerHTML = `
-        <div style="display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; margin-bottom:6px;">
-          ${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d => `<div style="font-weight:600; text-align:center;">${d}</div>`).join("")}
-        </div>
-        <div style="display:grid; grid-template-columns:repeat(7, 1fr); gap:6px;">
-          ${Array(startDay).fill('<div></div>').join("")}
-          ${Array.from({length: totalDays}, (_, i) => {
-            const day = i + 1;
-            const dateObj = new Date(year, month, day);
-            const key = dateObj.toISOString().slice(0, 10);
-            const hasEvent = allCalendarItems().some(ev => ev.dateKey === key);
-            return `
-              <div class="cal-day ${hasEvent ? 'has-event' : ''}" data-date="${key}" style="padding:10px; border:1px solid #e0e0e0; border-radius:8px; cursor:pointer; text-align:center;">
-                <div style="font-weight:600;">${day}</div>
-                ${hasEvent ? `<div style="font-size:10px; color:#1a73e8;">•</div>` : ''}
-              </div>
-            `;
-          }).join("")}
-        </div>
-      `;
-      document.querySelectorAll('.cal-day').forEach(el => {
-        el.addEventListener('click', () => renderDayEvents(el.getAttribute('data-date')));
-      });
-    }
-    function renderUpcomingEvents() {
-      const container = document.getElementById('upcomingEventsList');
-      if (!container) return;
-      const upcoming = allCalendarItems()
-        .slice()
-        .sort((a, b) => (a.dateKey || '').localeCompare(b.dateKey || ''))
-        .slice(0, 6);
 
-      if (!upcoming.length) {
-        container.innerHTML = '<div class="coastal hov" style="border: 2px solid #e2e2e2;"><div class="event-title">No upcoming events yet</div><p class="event-desc">Sign up for an event or save a resource to see it here.</p></div>';
-        return;
-      }
-      container.innerHTML = upcoming.map(ev => {
-        const location = ev.location ? `<br><i class="fa fa-map-pin"></i> ${escapeHtml(ev.location)}` : '';
-        const removeBtn = ev.sourceType && ev.sourceType !== 'approvedEvent'
-          ? `<button class="event-btn" type="button" data-remove-key="${encodeURIComponent(ev.sourceType + '::' + (ev.docId || ev.localId || ''))}" style="margin-top:8px;">Remove</button>`
-          : '';
-        return `<div class="coastal hov" style="border: 2px solid #e2e2e2; margin-top: 8px;">
-          <div class="event-title">${escapeHtml(ev.summary)}</div>
-          <p class="event-desc"><i class="fa fa-calendar"></i> ${escapeHtml(ev.dateKey || '')}${location}</p>
-          ${removeBtn}
-        </div>`;
-      }).join('');
+    function loadLocalFallbacks(identityId) {
+      try {
+        window.localFallbackEventSignups = JSON.parse(localStorage.getItem('rippleLocalEventSignups') || '[]')
+          .filter(item => !item.participantId || item.participantId === identityId)
+          .map(item => ({
+            summary:    sanitizeText(item.title || '(No title)', 90),
+            dateKey:    toDateKey(item.dateKey || item.date),
+            time:       sanitizeText(item.time  || 'All day', 40),
+            location:   sanitizeText(item.location || '', 90),
+            sourceType: 'localEventSignup',
+            localId:    item._localTs || `${item.title||''}|${item.dateKey||item.date||''}|${item.time||''}`
+          })).filter(item => !!item.dateKey);
+      } catch (_) { window.localFallbackEventSignups = []; }
 
-      container.querySelectorAll('button[data-remove-key]').forEach((btn) => {
-        btn.addEventListener('click', async (e) => {
-          e.preventDefault();
-          const encoded = btn.getAttribute('data-remove-key');
-          const raw = decodeURIComponent(encoded || '');
-          const [sourceType, id] = raw.split('::');
-          try {
-            await removeUpcomingItem(sourceType, id);
-          } catch (err) {
-            console.error('Failed to remove upcoming item:', err);
-            alert('Failed to remove this item.');
-          }
-        });
-      });
+      try {
+        window.localFallbackResourceSaves = JSON.parse(localStorage.getItem('rippleLocalResourceSaves') || '[]')
+          .filter(item => !item.participantId || item.participantId === identityId)
+          .map(item => ({
+            summary:    `Saved Resource: ${sanitizeText(item.title || '(No title)', 90)}`,
+            dateKey:    toDateKey(item.dateKey || item.date),
+            time:       'Saved', location: '',
+            sourceType: 'localResourceSave',
+            localId:    item._localTs || `${item.title||''}|${item.dateKey||item.date||''}`
+          })).filter(item => !!item.dateKey);
+      } catch (_) { window.localFallbackResourceSaves = []; }
     }
-    function fallbackLocalId(item) {
-      const baseTitle = item.title || '';
-      const baseDate = item.dateKey || item.date || '';
-      const baseTime = item.time || '';
-      return item._localTs || `${baseTitle}|${baseDate}|${baseTime}`;
-    }
-    function removeLocalFallbackById(storageKey, localId) {
+
+    function removeFallbackById(storageKey, localId) {
       const current = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      const next = current.filter(item => String(fallbackLocalId(item)) !== String(localId));
-      localStorage.setItem(storageKey, JSON.stringify(next));
+      const fallbackId = item => item._localTs || `${item.title||''}|${item.dateKey||item.date||''}|${item.time||''}`;
+      localStorage.setItem(storageKey, JSON.stringify(current.filter(item => String(fallbackId(item)) !== String(localId))));
     }
-    async function removeUpcomingItem(sourceType, id) {
+
+    window.calRemoveUpcomingItem = async function(sourceType, id) {
       if (!sourceType || !id) return;
       if (sourceType === 'eventSignup') {
         await deleteDoc(doc(db, 'eventSignups', id));
       } else if (sourceType === 'resourceSave') {
         await deleteDoc(doc(db, 'resourceSaves', id));
       } else if (sourceType === 'localEventSignup') {
-        removeLocalFallbackById('rippleLocalEventSignups', id);
-        loadLocalFallbackItems(window.calendarIdentityId || '');
-        refreshCalendarUI();
+        removeFallbackById('rippleLocalEventSignups', id);
+        loadLocalFallbacks(window.calendarIdentityId || '');
+        if (window.refreshCalendarUI) window.refreshCalendarUI();
       } else if (sourceType === 'localResourceSave') {
-        removeLocalFallbackById('rippleLocalResourceSaves', id);
-        loadLocalFallbackItems(window.calendarIdentityId || '');
-        refreshCalendarUI();
+        removeFallbackById('rippleLocalResourceSaves', id);
+        loadLocalFallbacks(window.calendarIdentityId || '');
+        if (window.refreshCalendarUI) window.refreshCalendarUI();
       }
-    }
-    function refreshCalendarUI() {
-      renderCalendarMonth();
-      renderUpcomingEvents();
-    }
-    function listenForCalendarData(identityId) {
-      loadLocalFallbackItems(identityId);
-      refreshCalendarUI();
-      if (Array.isArray(window.calendarDataUnsubs)) {
-        window.calendarDataUnsubs.forEach(unsub => {
-          try { unsub(); } catch (_) {}
-        });
-      }
+    };
+
+    window.calendarDataUnsubs = [];
+
+    function listenForData(identityId) {
+      loadLocalFallbacks(identityId);
+      if (window.refreshCalendarUI) window.refreshCalendarUI();
+
+      (window.calendarDataUnsubs || []).forEach(u => { try { u(); } catch(_){} });
       window.calendarDataUnsubs = [];
-      const approvedEventsQuery = query(collection(db, 'events'));
-      const unsubApproved = onSnapshot(approvedEventsQuery, (snapshot) => {
-        const list = [];
-        snapshot.forEach(docSnap => {
-          const data = docSnap.data();
-          const title = sanitizeDisplayText(data.title || '', 90);
-          if (!isLikelyHumanTitle(title)) return;
-          const dateKey = toDateKey(data.dateKey || data.date || data.dateText || data.createdAt);
-          if (!dateKey) return;
-          list.push({
-            summary: title,
-            dateKey,
-            time: sanitizeDisplayText(data.time || 'All day', 40),
-            location: sanitizeDisplayText(data.location || '', 90)
+
+      window.calendarDataUnsubs.push(
+        onSnapshot(query(collection(db, 'events')), snapshot => {
+          const list = [];
+          snapshot.forEach(docSnap => {
+            const data  = docSnap.data();
+            const title = sanitizeText(data.title || '', 90);
+            if (!isHumanTitle(title)) return;
+            const dateKey = toDateKey(data.dateKey || data.date || data.dateText || data.createdAt);
+            if (!dateKey) return;
+            list.push({ summary: title, dateKey, time: sanitizeText(data.time||'All day',40), location: sanitizeText(data.location||'',90) });
           });
-        });
-        window.localApprovedEvents = list;
-        refreshCalendarUI();
-      });
-      window.calendarDataUnsubs.push(unsubApproved);
-      const signupQuery = query(collection(db, 'eventSignups'), where('participantId', '==', identityId));
-      const unsubSignups = onSnapshot(signupQuery, (snapshot) => {
-        const list = [];
-        snapshot.forEach(docSnap => {
-          const data = docSnap.data();
-          const dateKey = toDateKey(data.dateKey || data.date || data.createdAt);
-          if (!dateKey) return;
-          const title = sanitizeDisplayText(data.title || '', 90);
-          if (!isLikelyHumanTitle(title)) return;
-          list.push({
-            docId: docSnap.id,
-            summary: title,
-            dateKey,
-            time: sanitizeDisplayText(data.time || 'All day', 40),
-            location: sanitizeDisplayText(data.location || '', 90),
-            sourceType: 'eventSignup'
+          window.localApprovedEvents = list;
+          if (window.refreshCalendarUI) window.refreshCalendarUI();
+        })
+      );
+
+      window.calendarDataUnsubs.push(
+        onSnapshot(query(collection(db,'eventSignups'), where('participantId','==',identityId)), snapshot => {
+          const list = [];
+          snapshot.forEach(docSnap => {
+            const data    = docSnap.data();
+            const dateKey = toDateKey(data.dateKey || data.date || data.createdAt);
+            if (!dateKey) return;
+            const title = sanitizeText(data.title||'',90);
+            if (!isHumanTitle(title)) return;
+            list.push({ docId: docSnap.id, summary: title, dateKey, time: sanitizeText(data.time||'All day',40), location: sanitizeText(data.location||'',90), sourceType: 'eventSignup' });
           });
-        });
-        window.localEventSignups = list;
-        refreshCalendarUI();
-      });
-      window.calendarDataUnsubs.push(unsubSignups);
-      const resourceQuery = query(collection(db, 'resourceSaves'), where('participantId', '==', identityId));
-      const unsubResources = onSnapshot(resourceQuery, (snapshot) => {
-        const list = [];
-        snapshot.forEach(docSnap => {
-          const data = docSnap.data();
-          const dateKey = toDateKey(data.dateKey || data.createdAt);
-          if (!dateKey) return;
-          const title = sanitizeDisplayText(data.title || '(No title)', 90);
-          list.push({
-            docId: docSnap.id,
-            summary: `Saved Resource: ${title}`,
-            dateKey,
-            time: 'Saved',
-            location: '',
-            sourceType: 'resourceSave'
+          window.localEventSignups = list;
+          if (window.refreshCalendarUI) window.refreshCalendarUI();
+        })
+      );
+
+      window.calendarDataUnsubs.push(
+        onSnapshot(query(collection(db,'resourceSaves'), where('participantId','==',identityId)), snapshot => {
+          const list = [];
+          snapshot.forEach(docSnap => {
+            const data    = docSnap.data();
+            const dateKey = toDateKey(data.dateKey || data.createdAt);
+            if (!dateKey) return;
+            list.push({ docId: docSnap.id, summary: `Saved Resource: ${sanitizeText(data.title||'(No title)',90)}`, dateKey, time: 'Saved', location: '', sourceType: 'resourceSave' });
           });
-        });
-        window.localResourceSaves = list;
-        refreshCalendarUI();
-      });
-      window.calendarDataUnsubs.push(unsubResources);
+          window.localResourceSaves = list;
+          if (window.refreshCalendarUI) window.refreshCalendarUI();
+        })
+      );
     }
-    window.signOutUser = function() {
-      signOut(auth).then(() => {
-        location.reload();
-      }).catch((error) => {
-        console.error('Sign out error:', error);
-      });
-    };
-    window.reso = function() {
-      window.location.href = 'resources.html?tab=events';
-    };
-    document.getElementById('prevMonth').addEventListener('click', () => {
-      const current = window.calendarCurrentDate || new Date();
-      current.setMonth(current.getMonth() - 1);
-      window.calendarCurrentDate = current;
-      renderCalendarMonth();
-    });
-    document.getElementById('nextMonth').addEventListener('click', () => {
-      const current = window.calendarCurrentDate || new Date();
-      current.setMonth(current.getMonth() + 1);
-      window.calendarCurrentDate = current;
-      renderCalendarMonth();
-    });
-    onAuthStateChanged(auth, async (user) => {
-      const avatar = document.querySelector('.avatar');
+
+    window.signOutUser = () => signOut(auth).then(() => location.reload()).catch(err => console.error(err));
+
+    window.currentCalendarUser = undefined;
+    window.renderCalendarAuthNav = function(user) {
+      const avatar   = document.querySelector('.avatar');
       const navRight = document.querySelector('.nav-right');
+
       if (user) {
-        const initial = (user.email || '').charAt(0).toUpperCase();
         if (avatar) {
           if (user.photoURL) {
-            avatar.style.backgroundImage = `url('${user.photoURL}')`;
-            avatar.style.backgroundSize = 'cover';
+            avatar.style.backgroundImage    = `url('${user.photoURL}')`;
+            avatar.style.backgroundSize     = 'cover';
             avatar.style.backgroundPosition = 'center';
             avatar.textContent = '';
           } else {
             avatar.style.backgroundImage = '';
-            avatar.textContent = initial;
+            avatar.textContent = (user.email || '').charAt(0).toUpperCase();
           }
           avatar.style.cursor = 'pointer';
-          avatar.onclick = () => window.location.href = 'account.html';
+          avatar.setAttribute('role', 'button');
+          avatar.setAttribute('tabindex', '0');
+          avatar.onclick = () => { window.location.href = 'account.html'; };
+          avatar.onkeydown = (event) => {
+            if (event.key === 'Enter' || event.key === ' ') window.location.href = 'account.html';
+          };
         }
+        const signInBtn = document.querySelector('.sign-in-btn');
+        if (signInBtn) signInBtn.remove();
       } else {
         if (avatar) {
-          avatar.textContent = '';
+          avatar.textContent           = '';
           avatar.style.backgroundImage = '';
-          avatar.onclick = () => window.location.href = 'login.html';
+          avatar.onclick               = () => { window.location.href = 'login.html'; };
         }
         const signOutBtn = document.querySelector('.sign-out-btn');
         if (signOutBtn) signOutBtn.remove();
         if (navRight && !document.querySelector('.sign-in-btn')) {
-          const signInBtn = document.createElement('button');
-          signInBtn.textContent = 'Sign In';
-          signInBtn.className = 'sign-in-btn';
-          signInBtn.style.padding = '8px 16px';
-          signInBtn.style.background = 'linear-gradient(to bottom, #4c7dff, #2e63e5)';
-          signInBtn.style.color = 'white';
-          signInBtn.style.border = 'none';
-          signInBtn.style.borderRadius = '999px';
-          signInBtn.style.cursor = 'pointer';
-          signInBtn.style.fontSize = '14px';
-          signInBtn.style.fontWeight = '600';
-          signInBtn.style.boxShadow = '0 4px 12px rgba(76, 125, 255, 0.25)';
-          signInBtn.onclick = () => window.location.href = 'login.html';
-          navRight.appendChild(signInBtn);
+          const btn = document.createElement('button');
+          btn.textContent  = 'Sign In';
+          btn.className    = 'sign-in-btn';
+          btn.style.cssText = 'padding:8px 16px;background:linear-gradient(to bottom,#4c7dff,#2e63e5);color:white;border:none;border-radius:999px;cursor:pointer;font-size:14px;font-weight:600;box-shadow:0 4px 12px rgba(76,125,255,.25)';
+          btn.onclick      = () => { window.location.href = 'login.html'; };
+          navRight.appendChild(btn);
         }
       }
-      const identity = await resolveParticipantIdentity(user);
+    };
+
+    onAuthStateChanged(auth, async user => {
+      window.currentCalendarUser = user || null;
+      window.renderCalendarAuthNav(user);
+
+      const identity   = await resolveIdentity(user);
       const identityId = identity.participantId;
       window.calendarIdentityId = identityId;
       if (!window.calendarListenersStartedFor || window.calendarListenersStartedFor !== identityId) {
         window.calendarListenersStartedFor = identityId;
-        listenForCalendarData(identityId);
+        listenForData(identityId);
       }
-      refreshCalendarUI();
     });
+  </script>
 
-    refreshCalendarUI();
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const fp = document.getElementById('footer-placeholder');
+      if (fp) fetch('footer.html').then(r => r.text()).then(html => { fp.innerHTML = html; }).catch(console.error);
+    });
   </script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const footerPlaceholder = document.getElementById('footer-placeholder');
-      if (footerPlaceholder) {
-        fetch('footer.html')
-          .then(response => response.text())
-          .then(html => {
-            footerPlaceholder.innerHTML = html;
-          })
-          .catch(error => {
-            console.error('Error loading footer:', error);
+      const hp = document.getElementById('header-placeholder');
+      if (!hp) return;
+      fetch('header.html')
+        .then(r => r.text())
+        .then(html => {
+          hp.innerHTML = html;
+          const path = window.location.pathname.split('/').pop();
+          hp.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === path);
           });
-      }
+          if (window.renderCalendarAuthNav && window.currentCalendarUser !== undefined) {
+            window.renderCalendarAuthNav(window.currentCalendarUser);
+          }
+          const hamburger = hp.querySelector('.hamburger');
+          const navLinks  = hp.querySelector('.nav-links');
+          if (hamburger && navLinks) {
+            hamburger.addEventListener('click', e => { e.stopPropagation(); navLinks.classList.toggle('open'); });
+            document.addEventListener('click', e => {
+              if (!navLinks.contains(e.target) && !hamburger.contains(e.target)) navLinks.classList.remove('open');
+            });
+            hp.querySelectorAll('.nav-link').forEach(link => {
+              link.addEventListener('click', () => navLinks.classList.remove('open'));
+            });
+          }
+        })
+        .catch(console.error);
     });
   </script>
-  <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const headerPlaceholder = document.getElementById('header-placeholder');
-    if (!headerPlaceholder) return;
-    fetch('header.html')
-      .then(response => response.text())
-      .then(html => {
-        headerPlaceholder.innerHTML = html;
-        const path = window.location.pathname.split('/').pop();
-        const links = headerPlaceholder.querySelectorAll('.nav-link');
-        links.forEach(link => {
-          const href = link.getAttribute('href');
-          if (href === path) {
-            link.classList.add('active');
-          } else {
-            link.classList.remove('active');
-          }
-        });
-        const hamburger = headerPlaceholder.querySelector('.hamburger');
-        const navLinks = headerPlaceholder.querySelector('.nav-links');
-
-        if (hamburger && navLinks) {
-          hamburger.addEventListener('click', function (event) {
-            event.stopPropagation();
-            navLinks.classList.toggle('open');
-          });
-
-          document.addEventListener('click', function (event) {
-            if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
-              navLinks.classList.remove('open');
-            }
-          });
-
-          const navLinkElements = headerPlaceholder.querySelectorAll('.nav-link');
-          navLinkElements.forEach(link => {
-            link.addEventListener('click', function () {
-              navLinks.classList.remove('open');
-            });
-          });
-        }
-      })
-      .catch(error => {
-        console.error('Error loading header:', error);
-      });
-  });
-</script>
 </body>
 </html>
