@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="main.css">
-<link rel="stylesheet" href="communites.css?v=forum-tab-4">
+<link rel="stylesheet" href="communites.css?v=forum-tab-8">
 <style>
   .search-bar {
     display: block;
@@ -124,10 +124,11 @@
   .forum-channel-btn {
     width: 100%;
     text-align: left;
-    border: 1px solid transparent;
-    background: transparent;
+    border: 1px solid #d8e2ef;
+    background: white;
     border-radius: 12px;
     padding: 12px;
+    margin-bottom: 10px;
     cursor: pointer;
     color: #1f2328;
     font-family: 'Inter', sans-serif;
@@ -153,6 +154,30 @@
     color: #64748b;
     font-size: 12px;
     line-height: 1.35;
+  }
+  .forum-channel-stats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 9px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .forum-online {
+    color: #15803d;
+  }
+  .forum-online::before {
+    content: "";
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 5px;
+    border-radius: 999px;
+    background: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.14);
+    vertical-align: 1px;
   }
   .forum-thread {
     min-width: 0;
@@ -199,6 +224,12 @@
     display: flex;
     margin-bottom: 16px;
   }
+  .forum-thread-item {
+    margin-bottom: 16px;
+  }
+  .forum-thread-item .forum-message-row {
+    margin-bottom: 0;
+  }
   .forum-message-row.mine {
     justify-content: flex-end;
   }
@@ -233,6 +264,79 @@
   .forum-message-text {
     overflow-wrap: anywhere;
   }
+  .forum-message-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .forum-action-btn {
+    border: 1px solid #d1d5db;
+    background: white;
+    color: #475569;
+    border-radius: 999px;
+    padding: 6px 11px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .forum-action-btn:hover,
+  .forum-action-btn.active {
+    background: #eaf4ff;
+    border-color: #bbd8ff;
+    color: #315f9c;
+  }
+  .forum-like-btn {
+    color: #b91c1c;
+  }
+  .forum-like-btn:hover,
+  .forum-like-btn.active {
+    background: #fff1f2;
+    border-color: #fecdd3;
+    color: #e11d48;
+  }
+  .forum-message-row.mine .forum-action-btn {
+    border-color: rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.14);
+    color: white;
+  }
+  .forum-replies {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px 0 0 52px;
+    max-width: min(620px, calc(100% - 52px));
+  }
+  .forum-reply {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px;
+  }
+  .forum-reply-form {
+    display: flex;
+    gap: 8px;
+    margin: 10px 0 0 52px;
+    max-width: min(620px, calc(100% - 52px));
+  }
+  .forum-reply-form input {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid #dfe3e8;
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+  }
+  .forum-reply-form button {
+    border: none;
+    border-radius: 999px;
+    background: #3996d3;
+    color: white;
+    padding: 10px 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
   .forum-input-area {
     display: grid;
     grid-template-columns: minmax(130px, 0.32fr) 1fr 48px;
@@ -250,6 +354,12 @@
     outline: none;
     font-size: 15px;
     font-family: 'Inter', sans-serif;
+  }
+  .forum-input-area.signed-in {
+    grid-template-columns: 1fr 48px;
+  }
+  .forum-input-area.signed-in #forumName {
+    display: none;
   }
   .send-btn {
     background: #5c7cff;
@@ -297,6 +407,11 @@
     .forum-input-area {
       grid-template-columns: 1fr 48px;
       border-radius: 24px;
+    }
+    .forum-replies,
+    .forum-reply-form {
+      margin-left: 24px;
+      max-width: calc(100% - 24px);
     }
     #forumName {
       grid-column: 1 / -1;
@@ -364,26 +479,32 @@
                 <button class="forum-channel-btn active" type="button" data-forum-id="general" data-forum-name="General Ripple Forum" data-forum-desc="Website-wide questions, updates, and encouragement.">
                     <span class="forum-channel-name">General Ripple</span>
                     <span class="forum-channel-desc">Open discussion for the whole website.</span>
+                    <span class="forum-channel-stats"><span>2,209 members</span><span class="forum-online">34 online</span></span>
                 </button>
                 <button class="forum-channel-btn" type="button" data-forum-id="environmental" data-forum-name="Keep Forsyth County Beautiful" data-forum-desc="Talk about cleanups, recycling, and environmental action.">
                     <span class="forum-channel-name">Keep Forsyth County Beautiful</span>
                     <span class="forum-channel-desc">Cleanups, recycling, water quality.</span>
+                    <span class="forum-channel-stats"><span>238 members</span><span class="forum-online">12 online</span></span>
                 </button>
                 <button class="forum-channel-btn" type="button" data-forum-id="mental" data-forum-name="Forsyth Speaks" data-forum-desc="Share support, mental health resources, and local wellness updates.">
                     <span class="forum-channel-name">Forsyth Speaks</span>
                     <span class="forum-channel-desc">Mental health support and wellness.</span>
+                    <span class="forum-channel-stats"><span>602 members</span><span class="forum-online">19 online</span></span>
                 </button>
                 <button class="forum-channel-btn" type="button" data-forum-id="volunteer" data-forum-name="Forsyth AYLUS" data-forum-desc="Coordinate volunteer opportunities, drives, and service events.">
                     <span class="forum-channel-name">Forsyth AYLUS</span>
                     <span class="forum-channel-desc">Volunteer shifts and service ideas.</span>
+                    <span class="forum-channel-stats"><span>842 members</span><span class="forum-online">27 online</span></span>
                 </button>
                 <button class="forum-channel-btn" type="button" data-forum-id="events" data-forum-name="Cumming City Center" data-forum-desc="Discuss local gatherings, meetups, and community events.">
                     <span class="forum-channel-name">Cumming City Center</span>
                     <span class="forum-channel-desc">Community events and meetups.</span>
+                    <span class="forum-channel-stats"><span>312 members</span><span class="forum-online">15 online</span></span>
                 </button>
                 <button class="forum-channel-btn" type="button" data-forum-id="donation" data-forum-name="The Place" data-forum-desc="Plan donation drives and ways to support local families.">
                     <span class="forum-channel-name">The Place</span>
                     <span class="forum-channel-desc">Donation drives and local aid.</span>
+                    <span class="forum-channel-stats"><span>215 members</span><span class="forum-online">8 online</span></span>
                 </button>
             </aside>
             <div class="forum-thread">
@@ -465,7 +586,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, doc, updateDoc, arrayUnion, arrayRemove, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
@@ -518,10 +639,77 @@
     });
   }
 
+  function getCurrentForumParticipantId() {
+    return currentForumUser ? currentForumUser.uid : getForumGuestId();
+  }
+
+  function getCurrentForumAuthorName() {
+    return cleanForumText(
+      forumNameInput.value || (currentForumUser && (currentForumUser.displayName || currentForumUser.email)) || 'Community Member',
+      40
+    );
+  }
+
+  async function toggleForumLike(message) {
+    if (!message.id) return;
+    const participantId = getCurrentForumParticipantId();
+    const likedBy = Array.isArray(message.likedBy) ? message.likedBy : [];
+    const messageRef = doc(db, 'notifications', message.id);
+    try {
+      if (likedBy.includes(participantId)) {
+        await updateDoc(messageRef, { likedBy: arrayRemove(participantId) });
+      } else {
+        await updateDoc(messageRef, { likedBy: arrayUnion(participantId) });
+      }
+    } catch (error) {
+      console.error('Forum like error:', error);
+      forumStatus.textContent = 'Like failed';
+    }
+  }
+
+  async function sendForumReply(message, input, button) {
+    const text = cleanForumText(input.value, 500);
+    if (!text || !message.id) return;
+    button.disabled = true;
+    button.style.opacity = '0.55';
+    try {
+      await addDoc(collection(db, 'notifications'), {
+        type: FORUM_MESSAGE_TYPE,
+        itemType: 'forum',
+        title: `${activeForumName} Reply`,
+        message: text,
+        text,
+        forumId: activeForumId,
+        forumName: activeForumName,
+        parentId: message.id,
+        authorName: getCurrentForumAuthorName(),
+        authorId: getCurrentForumParticipantId(),
+        authorEmail: currentForumUser ? currentForumUser.email || null : null,
+        createdBy: currentForumUser ? currentForumUser.uid : getForumGuestId(),
+        createdByEmail: currentForumUser ? currentForumUser.email || null : null,
+        participantId: currentForumUser ? `uid:${currentForumUser.uid}` : `visitor:${getForumGuestId()}`,
+        participantType: currentForumUser ? 'account' : 'visitor',
+        likedBy: [],
+        status: 'forum',
+        createdAt: serverTimestamp()
+      });
+      input.value = '';
+      input.closest('.forum-reply-form').remove();
+    } catch (error) {
+      console.error('Forum reply error:', error);
+      forumStatus.textContent = 'Reply failed';
+    } finally {
+      button.disabled = false;
+      button.style.opacity = '1';
+    }
+  }
+
   function renderForumMessage(message) {
+    const thread = document.createElement('div');
+    thread.className = 'forum-thread-item';
     const row = document.createElement('div');
     row.className = 'forum-message-row';
-    if (message.authorId && message.authorId === (currentForumUser ? currentForumUser.uid : getForumGuestId())) {
+    if (message.authorId && message.authorId === getCurrentForumParticipantId()) {
       row.classList.add('mine');
     }
 
@@ -536,10 +724,76 @@
     text.className = 'forum-message-text';
     text.textContent = message.text || '';
 
+    const actions = document.createElement('div');
+    actions.className = 'forum-message-actions';
+
+    const likedBy = Array.isArray(message.likedBy) ? message.likedBy : [];
+    const likeBtn = document.createElement('button');
+    likeBtn.type = 'button';
+    likeBtn.className = 'forum-action-btn forum-like-btn';
+    if (likedBy.includes(getCurrentForumParticipantId())) {
+      likeBtn.classList.add('active');
+    }
+    likeBtn.textContent = likedBy.length ? `♥ ${likedBy.length}` : '♡';
+    likeBtn.setAttribute('aria-label', likedBy.includes(getCurrentForumParticipantId()) ? 'Unlike message' : 'Like message');
+    likeBtn.addEventListener('click', () => toggleForumLike(message));
+
+    const replyBtn = document.createElement('button');
+    replyBtn.type = 'button';
+    replyBtn.className = 'forum-action-btn';
+    replyBtn.textContent = 'Reply';
+    replyBtn.addEventListener('click', () => {
+      const existing = row.querySelector('.forum-reply-form');
+      if (existing) {
+        existing.remove();
+        return;
+      }
+      const form = document.createElement('form');
+      form.className = 'forum-reply-form';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = `Reply to ${message.authorName || 'this message'}...`;
+      input.maxLength = 500;
+      const button = document.createElement('button');
+      button.type = 'submit';
+      button.textContent = 'Reply';
+      form.appendChild(input);
+      form.appendChild(button);
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        sendForumReply(message, input, button);
+      });
+      thread.appendChild(form);
+      input.focus();
+    });
+
+    actions.appendChild(likeBtn);
+    actions.appendChild(replyBtn);
     bubble.appendChild(meta);
     bubble.appendChild(text);
+    bubble.appendChild(actions);
     row.appendChild(bubble);
-    return row;
+    thread.appendChild(row);
+
+    if (Array.isArray(message.replies) && message.replies.length) {
+      const replies = document.createElement('div');
+      replies.className = 'forum-replies';
+      message.replies.forEach(reply => {
+        const replyBubble = document.createElement('div');
+        replyBubble.className = 'forum-reply';
+        const replyMeta = document.createElement('div');
+        replyMeta.className = 'forum-message-meta';
+        replyMeta.textContent = `${reply.authorName || 'Community Member'} • ${formatForumTime(reply.createdAt)}`;
+        const replyText = document.createElement('div');
+        replyText.className = 'forum-message-text';
+        replyText.textContent = reply.text || '';
+        replyBubble.appendChild(replyMeta);
+        replyBubble.appendChild(replyText);
+        replies.appendChild(replyBubble);
+      });
+      thread.appendChild(replies);
+    }
+    return thread;
   }
 
   function showForumEmptyState(text) {
@@ -551,8 +805,25 @@
   }
 
   function renderActiveForumMessages() {
-    const messages = forumSnapshotMessages
-      .filter(message => (message.forumId || 'general') === activeForumId)
+    const activeMessages = forumSnapshotMessages
+      .filter(message => (message.forumId || 'general') === activeForumId);
+    const repliesByParent = new Map();
+    activeMessages
+      .filter(message => message.parentId)
+      .forEach(reply => {
+        if (!repliesByParent.has(reply.parentId)) repliesByParent.set(reply.parentId, []);
+        repliesByParent.get(reply.parentId).push(reply);
+      });
+    repliesByParent.forEach(replies => {
+      replies.sort((a, b) => {
+        const at = a.createdAt && typeof a.createdAt.toMillis === 'function' ? a.createdAt.toMillis() : 0;
+        const bt = b.createdAt && typeof b.createdAt.toMillis === 'function' ? b.createdAt.toMillis() : 0;
+        return at - bt;
+      });
+    });
+    const messages = activeMessages
+      .filter(message => !message.parentId)
+      .map(message => ({ ...message, replies: repliesByParent.get(message.id) || [] }))
       .sort((a, b) => {
       const at = a.createdAt && typeof a.createdAt.toMillis === 'function' ? a.createdAt.toMillis() : 0;
       const bt = b.createdAt && typeof b.createdAt.toMillis === 'function' ? b.createdAt.toMillis() : 0;
@@ -603,11 +874,14 @@
       const data = docSnap.data();
       if (data.type !== FORUM_MESSAGE_TYPE) return;
       forumSnapshotMessages.push({
+        id: docSnap.id,
         forumId: data.forumId || 'general',
         forumName: cleanForumText(data.forumName, 80),
+        parentId: data.parentId || '',
         authorId: data.authorId,
         authorName: cleanForumText(data.authorName, 40),
         text: cleanForumText(data.text || data.message, 500),
+        likedBy: Array.isArray(data.likedBy) ? data.likedBy : [],
         createdAt: data.createdAt
       });
     });
@@ -625,10 +899,7 @@
 
     const sendButton = forumForm.querySelector('button');
     const guestId = getForumGuestId();
-    const authorName = cleanForumText(
-      forumNameInput.value || (currentForumUser && (currentForumUser.displayName || currentForumUser.email)) || 'Community Member',
-      40
-    );
+    const authorName = getCurrentForumAuthorName();
 
     sendButton.disabled = true;
     sendButton.style.opacity = '0.55';
@@ -648,6 +919,7 @@
         createdByEmail: currentForumUser ? currentForumUser.email || null : null,
         participantId: currentForumUser ? `uid:${currentForumUser.uid}` : `visitor:${guestId}`,
         participantType: currentForumUser ? 'account' : 'visitor',
+        likedBy: [],
         status: 'forum',
         createdAt: serverTimestamp()
       });
@@ -672,6 +944,9 @@
   function renderCommunitiesAuthNav(user) {
     if (user && forumNameInput && !forumNameInput.value) {
       forumNameInput.value = user.displayName || (user.email ? user.email.split('@')[0] : '');
+    }
+    if (forumForm) {
+      forumForm.classList.toggle('signed-in', !!user);
     }
     const avatar = document.querySelector('.avatar');
     const navRight = document.querySelector('.nav-right');
