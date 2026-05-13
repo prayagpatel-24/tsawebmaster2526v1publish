@@ -10,8 +10,63 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="main.css">
-<link rel="stylesheet" href="communites.css?v=forum-tab-2">
+<link rel="stylesheet" href="communites.css?v=forum-tab-4">
 <style>
+  .search-bar {
+    display: block;
+    width: 60%;
+    margin: 24px auto 40px;
+    padding: 14px 20px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+  .groups-container {
+    width: 80%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+  .group-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #d4dce3;
+  }
+  .group-card h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+  .group-card p {
+    margin-top: 0;
+    color: #666;
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+  .members {
+    display: flex;
+    align-items: center;
+    color: #444;
+    margin-bottom: 15px;
+    font-size: 14px;
+  }
+  .members::before {
+    content: '\1F465';
+    margin-right: 6px;
+  }
+  .join-btn {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid #bbb;
+    background: #f7f9fa;
+    cursor: pointer;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+  }
   .toggle-btns {
     display: flex;
     justify-content: center;
@@ -39,13 +94,68 @@
     border: 3px solid white;
   }
   .forum-shell {
-    width: 58%;
+    width: 80%;
     margin: 24px auto 0;
     background: white;
     border-radius: 22px;
     padding: 28px;
     border: 1px solid #dfe3e8;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  .forum-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 22px;
+  }
+  .forum-list {
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    background: #f8fbff;
+    padding: 12px;
+  }
+  .forum-list-title {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin: 6px 8px 12px;
+    text-transform: uppercase;
+  }
+  .forum-channel-btn {
+    width: 100%;
+    text-align: left;
+    border: 1px solid transparent;
+    background: transparent;
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    color: #1f2328;
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+  .forum-channel-btn:hover {
+    background: white;
+    border-color: #dbeafe;
+    transform: translateY(-1px);
+  }
+  .forum-channel-btn.active {
+    background: #eaf4ff;
+    border-color: #bbd8ff;
+  }
+  .forum-channel-name {
+    display: block;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .forum-channel-desc {
+    display: block;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  .forum-thread {
+    min-width: 0;
   }
   .forum-header {
     display: flex;
@@ -155,8 +265,31 @@
     cursor: pointer;
   }
   @media (max-width: 768px) {
+    .groups-container,
+    .search-bar {
+      width: calc(100% - 32px);
+    }
+    .groups-container {
+      grid-template-columns: 1fr;
+    }
     .forum-shell {
       width: calc(100% - 32px);
+      padding: 20px;
+    }
+    .forum-layout {
+      grid-template-columns: 1fr;
+    }
+    .forum-list {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 10px;
+    }
+    .forum-list-title {
+      display: none;
+    }
+    .forum-channel-btn {
+      flex: 0 0 210px;
     }
     .forum-header {
       flex-direction: column;
@@ -225,21 +358,52 @@
 
 <section id="forums-section" style="display:none;">
     <div class="forum-shell">
-        <div class="forum-header">
-            <div>
-                <h2>Community Forum</h2>
-                <p>Share updates, questions, and encouragement with other Ripple members.</p>
+        <div class="forum-layout">
+            <aside class="forum-list" aria-label="Forum communities">
+                <div class="forum-list-title">Forums</div>
+                <button class="forum-channel-btn active" type="button" data-forum-id="general" data-forum-name="General Ripple Forum" data-forum-desc="Website-wide questions, updates, and encouragement.">
+                    <span class="forum-channel-name">General Ripple</span>
+                    <span class="forum-channel-desc">Open discussion for the whole website.</span>
+                </button>
+                <button class="forum-channel-btn" type="button" data-forum-id="environmental" data-forum-name="Keep Forsyth County Beautiful" data-forum-desc="Talk about cleanups, recycling, and environmental action.">
+                    <span class="forum-channel-name">Keep Forsyth County Beautiful</span>
+                    <span class="forum-channel-desc">Cleanups, recycling, water quality.</span>
+                </button>
+                <button class="forum-channel-btn" type="button" data-forum-id="mental" data-forum-name="Forsyth Speaks" data-forum-desc="Share support, mental health resources, and local wellness updates.">
+                    <span class="forum-channel-name">Forsyth Speaks</span>
+                    <span class="forum-channel-desc">Mental health support and wellness.</span>
+                </button>
+                <button class="forum-channel-btn" type="button" data-forum-id="volunteer" data-forum-name="Forsyth AYLUS" data-forum-desc="Coordinate volunteer opportunities, drives, and service events.">
+                    <span class="forum-channel-name">Forsyth AYLUS</span>
+                    <span class="forum-channel-desc">Volunteer shifts and service ideas.</span>
+                </button>
+                <button class="forum-channel-btn" type="button" data-forum-id="events" data-forum-name="Cumming City Center" data-forum-desc="Discuss local gatherings, meetups, and community events.">
+                    <span class="forum-channel-name">Cumming City Center</span>
+                    <span class="forum-channel-desc">Community events and meetups.</span>
+                </button>
+                <button class="forum-channel-btn" type="button" data-forum-id="donation" data-forum-name="The Place" data-forum-desc="Plan donation drives and ways to support local families.">
+                    <span class="forum-channel-name">The Place</span>
+                    <span class="forum-channel-desc">Donation drives and local aid.</span>
+                </button>
+            </aside>
+            <div class="forum-thread">
+                <div class="forum-header">
+                    <div>
+                        <h2 id="forumTitle">General Ripple Forum</h2>
+                        <p id="forumDescription">Website-wide questions, updates, and encouragement.</p>
+                    </div>
+                    <div class="forum-status" id="forumStatus">Connecting...</div>
+                </div>
+                <div class="forum-messages" id="forumMessages" aria-live="polite">
+                    <div class="message">Loading forum messages...</div>
+                </div>
+                <form class="forum-input-area" id="forumForm">
+                    <input id="forumName" type="text" placeholder="Display name" maxlength="40" />
+                    <input id="forumMessage" type="text" placeholder="Type your message here..." maxlength="500" required />
+                    <button class="send-btn db" type="submit" aria-label="Send forum message">&#10148;</button>
+                </form>
             </div>
-            <div class="forum-status" id="forumStatus">Connecting...</div>
         </div>
-        <div class="forum-messages" id="forumMessages" aria-live="polite">
-            <div class="message">Loading forum messages...</div>
-        </div>
-        <form class="forum-input-area" id="forumForm">
-            <input id="forumName" type="text" placeholder="Display name" maxlength="40" />
-            <input id="forumMessage" type="text" placeholder="Type your message here..." maxlength="500" required />
-            <button class="send-btn db" type="submit" aria-label="Send forum message">&#10148;</button>
-        </form>
     </div>
 </section>
 
@@ -320,8 +484,15 @@
   const forumMessageInput = document.getElementById('forumMessage');
   const forumNameInput = document.getElementById('forumName');
   const forumStatus = document.getElementById('forumStatus');
+  const forumTitle = document.getElementById('forumTitle');
+  const forumDescription = document.getElementById('forumDescription');
+  const forumChannelButtons = document.querySelectorAll('.forum-channel-btn');
   const FORUM_MESSAGE_TYPE = 'communityForumMessage';
+  let activeForumId = new URLSearchParams(window.location.search).get('forum') || 'general';
+  let activeForumName = 'General Ripple Forum';
   let currentForumUser = null;
+  let currentAuthUser = undefined;
+  let forumSnapshotMessages = [];
 
   function getForumGuestId() {
     const key = 'rippleForumGuestId';
@@ -379,19 +550,10 @@
     forumMessages.appendChild(empty);
   }
 
-  onSnapshot(collection(db, 'notifications'), (snapshot) => {
-    const messages = [];
-    snapshot.forEach(docSnap => {
-      const data = docSnap.data();
-      if (data.type !== FORUM_MESSAGE_TYPE) return;
-      messages.push({
-        authorId: data.authorId,
-        authorName: cleanForumText(data.authorName, 40),
-        text: cleanForumText(data.text || data.message, 500),
-        createdAt: data.createdAt
-      });
-    });
-    messages.sort((a, b) => {
+  function renderActiveForumMessages() {
+    const messages = forumSnapshotMessages
+      .filter(message => (message.forumId || 'general') === activeForumId)
+      .sort((a, b) => {
       const at = a.createdAt && typeof a.createdAt.toMillis === 'function' ? a.createdAt.toMillis() : 0;
       const bt = b.createdAt && typeof b.createdAt.toMillis === 'function' ? b.createdAt.toMillis() : 0;
       return at - bt;
@@ -406,6 +568,50 @@
     }
     forumMessages.scrollTop = forumMessages.scrollHeight;
     forumStatus.textContent = 'Live';
+  }
+
+  function setActiveForum(button, updateUrl = true) {
+    activeForumId = button.dataset.forumId || 'general';
+    activeForumName = button.dataset.forumName || 'General Ripple Forum';
+    forumTitle.textContent = activeForumName;
+    forumDescription.textContent = button.dataset.forumDesc || 'Share updates, questions, and encouragement.';
+    forumChannelButtons.forEach(item => item.classList.toggle('active', item === button));
+    forumMessageInput.placeholder = `Message ${activeForumName}...`;
+    if (updateUrl) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', 'forums');
+      if (activeForumId === 'general') {
+        url.searchParams.delete('forum');
+      } else {
+        url.searchParams.set('forum', activeForumId);
+      }
+      window.history.replaceState({}, '', url);
+    }
+    renderActiveForumMessages();
+  }
+
+  forumChannelButtons.forEach(button => {
+    button.addEventListener('click', () => setActiveForum(button));
+  });
+
+  const requestedForumButton = Array.from(forumChannelButtons).find(button => button.dataset.forumId === activeForumId);
+  setActiveForum(requestedForumButton || forumChannelButtons[0], false);
+
+  onSnapshot(collection(db, 'notifications'), (snapshot) => {
+    forumSnapshotMessages = [];
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      if (data.type !== FORUM_MESSAGE_TYPE) return;
+      forumSnapshotMessages.push({
+        forumId: data.forumId || 'general',
+        forumName: cleanForumText(data.forumName, 80),
+        authorId: data.authorId,
+        authorName: cleanForumText(data.authorName, 40),
+        text: cleanForumText(data.text || data.message, 500),
+        createdAt: data.createdAt
+      });
+    });
+    renderActiveForumMessages();
   }, (error) => {
     console.error('Forum load error:', error);
     forumStatus.textContent = 'Offline';
@@ -430,9 +636,11 @@
       await addDoc(collection(db, 'notifications'), {
         type: FORUM_MESSAGE_TYPE,
         itemType: 'forum',
-        title: 'Community Forum Message',
+        title: `${activeForumName} Message`,
         message: text,
         text,
+        forumId: activeForumId,
+        forumName: activeForumName,
         authorName,
         authorId: currentForumUser ? currentForumUser.uid : guestId,
         authorEmail: currentForumUser ? currentForumUser.email || null : null,
@@ -461,8 +669,7 @@
     });
   };
 
-  onAuthStateChanged(auth, (user) => {
-    currentForumUser = user || null;
+  function renderCommunitiesAuthNav(user) {
     if (user && forumNameInput && !forumNameInput.value) {
       forumNameInput.value = user.displayName || (user.email ? user.email.split('@')[0] : '');
     }
@@ -521,7 +728,18 @@
         navRight.appendChild(signInBtn);
       }
     }
+  }
+
+  onAuthStateChanged(auth, (user) => {
+    currentForumUser = user || null;
+    currentAuthUser = user || null;
+    renderCommunitiesAuthNav(user);
   });
+
+  window.renderCommunitiesAuthNav = renderCommunitiesAuthNav;
+  window.getCommunitiesAuthUser = function() {
+    return currentAuthUser;
+  };
 </script>
 <script src="bubbles.js"></script>
 <script>
@@ -558,6 +776,9 @@
             link.classList.remove('active');
           }
         });
+        if (window.renderCommunitiesAuthNav && window.getCommunitiesAuthUser && window.getCommunitiesAuthUser() !== undefined) {
+          window.renderCommunitiesAuthNav(window.getCommunitiesAuthUser());
+        }
         const hamburger = headerPlaceholder.querySelector('.hamburger');
         const navLinks = headerPlaceholder.querySelector('.nav-links');
 

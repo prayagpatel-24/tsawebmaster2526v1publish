@@ -326,13 +326,68 @@ a:visited {
 }
 
 .forum-shell {
-  width: 58%;
+  width: 80%;
   margin: 24px auto 0;
   background: white;
   border-radius: 22px;
   padding: 28px;
   border: 1px solid #dfe3e8;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+.forum-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 22px;
+}
+.forum-list {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fbff;
+  padding: 12px;
+}
+.forum-list-title {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin: 6px 8px 12px;
+  text-transform: uppercase;
+}
+.forum-channel-btn {
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  color: #1f2328;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.forum-channel-btn:hover {
+  background: white;
+  border-color: #dbeafe;
+  transform: translateY(-1px);
+}
+.forum-channel-btn.active {
+  background: #eaf4ff;
+  border-color: #bbd8ff;
+}
+.forum-channel-name {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.forum-channel-desc {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.35;
+}
+.forum-thread {
+  min-width: 0;
 }
 .forum-header {
   display: flex;
@@ -619,6 +674,29 @@ a:visited {
 
   .forum-header {
     flex-direction: column;
+  }
+
+  .forum-shell {
+    padding: 20px;
+  }
+
+  .forum-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .forum-list {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px;
+  }
+
+  .forum-list-title {
+    display: none;
+  }
+
+  .forum-channel-btn {
+    flex: 0 0 210px;
   }
 
   .forum-input-area {
