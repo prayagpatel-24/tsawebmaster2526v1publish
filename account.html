@@ -539,23 +539,6 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(response => response.text())
     .then(html => {
       headerPlaceholder.innerHTML = html;
-      const navLinks = headerPlaceholder.querySelector('.nav-links');
-      let accountLink = Array.from(navLinks.children).find(link => 
-        link.textContent.includes('Account') || link.getAttribute('href') === 'account.html'
-      );
-      if (!accountLink) {
-        accountLink = document.createElement('a');
-        accountLink.href = 'account.html';
-        accountLink.className = 'nav-link';
-        accountLink.textContent = 'Account';
-        navLinks.appendChild(accountLink);
-      }
-      const path = 'account.html';
-      const links = headerPlaceholder.querySelectorAll('.nav-link');
-      links.forEach(link => {
-        link.classList.toggle('active', link.getAttribute('href') === path || 
-          link.href.includes('account.html'));
-      });
       const hamburger = headerPlaceholder.querySelector('.hamburger');
       const navLinksContainer = headerPlaceholder.querySelector('.nav-links');
       if (hamburger && navLinksContainer) {
