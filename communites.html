@@ -17,49 +17,107 @@
   <div id="header-placeholder"></div>
 <div class="title-section">
     <h1>Community Groups</h1>
-    <p>Connect with others through Facebook group chats</p>
+    <p>Connect with others through groups and forum messages</p>
 </div>
 
-<input class="search-bar" type="text" placeholder="Search communities..." />
-
-<div class="groups-container">
-    <div class="group-card hov">
-        <h3>Keep Forsyth County Beautiful</h3>
-        <p>Volunteer-driven environmental action focused on litter prevention, recycling, waste reduction, and water quality.</p>
-        <div class="members">238 members</div>
-        <a class="join-btn dark" href="community-group.html?group=environmental">&#x2197; Join Group</a>
-    </div>
-    <div class="group-card hov">
-        <h3>Forsyth Speaks</h3>
-        <p>A local mental health association providing free counseling and support to help the community thrive.</p>
-        <div class="members">602 members</div>
-        <a class="join-btn dark" href="community-group.html?group=mental">Join Group</a>
-    </div>
-    <div class="group-card hov">
-        <h3>Forsyth AYLUS</h3>
-        <p>Youth-led volunteer organization hosting monthly service events including cleanups, drives, and local support.</p>
-        <div class="members">842 members</div>
-        <a class="join-btn dark" href="community-group.html?group=volunteer">Join Group</a>
-    </div>
-    <div class="group-card hov">
-        <h3>Cumming City Center</h3>
-        <p>Community events year-round to connect with neighbors, build friendships, and stay in tune with local activities.</p>
-        <div class="members">312 members</div>
-        <a class="join-btn dark" href="community-group.html?group=events">Join Group</a>
-    </div>
-    <div class="group-card hov">
-        <h3>The Place</h3>
-        <p>A local thrift and donation mission where reused items support families in need and strengthen the community.</p>
-        <div class="members">215 members</div>
-        <a class="join-btn dark" href="community-group.html?group=donation">Join Group</a>
-    </div>
+<div class="toggle-btns" aria-label="Community tabs">
+    <button class="active db" type="button" data-tab="groups">Groups</button>
+    <button class="dark" type="button" data-tab="forums">Forums</button>
 </div>
+
+<section id="groups-section">
+    <input class="search-bar" type="text" placeholder="Search communities..." />
+
+    <div class="groups-container">
+        <div class="group-card hov">
+            <h3>Keep Forsyth County Beautiful</h3>
+            <p>Volunteer-driven environmental action focused on litter prevention, recycling, waste reduction, and water quality.</p>
+            <div class="members">238 members</div>
+            <a class="join-btn dark" href="community-group.html?group=environmental">&#x2197; Join Group</a>
+        </div>
+        <div class="group-card hov">
+            <h3>Forsyth Speaks</h3>
+            <p>A local mental health association providing free counseling and support to help the community thrive.</p>
+            <div class="members">602 members</div>
+            <a class="join-btn dark" href="community-group.html?group=mental">Join Group</a>
+        </div>
+        <div class="group-card hov">
+            <h3>Forsyth AYLUS</h3>
+            <p>Youth-led volunteer organization hosting monthly service events including cleanups, drives, and local support.</p>
+            <div class="members">842 members</div>
+            <a class="join-btn dark" href="community-group.html?group=volunteer">Join Group</a>
+        </div>
+        <div class="group-card hov">
+            <h3>Cumming City Center</h3>
+            <p>Community events year-round to connect with neighbors, build friendships, and stay in tune with local activities.</p>
+            <div class="members">312 members</div>
+            <a class="join-btn dark" href="community-group.html?group=events">Join Group</a>
+        </div>
+        <div class="group-card hov">
+            <h3>The Place</h3>
+            <p>A local thrift and donation mission where reused items support families in need and strengthen the community.</p>
+            <div class="members">215 members</div>
+            <a class="join-btn dark" href="community-group.html?group=donation">Join Group</a>
+        </div>
+    </div>
+</section>
+
+<section id="forums-section" style="display:none;">
+    <div class="forum-shell">
+        <div class="forum-header">
+            <div>
+                <h2>Community Forum</h2>
+                <p>Share updates, questions, and encouragement with other Ripple members.</p>
+            </div>
+            <div class="forum-status" id="forumStatus">Connecting...</div>
+        </div>
+        <div class="forum-messages" id="forumMessages" aria-live="polite">
+            <div class="message">Loading forum messages...</div>
+        </div>
+        <form class="forum-input-area" id="forumForm">
+            <input id="forumName" type="text" placeholder="Display name" maxlength="40" />
+            <input id="forumMessage" type="text" placeholder="Type your message here..." maxlength="500" required />
+            <button class="send-btn db" type="submit" aria-label="Send forum message">&#10148;</button>
+        </form>
+    </div>
+</section>
 
 <footer class="footer" style="margin-top: 100px; width: 100%">
   <div id="footer-placeholder"></div>
 </footer>
 
 <script>
+  const tabButtons = document.querySelectorAll('.toggle-btns button');
+  const groupsSection = document.getElementById('groups-section');
+  const forumsSection = document.getElementById('forums-section');
+
+  function setCommunityTab(tab) {
+    const showForums = tab === 'forums';
+    groupsSection.style.display = showForums ? 'none' : 'block';
+    forumsSection.style.display = showForums ? 'block' : 'none';
+    tabButtons.forEach(button => {
+      const isActive = button.dataset.tab === tab;
+      button.classList.toggle('active', isActive);
+      button.classList.toggle('db', isActive);
+      button.classList.toggle('dark', !isActive);
+    });
+    const url = new URL(window.location.href);
+    if (showForums) {
+      url.searchParams.set('tab', 'forums');
+    } else {
+      url.searchParams.delete('tab');
+    }
+    window.history.replaceState({}, '', url);
+  }
+
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => setCommunityTab(button.dataset.tab));
+  });
+
+  if (new URLSearchParams(window.location.search).get('tab') === 'forums') {
+    setCommunityTab('forums');
+  }
+
   const searchBar = document.querySelector('.search-bar');
   if (searchBar) {
     searchBar.addEventListener('input', function() {
@@ -82,6 +140,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
@@ -94,6 +153,144 @@
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app);
+  const forumMessages = document.getElementById('forumMessages');
+  const forumForm = document.getElementById('forumForm');
+  const forumMessageInput = document.getElementById('forumMessage');
+  const forumNameInput = document.getElementById('forumName');
+  const forumStatus = document.getElementById('forumStatus');
+  const FORUM_MESSAGE_TYPE = 'communityForumMessage';
+  let currentForumUser = null;
+
+  function getForumGuestId() {
+    const key = 'rippleForumGuestId';
+    let id = localStorage.getItem(key);
+    if (!id) {
+      id = `guest_${Math.random().toString(36).slice(2, 10)}_${Date.now().toString(36)}`;
+      localStorage.setItem(key, id);
+    }
+    return id;
+  }
+
+  function cleanForumText(value, maxLength) {
+    return String(value || '').replace(/\s+/g, ' ').trim().slice(0, maxLength);
+  }
+
+  function formatForumTime(createdAt) {
+    if (!createdAt || !createdAt.toDate) return 'Just now';
+    return createdAt.toDate().toLocaleString([], {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    });
+  }
+
+  function renderForumMessage(message) {
+    const row = document.createElement('div');
+    row.className = 'forum-message-row';
+    if (message.authorId && message.authorId === (currentForumUser ? currentForumUser.uid : getForumGuestId())) {
+      row.classList.add('mine');
+    }
+
+    const bubble = document.createElement('div');
+    bubble.className = 'forum-message-bubble message';
+
+    const meta = document.createElement('div');
+    meta.className = 'forum-message-meta';
+    meta.textContent = `${message.authorName || 'Community Member'} • ${formatForumTime(message.createdAt)}`;
+
+    const text = document.createElement('div');
+    text.className = 'forum-message-text';
+    text.textContent = message.text || '';
+
+    bubble.appendChild(meta);
+    bubble.appendChild(text);
+    row.appendChild(bubble);
+    return row;
+  }
+
+  function showForumEmptyState(text) {
+    forumMessages.innerHTML = '';
+    const empty = document.createElement('div');
+    empty.className = 'message';
+    empty.textContent = text;
+    forumMessages.appendChild(empty);
+  }
+
+  onSnapshot(collection(db, 'notifications'), (snapshot) => {
+    const messages = [];
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      if (data.type !== FORUM_MESSAGE_TYPE) return;
+      messages.push({
+        authorId: data.authorId,
+        authorName: cleanForumText(data.authorName, 40),
+        text: cleanForumText(data.text || data.message, 500),
+        createdAt: data.createdAt
+      });
+    });
+    messages.sort((a, b) => {
+      const at = a.createdAt && typeof a.createdAt.toMillis === 'function' ? a.createdAt.toMillis() : 0;
+      const bt = b.createdAt && typeof b.createdAt.toMillis === 'function' ? b.createdAt.toMillis() : 0;
+      return at - bt;
+    });
+    forumMessages.innerHTML = '';
+    if (!messages.length) {
+      showForumEmptyState('No messages yet. Start the conversation!');
+    } else {
+      messages.slice(-100).forEach(message => {
+        forumMessages.appendChild(renderForumMessage(message));
+      });
+    }
+    forumMessages.scrollTop = forumMessages.scrollHeight;
+    forumStatus.textContent = 'Live';
+  }, (error) => {
+    console.error('Forum load error:', error);
+    forumStatus.textContent = 'Offline';
+    showForumEmptyState('Forum messages could not load right now.');
+  });
+
+  forumForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const text = cleanForumText(forumMessageInput.value, 500);
+    if (!text) return;
+
+    const sendButton = forumForm.querySelector('button');
+    const guestId = getForumGuestId();
+    const authorName = cleanForumText(
+      forumNameInput.value || (currentForumUser && (currentForumUser.displayName || currentForumUser.email)) || 'Community Member',
+      40
+    );
+
+    sendButton.disabled = true;
+    sendButton.style.opacity = '0.55';
+    try {
+      await addDoc(collection(db, 'notifications'), {
+        type: FORUM_MESSAGE_TYPE,
+        itemType: 'forum',
+        title: 'Community Forum Message',
+        message: text,
+        text,
+        authorName,
+        authorId: currentForumUser ? currentForumUser.uid : guestId,
+        authorEmail: currentForumUser ? currentForumUser.email || null : null,
+        createdBy: currentForumUser ? currentForumUser.uid : guestId,
+        createdByEmail: currentForumUser ? currentForumUser.email || null : null,
+        participantId: currentForumUser ? `uid:${currentForumUser.uid}` : `visitor:${guestId}`,
+        participantType: currentForumUser ? 'account' : 'visitor',
+        status: 'forum',
+        createdAt: serverTimestamp()
+      });
+      forumMessageInput.value = '';
+    } catch (error) {
+      console.error('Forum send error:', error);
+      forumStatus.textContent = 'Send failed';
+    } finally {
+      sendButton.disabled = false;
+      sendButton.style.opacity = '1';
+    }
+  });
 
   window.signOutUser = function() {
     signOut(auth).then(() => {
@@ -104,6 +301,10 @@
   };
 
   onAuthStateChanged(auth, (user) => {
+    currentForumUser = user || null;
+    if (user && forumNameInput && !forumNameInput.value) {
+      forumNameInput.value = user.displayName || (user.email ? user.email.split('@')[0] : '');
+    }
     const avatar = document.querySelector('.avatar');
     const navRight = document.querySelector('.nav-right');
     if (user) {

@@ -268,7 +268,9 @@
       const unsub = onSnapshot(collection(db, 'notifications'), (snapshot) => {
         const list = [];
         snapshot.forEach((docSnap) => {
-          list.push({ id: docSnap.id, data: docSnap.data() });
+          const data = docSnap.data();
+          if (data.type === 'communityForumMessage') return;
+          list.push({ id: docSnap.id, data });
         });
         renderNotifications(list, { participantId: 'global' }, isAdmin);
       }, (err) => {
