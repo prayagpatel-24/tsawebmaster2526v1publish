@@ -1701,18 +1701,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   };
 
-  onAuthStateChanged(auth, (user) => {
+  window.rippleAuthUser = undefined;
+  window.rippleAuthRender = function(user) {
     const avatar = document.querySelector('.avatar');
     const navRight = document.querySelector('.nav-right');
     if (user) {
-      const roleDocRef = doc(db, 'users', user.uid);
-      getDoc(roleDocRef).then((snap) => {
-        if (snap.exists() && snap.data().role) {
-          window.currentUserRole = snap.data().role;
-        }
-      }).catch(() => {
-        window.currentUserRole = 'member';
-      });
       const initial = (user.email || '').charAt(0).toUpperCase();
       if (avatar) {
         if (user.photoURL) {
@@ -1764,6 +1757,20 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         navRight.appendChild(signInBtn);
       }
+    }
+  };
+  onAuthStateChanged(auth, (user) => {
+    window.rippleAuthUser = user || null;
+    window.rippleAuthRender(user);
+    if (user) {
+      const roleDocRef = doc(db, 'users', user.uid);
+      getDoc(roleDocRef).then((snap) => {
+        if (snap.exists() && snap.data().role) {
+          window.currentUserRole = snap.data().role;
+        }
+      }).catch(() => {
+        window.currentUserRole = 'member';
+      });
     }
   });
   function sanitizeDisplayText(value, maxLen = 140) {
@@ -1895,12 +1902,15 @@ document.addEventListener('DOMContentLoaded', function() {
             });
           });
         }
+        if (window.rippleAuthRender && window.rippleAuthUser !== undefined) {
+          window.rippleAuthRender(window.rippleAuthUser);
+        }
       })
       .catch(error => {
         console.error('Error loading header:', error);
       });
   });
 </script>
-<script src="bubble-transition.js"></script>
+  <script type="module" src="ripple-admin-nav.js"></script>
 </body>
 </html>

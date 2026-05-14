@@ -19,7 +19,7 @@
   <main class="notif-page">
     <div class="notif-shell">
       <h1>Notifications</h1>
-      <p class="small-muted">Moderation results, event signups, saved resources, and role request updates appear here.</p>
+      <p class="small-muted">Admin moderation, volunteer hour requests, account activity, and role request updates appear here.</p>
       <div id="notifList"></div>
     </div>
   </main>
@@ -27,7 +27,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, addDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, addDoc, setDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     const firebaseConfig = {
       apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
       authDomain: "webmaster-v4-0.firebaseapp.com",
@@ -126,6 +126,19 @@
       if (!Array.isArray(data.recipientsRole) || !data.recipientsRole.length) return false;
       return data.recipientsRole.some(r => ['admin', 'founder'].includes((r || '').toLowerCase()));
     }
+    function hasPendingDecisionStatus(data) {
+      const status = (data.status || '').toLowerCase();
+      return status === 'unread' || status === 'pending';
+    }
+    function isHourRequestForModeration(data) {
+      return data.type === 'hourRequest' && hasPendingDecisionStatus(data);
+    }
+    function isChatViolationForReinstatement(data) {
+      if (data.type !== 'chatModerationViolation') return false;
+      if (!data.accessRevoked || !data.offenderUid) return false;
+      const status = (data.status || '').toLowerCase();
+      return status !== 'handled' && data.result !== 'reinstated';
+    }
     function formatTimestamp(raw) {
       if (!raw) return '';
       try {
@@ -141,9 +154,28 @@
       if (data.itemType) bits.push(data.itemType);
       if (data.status) bits.push(`status: ${data.status}`);
       if (data.createdByEmail) bits.push(`by ${data.createdByEmail}`);
+      if (data.requestorEmail && data.requestorEmail !== data.createdByEmail) bits.push(`for ${data.requestorEmail}`);
+      if (data.offenderEmail) bits.push(`user ${data.offenderEmail}`);
       const when = formatTimestamp(data.createdAt);
       if (when) bits.push(when);
       return bits.join(' • ') || 'Notification';
+    }
+    function buildDetails(data) {
+      const details = [];
+      if (data.message) details.push(data.message);
+      if (data.type === 'hourRequest') {
+        const hours = Number(data.hoursRequested || 0);
+        details.push(`Event: ${data.eventName || 'Unknown event'}`);
+        details.push(`Date: ${data.eventDate || 'No date provided'}`);
+        details.push(`Hours: ${hours || 'Not specified'}`);
+      }
+      if (data.type === 'chatModerationViolation') {
+        details.push(`Warning count: ${Number(data.warningCount || 0)} / 3`);
+        if (data.accessRevoked) details.push('Messaging access is currently revoked.');
+        if (data.forumName) details.push(`Forum: ${data.forumName}`);
+        if (data.moderationReason) details.push(`Reason: ${data.moderationReason}`);
+      }
+      return details.filter(Boolean).join('\n');
     }
     function shouldShowPersonalNotification(data, identity, user) {
       const participantMatch = data.participantId && data.participantId === identity.participantId;
@@ -198,6 +230,67 @@
           createdAt: serverTimestamp()
         });
       }
+    }
+    async function handleHourRequestDecision(notificationId, data, decision) {
+      if (!activeUser || !isAdminRole(currentUserRole)) return;
+      if (!data.itemId) throw new Error('Hour request id missing');
+      const approved = decision === 'approved';
+      const reqRef = doc(db, 'hourRequests', data.itemId);
+      const reqSnap = await getDoc(reqRef);
+      if (!reqSnap.exists()) throw new Error('Hour request not found');
+      const reqData = reqSnap.data();
+      const status = (reqData.status || 'pending').toLowerCase();
+      if (status !== 'pending') throw new Error('This hour request was already reviewed');
+      const requestorId = reqData.uid || data.requestorId || null;
+      const hours = Number(reqData.hoursRequested || data.hoursRequested || 0);
+      if (approved && (!requestorId || !Number.isFinite(hours) || hours <= 0)) {
+        throw new Error('Hour request is missing a valid user or hours value');
+      }
+      if (approved) {
+        await setDoc(doc(db, 'users', requestorId), {
+          volunteerHours: increment(hours),
+          volunteerHoursUpdatedAt: serverTimestamp()
+        }, { merge: true });
+      }
+      await updateDoc(reqRef, {
+        status: approved ? 'approved' : 'denied',
+        reviewedBy: activeUser.uid,
+        reviewedByEmail: activeUser.email || null,
+        reviewedAt: serverTimestamp()
+      });
+      await updateDoc(doc(db, 'notifications', notificationId), {
+        status: 'handled',
+        result: approved ? 'approved' : 'denied',
+        handledBy: activeUser.uid,
+        handledByEmail: activeUser.email || null,
+        handledAt: serverTimestamp()
+      });
+    }
+    async function handleMessageReinstatement(notificationId, data) {
+      if (!activeUser || !isAdminRole(currentUserRole)) return;
+      if (!data.offenderUid) throw new Error('No account is linked to this warning');
+      await setDoc(doc(db, 'users', data.offenderUid), {
+        messageAccessRevoked: false,
+        messageWarnings: 0,
+        messageReinstatedBy: activeUser.uid,
+        messageReinstatedByEmail: activeUser.email || null,
+        messageReinstatedAt: serverTimestamp()
+      }, { merge: true });
+      await updateDoc(doc(db, 'notifications', notificationId), {
+        status: 'handled',
+        result: 'reinstated',
+        handledBy: activeUser.uid,
+        handledByEmail: activeUser.email || null,
+        handledAt: serverTimestamp()
+      });
+    }
+    function renderAdminOnlyNotice(message) {
+      clearListeners();
+      notifList.innerHTML = '';
+      const empty = document.createElement('div');
+      empty.className = 'notif-empty';
+      empty.textContent = message;
+      notifList.appendChild(empty);
     }
     function renderNotifications(list, identity, isAdmin) {
       notifList.innerHTML = '';
@@ -256,7 +349,58 @@
             actions.appendChild(deny);
           } else {
             const info = document.createElement('div');
-            info.textContent = data.message || '';
+            info.textContent = buildDetails(data);
+            actions.appendChild(info);
+          }
+          if (isAdmin && isHourRequestForModeration(data)) {
+            actions.innerHTML = '';
+            const approve = document.createElement('button');
+            approve.className = 'approve-btn';
+            approve.type = 'button';
+            approve.textContent = 'Approve Hours';
+            approve.addEventListener('click', async () => {
+              try {
+                await handleHourRequestDecision(id, data, 'approved');
+              } catch (err) {
+                console.error(err);
+                alert('Failed to approve hours: ' + err.message);
+              }
+            });
+            const deny = document.createElement('button');
+            deny.className = 'deny-btn';
+            deny.type = 'button';
+            deny.textContent = 'Deny';
+            deny.addEventListener('click', async () => {
+              try {
+                await handleHourRequestDecision(id, data, 'denied');
+              } catch (err) {
+                console.error(err);
+                alert('Failed to deny hours: ' + err.message);
+              }
+            });
+            const info = document.createElement('div');
+            info.textContent = buildDetails(data);
+            actions.appendChild(approve);
+            actions.appendChild(deny);
+            actions.appendChild(info);
+          }
+          if (isAdmin && isChatViolationForReinstatement(data)) {
+            actions.innerHTML = '';
+            const reinstate = document.createElement('button');
+            reinstate.className = 'neutral-btn';
+            reinstate.type = 'button';
+            reinstate.textContent = 'Reinstate Messages';
+            reinstate.addEventListener('click', async () => {
+              try {
+                await handleMessageReinstatement(id, data);
+              } catch (err) {
+                console.error(err);
+                alert('Failed to reinstate messaging: ' + err.message);
+              }
+            });
+            const info = document.createElement('div');
+            info.textContent = buildDetails(data);
+            actions.appendChild(reinstate);
             actions.appendChild(info);
           }
           card.appendChild(left);
@@ -279,9 +423,8 @@
       });
       activeUnsubs.push(unsub);
     }
-    onAuthStateChanged(auth, async (user) => {
-      clearListeners();
-      activeUser = user || null;
+    window.rippleAuthUser = undefined;
+    window.rippleAuthRender = function(user) {
       const avatar = document.querySelector('.avatar');
       const navRight = document.querySelector('.nav-right');
       if (user) {
@@ -301,10 +444,7 @@
         }
         const signInBtn = document.querySelector('.sign-in-btn');
         if (signInBtn) signInBtn.remove();
-        const roleDoc = await getDoc(doc(db, 'users', user.uid));
-        currentUserRole = roleDoc.exists() && roleDoc.data().role ? roleDoc.data().role : 'member';
       } else {
-        currentUserRole = 'member';
         if (avatar) {
           avatar.textContent = '';
           avatar.style.backgroundImage = '';
@@ -329,8 +469,25 @@
           navRight.appendChild(signInBtn);
         }
       }
+    };
+    onAuthStateChanged(auth, async (user) => {
+      clearListeners();
+      activeUser = user || null;
+      window.rippleAuthUser = user || null;
+      window.rippleAuthRender(user);
+      if (user) {
+        const roleDoc = await getDoc(doc(db, 'users', user.uid));
+        currentUserRole = roleDoc.exists() && roleDoc.data().role ? roleDoc.data().role : 'member';
+      } else {
+        currentUserRole = 'member';
+      }
       const isAdmin = isAdminRole(currentUserRole);
-      attachSharedNotifications(isAdmin);
+      if (window.rippleSetAdminNav) window.rippleSetAdminNav(isAdmin);
+      if (!isAdmin) {
+        renderAdminOnlyNotice(user ? 'Notifications are available to admins only.' : 'Sign in with an admin account to view notifications.');
+        return;
+      }
+      attachSharedNotifications(true);
     });
     window.signOutUser = function() {
       signOut(auth).then(() => {
@@ -381,12 +538,15 @@
             });
           });
         }
+        if (window.rippleAuthRender && window.rippleAuthUser !== undefined) {
+          window.rippleAuthRender(window.rippleAuthUser);
+        }
       })
       .catch(error => {
         console.error('Error loading header:', error);
       });
   });
 </script>
-<script src="bubble-transition.js"></script>
+  <script type="module" src="ripple-admin-nav.js"></script>
 </body>
 </html>

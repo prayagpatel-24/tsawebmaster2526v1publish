@@ -90,6 +90,7 @@ body {
 .notif-title { font-weight:700; margin-bottom:6px; color: #0f172a; }
 .notif-meta { font-size:13px; color:#64748b; }
 .notif-actions { display:flex; gap:8px; align-items:center; }
+.notif-actions div { white-space: pre-line; }
 .notif-empty {
   padding: 16px;
   border-radius: 14px;
@@ -116,9 +117,19 @@ body {
   cursor:pointer; 
   font-weight:600;
 }
+.neutral-btn {
+  background: linear-gradient(to bottom,#334155,#1e293b);
+  color:white;
+  padding:8px 14px;
+  border-radius:999px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+}
 .small-muted { font-size:13px; color:#64748b; }
 .approve-btn:hover { opacity: 0.95; }
 .deny-btn:hover { opacity: 0.95; }
+.neutral-btn:hover { opacity: 0.95; }
 @media (max-width: 660px) {
   .notif-page { padding: 24px 16px; }
   .notif-shell { padding: 16px; }

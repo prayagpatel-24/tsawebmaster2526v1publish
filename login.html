@@ -232,7 +232,7 @@
                         itemId: user.uid,
                         title: 'User Login',
                         message: `${email} signed in.`,
-                        recipientsRole: ['admin','founder'],
+                        recipientsRole: ['admin'],
                         status: 'unread',
                         createdBy: user.uid,
                         createdByEmail: email,
@@ -284,7 +284,7 @@
                         itemId: user.uid,
                         title: 'New Signup',
                         message: `${name} created a new account with ${email}.`,
-                        recipientsRole: ['admin','founder'],
+                        recipientsRole: ['admin'],
                         status: 'unread',
                         createdBy: user.uid,
                         createdByEmail: email,
@@ -300,5 +300,6 @@
                 });
         });
     </script>
+  <script type="module" src="ripple-admin-nav.js"></script>
 </body>
 </html>

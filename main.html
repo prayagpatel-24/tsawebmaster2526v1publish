@@ -174,7 +174,8 @@
       console.error('Sign out error:', error);
     });
   };
-  onAuthStateChanged(auth, (user) => {
+  window.rippleAuthUser = undefined;
+  window.rippleAuthRender = function(user) {
     const avatar = document.querySelector('.avatar');
     const navRight = document.querySelector('.nav-right');
     if (user) {
@@ -230,6 +231,10 @@
         navRight.appendChild(signInBtn);
       }
     }
+  };
+  onAuthStateChanged(auth, (user) => {
+    window.rippleAuthUser = user || null;
+    window.rippleAuthRender(user);
   });
 </script>
 <script src="bubbles.js"></script>
@@ -288,11 +293,15 @@
             });
           });
         }
+        if (window.rippleAuthRender && window.rippleAuthUser !== undefined) {
+          window.rippleAuthRender(window.rippleAuthUser);
+        }
       })
       .catch(error => {
         console.error('Error loading header:', error);
       });
   });
 </script>
+  <script type="module" src="ripple-admin-nav.js"></script>
 </body>
 </html>
