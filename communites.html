@@ -715,6 +715,51 @@
 	    };
 	  }
 
+	  function fallbackForumNameModeration(name) {
+	    const raw = String(name || '').toLowerCase();
+	    const compact = raw.replace(/[^a-z0-9]/g, '');
+	    const blockedPatterns = [
+	      /\bkys\b/,
+	      /\bkill\s+yourself\b/,
+	      /\bslur\b/,
+	      /\bscam\b/,
+	      /\bfraud\b/,
+	      /\bexplicit\b/,
+	      /\bfuck\b/,
+	      /\bshit\b/,
+	      /\bbitch\b/,
+	      /\basshole\b/,
+	      /\badmin\b/,
+	      /\bfounder\b/,
+	      /\bmoderator\b/,
+	      /\bstaff\b/
+	    ];
+	    const blockedCompact = [
+	      'killyourself',
+	      'administrator',
+	      'moderator'
+	    ];
+	    if (blockedPatterns.some(pattern => pattern.test(raw)) || blockedCompact.some(term => compact.includes(term))) {
+	      return {
+	        approved: false,
+	        reason: 'Rejected because the display name appears unsafe or misleading for the community forum.',
+	        risk: 'high'
+	      };
+	    }
+	    if (/(.)\1{7,}/.test(raw) || /https?:\/\/|www\.|@/.test(raw)) {
+	      return {
+	        approved: false,
+	        reason: 'Rejected because the display name looks like spam or contact information.',
+	        risk: 'medium'
+	      };
+	    }
+	    return {
+	      approved: true,
+	      reason: 'Approved by fallback name moderation.',
+	      risk: 'low'
+	    };
+	  }
+
 	  async function moderateForumMessage(text, context) {
 	    const prompt = [
 	      'You are a strict safety moderator for a teen community forum.',
@@ -753,6 +798,49 @@
 	    } catch (error) {
 	      console.warn('Forum moderation fallback used:', error);
 	      return fallbackChatModeration(text);
+	    } finally {
+	      clearTimeout(timeout);
+	    }
+	  }
+
+	  async function moderateForumGuestName(name, context) {
+	    const prompt = [
+	      'You are a strict safety moderator for guest display names in a teen community forum.',
+	      'Reject names with hate, harassment, threats, sexual content, abusive profanity, scams, spam, personal contact information, or impersonation of staff, admins, founders, moderators, or public officials.',
+	      'Allow ordinary first names, nicknames, initials, and harmless community-themed names.',
+	      'Return JSON only with keys: approved (boolean), reason (string), risk (low|medium|high).'
+	    ].join(' ');
+	    const controller = new AbortController();
+	    const timeout = setTimeout(() => controller.abort(), 12000);
+	    try {
+	      const response = await fetch(MODERATION_API_URL, {
+	        method: 'POST',
+	        headers: {
+	          'Content-Type': 'application/json',
+	          'Authorization': `Bearer ${MODERATION_API_KEY}`
+	        },
+	        body: JSON.stringify({
+	          model: MODERATION_MODEL,
+	          temperature: 0,
+	          messages: [
+	            { role: 'system', content: prompt },
+	            { role: 'user', content: JSON.stringify({ name, context }) }
+	          ],
+	          response_format: { type: 'json_object' }
+	        }),
+	        signal: controller.signal
+	      });
+	      if (!response.ok) throw new Error(`Name moderation API failed (${response.status})`);
+	      const payload = await response.json();
+	      const result = parseModerationResult(payload.choices?.[0]?.message?.content || '');
+	      if (!result) throw new Error('Name moderation response parse failed');
+	      if (result.approved && String(result.risk).toLowerCase() === 'high') {
+	        return { approved: false, reason: 'Rejected due to high-risk name moderation signals.', risk: 'high' };
+	      }
+	      return result;
+	    } catch (error) {
+	      console.warn('Forum name moderation fallback used:', error);
+	      return fallbackForumNameModeration(name);
 	    } finally {
 	      clearTimeout(timeout);
 	    }
@@ -890,6 +978,25 @@
 	    return { approved: false, moderation, violation };
 	  }
 
+	  async function reviewForumGuestName(name) {
+	    if (currentForumUser) return { approved: true };
+	    const guestName = cleanForumText(name, 40);
+	    if (!guestName || guestName === 'Community Member') return { approved: true };
+	    forumStatus.textContent = 'Checking name...';
+	    const moderation = await moderateForumGuestName(guestName, {
+	      forumId: activeForumId,
+	      forumName: activeForumName,
+	      signedIn: false
+	    });
+	    if (moderation.approved) {
+	      clearForumWarning();
+	      return { approved: true, moderation };
+	    }
+	    showForumWarning('Please choose a different display name before posting.');
+	    forumStatus.textContent = 'Name blocked';
+	    return { approved: false, moderation };
+	  }
+
 	  function formatForumTime(createdAt) {
     if (!createdAt || !createdAt.toDate) return 'Just now';
     return createdAt.toDate().toLocaleString([], {
@@ -938,6 +1045,8 @@
 	    button.disabled = true;
 	    button.style.opacity = '0.55';
 	    try {
+	      const nameReview = await reviewForumGuestName(getCurrentForumAuthorName());
+	      if (!nameReview.approved) return;
 	      const review = await reviewForumSubmission(text, 'reply');
 	      if (!review.approved) {
 	        input.value = '';
@@ -1192,6 +1301,8 @@
 	    sendButton.disabled = true;
 	    sendButton.style.opacity = '0.55';
 	    try {
+	      const nameReview = await reviewForumGuestName(authorName);
+	      if (!nameReview.approved) return;
 	      const review = await reviewForumSubmission(text, 'message');
 	      if (!review.approved) {
 	        forumMessageInput.value = '';

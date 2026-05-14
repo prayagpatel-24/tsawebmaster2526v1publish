@@ -65,7 +65,6 @@
     </footer>
   </div>
 
-  <!-- Calendar rendering — runs synchronously, no Firebase dependency -->
   <script>
     var CAL_STATIC_EVENTS = [
       { date: "2026-05-15", title: "Park Cleanup",       location: "Fowler Park"          },
@@ -76,7 +75,6 @@
 
     var CAL_MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
-    // Shared state — Firebase script may update these
     window.localApprovedEvents       = [];
     window.localEventSignups         = [];
     window.localResourceSaves        = [];

@@ -233,15 +233,26 @@
     }
     async function handleHourRequestDecision(notificationId, data, decision) {
       if (!activeUser || !isAdminRole(currentUserRole)) return;
-      if (!data.itemId) throw new Error('Hour request id missing');
       const approved = decision === 'approved';
-      const reqRef = doc(db, 'hourRequests', data.itemId);
-      const reqSnap = await getDoc(reqRef);
-      if (!reqSnap.exists()) throw new Error('Hour request not found');
-      const reqData = reqSnap.data();
-      const status = (reqData.status || 'pending').toLowerCase();
+      let reqRef = null;
+      let reqData = data;
+      if (data.itemId && data.requestSource !== 'notification') {
+        try {
+          reqRef = doc(db, 'hourRequests', data.itemId);
+          const reqSnap = await getDoc(reqRef);
+          if (reqSnap.exists()) {
+            reqData = reqSnap.data();
+          } else {
+            reqRef = null;
+          }
+        } catch (err) {
+          console.warn('Hour request document unavailable; using notification data instead.', err);
+          reqRef = null;
+        }
+      }
+      const status = (reqData.status || data.status || 'pending').toLowerCase();
       if (status !== 'pending') throw new Error('This hour request was already reviewed');
-      const requestorId = reqData.uid || data.requestorId || null;
+      const requestorId = reqData.uid || data.requestorId || data.createdBy || null;
       const hours = Number(reqData.hoursRequested || data.hoursRequested || 0);
       if (approved && (!requestorId || !Number.isFinite(hours) || hours <= 0)) {
         throw new Error('Hour request is missing a valid user or hours value');
@@ -252,12 +263,14 @@
           volunteerHoursUpdatedAt: serverTimestamp()
         }, { merge: true });
       }
-      await updateDoc(reqRef, {
-        status: approved ? 'approved' : 'denied',
-        reviewedBy: activeUser.uid,
-        reviewedByEmail: activeUser.email || null,
-        reviewedAt: serverTimestamp()
-      });
+      if (reqRef) {
+        await updateDoc(reqRef, {
+          status: approved ? 'approved' : 'denied',
+          reviewedBy: activeUser.uid,
+          reviewedByEmail: activeUser.email || null,
+          reviewedAt: serverTimestamp()
+        });
+      }
       await updateDoc(doc(db, 'notifications', notificationId), {
         status: 'handled',
         result: approved ? 'approved' : 'denied',
