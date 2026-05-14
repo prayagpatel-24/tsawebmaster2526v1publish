@@ -252,6 +252,11 @@
     border-color: #4563d9;
     color: white;
   }
+  .forum-message-row.mine .forum-reply {
+    background: #5c7cff;
+    border-color: #4563d9;
+    color: white;
+  }
   .forum-message-meta {
     font-size: 12px;
     font-weight: 600;
@@ -304,20 +309,39 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin: 10px 0 0 52px;
-    max-width: min(620px, calc(100% - 52px));
+    margin: 10px 0 0 32px;
+    max-width: calc(100% - 32px);
   }
   .forum-reply {
     background: white;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
     padding: 12px;
+    width: fit-content;
+    max-width: min(620px, 100%);
+  }
+  .forum-reply-thread {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .forum-reply-thread .forum-message-row {
+    justify-content: flex-start;
+    margin-bottom: 0;
+  }
+  .forum-reply-thread .forum-replies {
+    margin-left: 32px;
+    max-width: calc(100% - 32px);
+  }
+  .forum-reply-thread > .forum-reply-form {
+    margin-left: 32px;
+    max-width: calc(100% - 32px);
   }
   .forum-reply-form {
     display: flex;
     gap: 8px;
-    margin: 10px 0 0 52px;
-    max-width: min(620px, calc(100% - 52px));
+    margin: 10px 0 0 32px;
+    max-width: min(620px, calc(100% - 32px));
   }
   .forum-reply-form input {
     flex: 1;
@@ -360,6 +384,34 @@
   }
   .forum-input-area.signed-in #forumName {
     display: none;
+  }
+  .forum-input-area.locked {
+    grid-template-columns: 1fr auto;
+    border-radius: 18px;
+  }
+  .forum-input-area.locked #forumName,
+  .forum-input-area.locked #forumMessage,
+  .forum-input-area.locked .send-btn {
+    display: none;
+  }
+  .forum-login-prompt {
+    color: #475569;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .forum-login-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 999px;
+    background: #5c7cff;
+    color: white;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
   }
   .send-btn {
     background: #5c7cff;
@@ -586,7 +638,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, doc, updateDoc, arrayUnion, arrayRemove, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, arrayUnion, arrayRemove, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBguT9BsQHwsAwAd3mbEmj3S5E7GtR_IBU",
@@ -608,12 +660,22 @@
   const forumTitle = document.getElementById('forumTitle');
   const forumDescription = document.getElementById('forumDescription');
   const forumChannelButtons = document.querySelectorAll('.forum-channel-btn');
+  const forumLoginPrompt = document.createElement('div');
+  const forumLoginLink = document.createElement('a');
   const FORUM_MESSAGE_TYPE = 'communityForumMessage';
   let activeForumId = new URLSearchParams(window.location.search).get('forum') || 'general';
   let activeForumName = 'General Ripple Forum';
   let currentForumUser = null;
   let currentAuthUser = undefined;
   let forumSnapshotMessages = [];
+  let pendingReplyParentId = null;
+
+  forumLoginPrompt.className = 'forum-login-prompt';
+  forumLoginPrompt.textContent = 'Sign in to send messages in the forum.';
+  forumLoginLink.className = 'forum-login-link';
+  forumLoginLink.href = 'login.html';
+  forumLoginLink.textContent = 'Sign In';
+  forumLoginLink.setAttribute('aria-label', 'Sign in to message in forums');
 
   function getForumGuestId() {
     const key = 'rippleForumGuestId';
@@ -643,11 +705,22 @@
     return currentForumUser ? currentForumUser.uid : getForumGuestId();
   }
 
+  function isCurrentForumAuthor(message) {
+    return !!message.authorId && message.authorId === getCurrentForumParticipantId();
+  }
+
   function getCurrentForumAuthorName() {
     return cleanForumText(
       forumNameInput.value || (currentForumUser && (currentForumUser.displayName || currentForumUser.email)) || 'Community Member',
       40
     );
+  }
+
+  function requireForumSignIn() {
+    if (currentForumUser) return true;
+    forumStatus.textContent = 'Sign in required';
+    forumMessageInput.blur();
+    return false;
   }
 
   async function toggleForumLike(message) {
@@ -667,7 +740,46 @@
     }
   }
 
+  async function deleteForumMessage(message) {
+    if (!message.id || message.deleted || !isCurrentForumAuthor(message)) return;
+    const hasReplies = Array.isArray(message.replies) && message.replies.length > 0;
+    const confirmed = window.confirm(hasReplies
+      ? 'Delete your comment? Replies will stay visible under a deleted comment placeholder.'
+      : 'Delete your comment?');
+    if (!confirmed) return;
+
+    const messageRef = doc(db, 'notifications', message.id);
+    try {
+      if (hasReplies) {
+        await updateDoc(messageRef, {
+          text: '[deleted]',
+          message: '[deleted]',
+          title: `${message.forumName || activeForumName} Deleted Comment`,
+          authorName: 'Deleted comment',
+          likedBy: [],
+          deleted: true
+        });
+      } else {
+        try {
+          await deleteDoc(messageRef);
+        } catch (deleteError) {
+          await updateDoc(messageRef, {
+            hidden: true,
+            deleted: true,
+            text: '',
+            message: '',
+            likedBy: []
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Forum delete error:', error);
+      forumStatus.textContent = 'Delete failed';
+    }
+  }
+
   async function sendForumReply(message, input, button) {
+    if (!requireForumSignIn()) return;
     const text = cleanForumText(input.value, 500);
     if (!text || !message.id) return;
     button.disabled = true;
@@ -676,11 +788,11 @@
       await addDoc(collection(db, 'notifications'), {
         type: FORUM_MESSAGE_TYPE,
         itemType: 'forum',
-        title: `${activeForumName} Reply`,
+        title: `${message.forumName || activeForumName} Reply`,
         message: text,
         text,
-        forumId: activeForumId,
-        forumName: activeForumName,
+        forumId: message.forumId || activeForumId,
+        forumName: message.forumName || activeForumName,
         parentId: message.id,
         authorName: getCurrentForumAuthorName(),
         authorId: getCurrentForumParticipantId(),
@@ -693,6 +805,7 @@
         status: 'forum',
         createdAt: serverTimestamp()
       });
+      pendingReplyParentId = message.id;
       input.value = '';
       input.closest('.forum-reply-form').remove();
     } catch (error) {
@@ -704,9 +817,73 @@
     }
   }
 
-  function renderForumMessage(message) {
+  function openForumReplyForm(message, thread) {
+    if (!requireForumSignIn()) return;
+    const existing = Array.from(thread.children).find(child => child.classList.contains('forum-reply-form'));
+    if (existing) {
+      existing.remove();
+      return;
+    }
+    const form = document.createElement('form');
+    form.className = 'forum-reply-form';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = `Reply to ${message.authorName || 'this message'}...`;
+    input.maxLength = 500;
+    const button = document.createElement('button');
+    button.type = 'submit';
+    button.textContent = 'Reply';
+    form.appendChild(input);
+    form.appendChild(button);
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      sendForumReply(message, input, button);
+    });
+    thread.appendChild(form);
+    input.focus();
+  }
+
+  function createForumMessageActions(message, thread) {
+    const actions = document.createElement('div');
+    actions.className = 'forum-message-actions';
+    if (message.deleted) return actions;
+
+    const likedBy = Array.isArray(message.likedBy) ? message.likedBy : [];
+    const likedByMe = likedBy.includes(getCurrentForumParticipantId());
+    const likeBtn = document.createElement('button');
+    likeBtn.type = 'button';
+    likeBtn.className = 'forum-action-btn forum-like-btn';
+    if (likedByMe) {
+      likeBtn.classList.add('active');
+    }
+    likeBtn.textContent = likedBy.length ? `♥ ${likedBy.length}` : '♡';
+    likeBtn.setAttribute('aria-label', likedByMe ? 'Unlike message' : 'Like message');
+    likeBtn.addEventListener('click', () => toggleForumLike(message));
+
+    const replyBtn = document.createElement('button');
+    replyBtn.type = 'button';
+    replyBtn.className = 'forum-action-btn';
+    replyBtn.textContent = 'Reply';
+    replyBtn.addEventListener('click', () => openForumReplyForm(message, thread));
+
+    actions.appendChild(likeBtn);
+    actions.appendChild(replyBtn);
+    if (isCurrentForumAuthor(message)) {
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'forum-action-btn';
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.setAttribute('aria-label', 'Delete your comment');
+      deleteBtn.addEventListener('click', () => deleteForumMessage(message));
+      actions.appendChild(deleteBtn);
+    }
+    return actions;
+  }
+
+  function renderForumMessage(message, depth = 0, visited = new Set()) {
     const thread = document.createElement('div');
-    thread.className = 'forum-thread-item';
+    thread.className = depth ? 'forum-reply-thread' : 'forum-thread-item';
+    thread.dataset.messageId = message.id || '';
     const row = document.createElement('div');
     row.className = 'forum-message-row';
     if (message.authorId && message.authorId === getCurrentForumParticipantId()) {
@@ -714,7 +891,7 @@
     }
 
     const bubble = document.createElement('div');
-    bubble.className = 'forum-message-bubble message';
+    bubble.className = depth ? 'forum-reply' : 'forum-message-bubble message';
 
     const meta = document.createElement('div');
     meta.className = 'forum-message-meta';
@@ -722,74 +899,21 @@
 
     const text = document.createElement('div');
     text.className = 'forum-message-text';
-    text.textContent = message.text || '';
+    text.textContent = message.deleted ? '[deleted]' : message.text || '';
 
-    const actions = document.createElement('div');
-    actions.className = 'forum-message-actions';
-
-    const likedBy = Array.isArray(message.likedBy) ? message.likedBy : [];
-    const likeBtn = document.createElement('button');
-    likeBtn.type = 'button';
-    likeBtn.className = 'forum-action-btn forum-like-btn';
-    if (likedBy.includes(getCurrentForumParticipantId())) {
-      likeBtn.classList.add('active');
-    }
-    likeBtn.textContent = likedBy.length ? `♥ ${likedBy.length}` : '♡';
-    likeBtn.setAttribute('aria-label', likedBy.includes(getCurrentForumParticipantId()) ? 'Unlike message' : 'Like message');
-    likeBtn.addEventListener('click', () => toggleForumLike(message));
-
-    const replyBtn = document.createElement('button');
-    replyBtn.type = 'button';
-    replyBtn.className = 'forum-action-btn';
-    replyBtn.textContent = 'Reply';
-    replyBtn.addEventListener('click', () => {
-      const existing = row.querySelector('.forum-reply-form');
-      if (existing) {
-        existing.remove();
-        return;
-      }
-      const form = document.createElement('form');
-      form.className = 'forum-reply-form';
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.placeholder = `Reply to ${message.authorName || 'this message'}...`;
-      input.maxLength = 500;
-      const button = document.createElement('button');
-      button.type = 'submit';
-      button.textContent = 'Reply';
-      form.appendChild(input);
-      form.appendChild(button);
-      form.addEventListener('submit', event => {
-        event.preventDefault();
-        sendForumReply(message, input, button);
-      });
-      thread.appendChild(form);
-      input.focus();
-    });
-
-    actions.appendChild(likeBtn);
-    actions.appendChild(replyBtn);
     bubble.appendChild(meta);
     bubble.appendChild(text);
-    bubble.appendChild(actions);
+    bubble.appendChild(createForumMessageActions(message, thread));
     row.appendChild(bubble);
     thread.appendChild(row);
 
-    if (Array.isArray(message.replies) && message.replies.length) {
+    if (Array.isArray(message.replies) && message.replies.length && !visited.has(message.id)) {
+      const nextVisited = new Set(visited);
+      nextVisited.add(message.id);
       const replies = document.createElement('div');
       replies.className = 'forum-replies';
       message.replies.forEach(reply => {
-        const replyBubble = document.createElement('div');
-        replyBubble.className = 'forum-reply';
-        const replyMeta = document.createElement('div');
-        replyMeta.className = 'forum-message-meta';
-        replyMeta.textContent = `${reply.authorName || 'Community Member'} • ${formatForumTime(reply.createdAt)}`;
-        const replyText = document.createElement('div');
-        replyText.className = 'forum-message-text';
-        replyText.textContent = reply.text || '';
-        replyBubble.appendChild(replyMeta);
-        replyBubble.appendChild(replyText);
-        replies.appendChild(replyBubble);
+        replies.appendChild(renderForumMessage(reply, depth + 1, nextVisited));
       });
       thread.appendChild(replies);
     }
@@ -807,38 +931,48 @@
   function renderActiveForumMessages() {
     const activeMessages = forumSnapshotMessages
       .filter(message => (message.forumId || 'general') === activeForumId);
-    const repliesByParent = new Map();
-    activeMessages
-      .filter(message => message.parentId)
-      .forEach(reply => {
-        if (!repliesByParent.has(reply.parentId)) repliesByParent.set(reply.parentId, []);
-        repliesByParent.get(reply.parentId).push(reply);
-      });
-    repliesByParent.forEach(replies => {
-      replies.sort((a, b) => {
+    const messagesById = new Map(activeMessages.map(message => [message.id, { ...message, replies: [] }]));
+    const messages = [];
+    messagesById.forEach(message => {
+      if (message.parentId && messagesById.has(message.parentId)) {
+        messagesById.get(message.parentId).replies.push(message);
+      } else {
+        messages.push(message);
+      }
+    });
+    function sortForumThread(items) {
+      items.sort((a, b) => {
         const at = a.createdAt && typeof a.createdAt.toMillis === 'function' ? a.createdAt.toMillis() : 0;
         const bt = b.createdAt && typeof b.createdAt.toMillis === 'function' ? b.createdAt.toMillis() : 0;
         return at - bt;
       });
-    });
-    const messages = activeMessages
-      .filter(message => !message.parentId)
-      .map(message => ({ ...message, replies: repliesByParent.get(message.id) || [] }))
-      .sort((a, b) => {
-      const at = a.createdAt && typeof a.createdAt.toMillis === 'function' ? a.createdAt.toMillis() : 0;
-      const bt = b.createdAt && typeof b.createdAt.toMillis === 'function' ? b.createdAt.toMillis() : 0;
-      return at - bt;
-    });
+      items.forEach(item => sortForumThread(item.replies));
+    }
+    function removeHiddenDeletedLeaves(items) {
+      return items
+        .map(item => ({ ...item, replies: removeHiddenDeletedLeaves(item.replies) }))
+        .filter(item => item.replies.length || (!item.hidden && !item.deleted));
+    }
+    sortForumThread(messages);
+    const visibleMessages = removeHiddenDeletedLeaves(messages);
     forumMessages.innerHTML = '';
-    if (!messages.length) {
+    if (!visibleMessages.length) {
       showForumEmptyState('No messages yet. Start the conversation!');
     } else {
-      messages.slice(-100).forEach(message => {
+      visibleMessages.forEach(message => {
         forumMessages.appendChild(renderForumMessage(message));
       });
     }
-    forumMessages.scrollTop = forumMessages.scrollHeight;
-    forumStatus.textContent = 'Live';
+    if (pendingReplyParentId) {
+      const parentThread = forumMessages.querySelector(`[data-message-id="${pendingReplyParentId}"]`);
+      if (parentThread) {
+        parentThread.scrollIntoView({ block: 'nearest' });
+      }
+      pendingReplyParentId = null;
+    } else {
+      forumMessages.scrollTop = forumMessages.scrollHeight;
+    }
+    forumStatus.textContent = currentForumUser ? 'Live' : 'Read only';
   }
 
   function setActiveForum(button, updateUrl = true) {
@@ -882,6 +1016,8 @@
         authorName: cleanForumText(data.authorName, 40),
         text: cleanForumText(data.text || data.message, 500),
         likedBy: Array.isArray(data.likedBy) ? data.likedBy : [],
+        deleted: data.deleted === true,
+        hidden: data.hidden === true,
         createdAt: data.createdAt
       });
     });
@@ -894,11 +1030,12 @@
 
   forumForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+    if (!requireForumSignIn()) return;
     const text = cleanForumText(forumMessageInput.value, 500);
     if (!text) return;
 
     const sendButton = forumForm.querySelector('button');
-    const guestId = getForumGuestId();
+    const guestId = currentForumUser ? null : getForumGuestId();
     const authorName = getCurrentForumAuthorName();
 
     sendButton.disabled = true;
@@ -947,6 +1084,26 @@
     }
     if (forumForm) {
       forumForm.classList.toggle('signed-in', !!user);
+      forumForm.classList.toggle('locked', !user);
+      forumMessageInput.disabled = !user;
+      forumNameInput.disabled = !user;
+      const sendButton = forumForm.querySelector('.send-btn');
+      if (sendButton) {
+        sendButton.disabled = !user;
+      }
+      if (user) {
+        forumLoginPrompt.remove();
+        forumLoginLink.remove();
+        forumMessageInput.placeholder = `Message ${activeForumName}...`;
+      } else {
+        if (!forumForm.contains(forumLoginPrompt)) {
+          forumForm.prepend(forumLoginPrompt);
+        }
+        if (!forumForm.contains(forumLoginLink)) {
+          forumForm.appendChild(forumLoginLink);
+        }
+        forumStatus.textContent = 'Read only';
+      }
     }
     const avatar = document.querySelector('.avatar');
     const navRight = document.querySelector('.nav-right');
