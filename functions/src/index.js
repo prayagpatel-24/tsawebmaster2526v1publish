@@ -107,7 +107,6 @@ async function blockMessage(messageRef, messageId, originalData, messageText, pr
     flaggedAt: admin.firestore.FieldValue.serverTimestamp()
   });
 
-  // Remove the public message document after preserving it for admin review.
   await messageRef.delete();
 }
 
@@ -124,9 +123,6 @@ async function moderateCreatedMessage(messageRef, messageId, data) {
     return;
   }
 
-  // Stage 0: exact prohibited terms are blocked immediately. This is separate
-  // from cosine similarity because obvious slurs should not depend on fuzzy
-  // similarity scoring or an AI API call.
   const exactBlock = runExactBlocklist(messageText);
   if (exactBlock.blocked) {
     await blockMessage(
@@ -152,14 +148,14 @@ async function moderateCreatedMessage(messageRef, messageId, data) {
 
   const prefilter = runCosinePrefilter(messageText);
 
-  // Stage 1: most messages stop here and never incur AI cost/latency.
+  
   if (!prefilter.flaggedForAi) {
     await approveMessage(messageRef, prefilter);
     return;
   }
 
   try {
-    // Stage 2: only near-matches to the flagged phrase list reach Mistral.
+    
     const aiVerdict = await reviewWithMistral(messageText, prefilter);
 
     if (aiVerdict.flagged) {
@@ -193,14 +189,6 @@ async function moderateCreatedMessage(messageRef, messageId, data) {
   }
 }
 
-/**
- * Two-stage moderation for newly-created message documents.
- *
- * Client writes should create messages with moderationStatus="pending" and
- * visible=false. Firestore rules below enforce that public reads only see
- * approved messages, so the trigger can run after the write without exposing
- * unreviewed content to the app.
- */
 exports.moderateNewMessage = onDocumentCreated(
   {
     document: "messages/{messageId}",
@@ -215,13 +203,6 @@ exports.moderateNewMessage = onDocumentCreated(
   }
 );
 
-/**
- * Temporary bridge for the existing forum implementation.
- *
- * communites.html currently stores forum posts in the notifications collection.
- * This keeps those posts protected until the frontend is fully migrated to the
- * messages collection.
- */
 exports.moderateForumNotification = onDocumentCreated(
   {
     document: "notifications/{notificationId}",

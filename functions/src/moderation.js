@@ -30,14 +30,17 @@ const STOPWORDS = new Set([
 ]);
 
 const EXACT_BLOCKED_TERMS = [
-  {
-    label: "racial slur",
-    compactTerm: ["n", "i", "g", "g", "e", "r"].join("")
-  },
-  {
-    label: "racial slur",
-    compactTerm: ["n", "i", "g", "g", "a"].join("")
-  }
+  { label: "racial slur", compactTerm: ["n","i","g","g","e","r"].join("") },
+  { label: "racial slur", compactTerm: ["n","i","g","g","a"].join("") },
+  { label: "racial slur", compactTerm: ["s","p","i","c"].join("") },
+  { label: "racial slur", compactTerm: ["c","h","i","n","k"].join("") },
+  { label: "racial slur", compactTerm: ["g","o","o","k"].join("") },
+  { label: "racial slur", compactTerm: ["k","i","k","e"].join("") },
+  { label: "racial slur", compactTerm: ["w","e","t","b","a","c","k"].join("") },
+  { label: "anti-LGBTQ slur", compactTerm: ["f","a","g","g","o","t"].join("") },
+  { label: "anti-LGBTQ slur", compactTerm: ["t","r","a","n","n","y"].join("") },
+  { label: "ableist slur", compactTerm: ["r","e","t","a","r","d"].join("") },
+  { label: "threat language", compactTerm: ["k","i","l","l","y","o","u","r","s","e","l","f"].join("") },
 ];
 
 function compactForBlocklist(text) {
