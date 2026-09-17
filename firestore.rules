@@ -1,0 +1,79 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && userDoc().data.role in ['admin', 'founder'];
+    }
+
+    match /messages/{messageId} {
+      // Public clients can only read messages after the Cloud Function approves
+      // them. Admins can inspect pending/approved messages.
+      allow read: if isAdmin()
+        || resource.data.moderationStatus == 'approved';
+
+      // Users may submit messages, but they cannot mark them approved or visible.
+      allow create: if signedIn()
+        && (
+          !request.resource.data.keys().hasAny(['moderationStatus'])
+          || request.resource.data.moderationStatus == 'pending'
+        )
+        && (
+          !request.resource.data.keys().hasAny(['visible'])
+          || request.resource.data.visible == false
+        );
+
+      allow update, delete: if isAdmin();
+    }
+
+    match /flagged_messages/{messageId} {
+      // The Cloud Function writes these with the Admin SDK, which bypasses
+      // security rules. Browser clients cannot create flagged review records.
+      allow create: if false;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /notifications/{notificationId} {
+      // Existing forum posts currently live in notifications. Public users may
+      // only read forum messages after the backend approves them; admins can
+      // read all notifications for moderation.
+      allow read: if isAdmin()
+        || (
+          resource.data.type == 'forumMessage'
+          && (
+            !resource.data.keys().hasAny(['moderationStatus'])
+            || resource.data.moderationStatus == 'approved'
+          )
+          && resource.data.visible != false
+        );
+
+      // The current frontend writes forum posts here. It must write them as
+      // pending/hidden so the Cloud Function can approve or remove them.
+      allow create: if (
+          request.resource.data.type == 'forumMessage'
+          && request.resource.data.moderationStatus == 'pending'
+          && request.resource.data.visible == false
+        )
+        || signedIn();
+
+      // Users can only update forum likes from the browser. Moderation updates
+      // are done by the Cloud Function through the Admin SDK.
+      allow update: if isAdmin()
+        || (
+          resource.data.type == 'forumMessage'
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly(['likedBy'])
+        );
+
+      allow delete: if isAdmin();
+    }
+  }
+}

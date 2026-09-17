@@ -678,8 +678,36 @@
 	    }
 	  }
 
+	  const FORUM_EXACT_BLOCKED_COMPACT = [
+	    ['n', 'i', 'g', 'g', 'e', 'r'].join(''),
+	    ['n', 'i', 'g', 'g', 'a'].join('')
+	  ];
+
+	  function compactForumModerationText(text) {
+	    return String(text || '')
+	      .toLowerCase()
+	      .replace(/[!1|]/g, 'i')
+	      .replace(/[@4]/g, 'a')
+	      .replace(/[3]/g, 'e')
+	      .replace(/[0]/g, 'o')
+	      .replace(/[$5]/g, 's')
+	      .replace(/[^a-z0-9]/g, '');
+	  }
+
+	  function containsExactForumBlockedTerm(text) {
+	    const compact = compactForumModerationText(text);
+	    return FORUM_EXACT_BLOCKED_COMPACT.some(term => compact.includes(term));
+	  }
+
 	  function fallbackChatModeration(text) {
 	    const raw = String(text || '').toLowerCase();
+	    if (containsExactForumBlockedTerm(raw)) {
+	      return {
+	        approved: false,
+	        reason: 'Rejected because the message contains a prohibited slur.',
+	        risk: 'high'
+	      };
+	    }
 	    const blockedPatterns = [
 	      /\bkys\b/,
 	      /\bkill\s+yourself\b/,
@@ -718,6 +746,13 @@
 	  function fallbackForumNameModeration(name) {
 	    const raw = String(name || '').toLowerCase();
 	    const compact = raw.replace(/[^a-z0-9]/g, '');
+	    if (containsExactForumBlockedTerm(raw)) {
+	      return {
+	        approved: false,
+	        reason: 'Rejected because the display name contains a prohibited slur.',
+	        risk: 'high'
+	      };
+	    }
 	    const blockedPatterns = [
 	      /\bkys\b/,
 	      /\bkill\s+yourself\b/,
@@ -1069,6 +1104,8 @@
         participantId: currentForumUser ? `uid:${currentForumUser.uid}` : `visitor:${getForumGuestId()}`,
         participantType: currentForumUser ? 'account' : 'visitor',
         likedBy: [],
+        moderationStatus: 'pending',
+        visible: false,
         status: 'forum',
         createdAt: serverTimestamp()
       });
@@ -1266,6 +1303,8 @@
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
       if (data.type !== FORUM_MESSAGE_TYPE) return;
+      if (data.moderationStatus && data.moderationStatus !== 'approved') return;
+      if (data.visible === false && data.moderationStatus !== 'approved') return;
       forumSnapshotMessages.push({
         id: docSnap.id,
         forumId: data.forumId || 'general',
@@ -1324,6 +1363,8 @@
         participantId: currentForumUser ? `uid:${currentForumUser.uid}` : `visitor:${guestId}`,
         participantType: currentForumUser ? 'account' : 'visitor',
         likedBy: [],
+        moderationStatus: 'pending',
+        visible: false,
         status: 'forum',
         createdAt: serverTimestamp()
       });
